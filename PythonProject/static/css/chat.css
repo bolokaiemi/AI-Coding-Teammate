@@ -1,0 +1,1179 @@
+/* =========================================================
+   AI CODING TEAMMATE
+   CHAT.CSS
+   Modern AI Chat Interface
+   ========================================================= */
+
+
+/* =========================================================
+   1. VARIABLES
+   ========================================================= */
+
+:root {
+    --chat-bg: #07111f;
+    --chat-surface: #0c1727;
+    --chat-surface-soft: #101d30;
+    --chat-surface-hover: #16263d;
+
+    --chat-border: rgba(148, 163, 184, 0.14);
+    --chat-border-strong: rgba(96, 165, 250, 0.28);
+
+    --chat-text: #f4f7fb;
+    --chat-text-secondary: #9eacc0;
+    --chat-text-muted: #6f8097;
+
+    --chat-primary: #3b82f6;
+    --chat-primary-light: #60a5fa;
+    --chat-purple: #8b5cf6;
+
+    --chat-success: #22c55e;
+    --chat-warning: #f59e0b;
+    --chat-danger: #ef4444;
+
+    --chat-radius-sm: 9px;
+    --chat-radius-md: 13px;
+    --chat-radius-lg: 18px;
+
+    --chat-shadow:
+        0 18px 45px rgba(0, 0, 0, 0.24);
+}
+
+
+/* =========================================================
+   2. MAIN CHAT CONTAINER
+   ========================================================= */
+
+.chat-container {
+    width: 100%;
+    height: 100%;
+
+    min-height: 0;
+
+    display: flex;
+    flex-direction: column;
+
+    overflow: hidden;
+
+    color: var(--chat-text);
+
+    background:
+        linear-gradient(
+            180deg,
+            rgba(12, 23, 39, 0.98),
+            rgba(7, 17, 31, 0.99)
+        );
+}
+
+
+/* =========================================================
+   3. CHAT HEADER
+   ========================================================= */
+
+.chat-header {
+    min-height: 70px;
+
+    padding: 13px 14px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 12px;
+
+    border-bottom: 1px solid var(--chat-border);
+
+    background:
+        rgba(255, 255, 255, 0.018);
+}
+
+.chat-ai-profile {
+    min-width: 0;
+
+    display: flex;
+    align-items: center;
+
+    gap: 11px;
+}
+
+
+/* =========================================================
+   4. AI AVATAR
+   ========================================================= */
+
+.chat-ai-avatar {
+    position: relative;
+
+    width: 43px;
+    height: 43px;
+
+    flex-shrink: 0;
+
+    display: grid;
+    place-items: center;
+
+    border: 1px solid rgba(96, 165, 250, 0.15);
+    border-radius: 13px;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(59, 130, 246, 0.14),
+            rgba(139, 92, 246, 0.11)
+        );
+
+    font-size: 1.2rem;
+
+    box-shadow:
+        0 8px 20px rgba(59, 130, 246, 0.08);
+}
+
+.chat-online-dot {
+    position: absolute;
+
+    right: -1px;
+    bottom: -1px;
+
+    width: 10px;
+    height: 10px;
+
+    border: 2px solid #0c1727;
+    border-radius: 50%;
+
+    background: var(--chat-success);
+
+    box-shadow:
+        0 0 8px rgba(34, 197, 94, 0.45);
+}
+
+
+/* =========================================================
+   5. CHAT PROFILE TEXT
+   ========================================================= */
+
+.chat-status {
+    display: block;
+
+    margin-bottom: 2px;
+
+    color: #86efac;
+
+    font-size: 0.58rem;
+    font-weight: 800;
+
+    letter-spacing: 0.13em;
+}
+
+.chat-ai-profile h2 {
+    overflow: hidden;
+
+    color: #eef4fc;
+
+    font-size: 0.86rem;
+    font-weight: 700;
+
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+
+/* =========================================================
+   6. OPTIONS BUTTON
+   ========================================================= */
+
+.chat-options-button {
+    width: 34px;
+    height: 34px;
+
+    flex-shrink: 0;
+
+    display: grid;
+    place-items: center;
+
+    border: 1px solid transparent;
+    border-radius: 9px;
+
+    background: transparent;
+
+    color: var(--chat-text-muted);
+
+    cursor: pointer;
+
+    font-size: 1.2rem;
+
+    transition:
+        background 0.2s ease,
+        border-color 0.2s ease,
+        color 0.2s ease;
+}
+
+.chat-options-button:hover {
+    color: #ffffff;
+
+    border-color: var(--chat-border);
+
+    background:
+        rgba(255, 255, 255, 0.045);
+}
+
+
+/* =========================================================
+   7. MESSAGES AREA
+   ========================================================= */
+
+.chat-messages {
+    flex: 1;
+
+    min-height: 0;
+
+    padding: 16px 13px;
+
+    overflow-y: auto;
+    overflow-x: hidden;
+
+    scroll-behavior: smooth;
+}
+
+
+/* =========================================================
+   8. MESSAGE LAYOUT
+   ========================================================= */
+
+.chat-message {
+    display: flex;
+    align-items: flex-start;
+
+    gap: 9px;
+
+    margin-bottom: 17px;
+
+    animation: chatMessageIn 0.22s ease;
+}
+
+@keyframes chatMessageIn {
+    from {
+        opacity: 0;
+        transform: translateY(4px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.message-avatar {
+    width: 31px;
+    height: 31px;
+
+    flex-shrink: 0;
+
+    display: grid;
+    place-items: center;
+
+    border-radius: 9px;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(59, 130, 246, 0.12),
+            rgba(139, 92, 246, 0.08)
+        );
+
+    border:
+        1px solid
+        rgba(96, 165, 250, 0.12);
+
+    font-size: 0.82rem;
+}
+
+.message-content {
+    min-width: 0;
+
+    max-width: calc(100% - 40px);
+}
+
+
+/* =========================================================
+   9. MESSAGE SENDER
+   ========================================================= */
+
+.message-sender {
+    display: block;
+
+    margin-bottom: 5px;
+
+    color: #8395aa;
+
+    font-size: 0.62rem;
+    font-weight: 700;
+}
+
+
+/* =========================================================
+   10. AI MESSAGE BUBBLE
+   ========================================================= */
+
+.message-bubble {
+    padding: 11px 12px;
+
+    border: 1px solid var(--chat-border);
+    border-radius:
+        5px
+        13px
+        13px
+        13px;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(16, 29, 48, 0.92),
+            rgba(10, 21, 36, 0.95)
+        );
+
+    color: #d9e3ef;
+
+    font-size: 0.75rem;
+    line-height: 1.62;
+
+    box-shadow:
+        0 6px 16px rgba(0, 0, 0, 0.1);
+}
+
+.message-bubble p {
+    margin: 0;
+}
+
+.message-bubble p + p {
+    margin-top: 8px;
+}
+
+
+/* =========================================================
+   11. MESSAGE TIME
+   ========================================================= */
+
+.message-time {
+    display: block;
+
+    margin-top: 5px;
+
+    color: #566980;
+
+    font-size: 0.58rem;
+}
+
+
+/* =========================================================
+   12. USER MESSAGE SUPPORT
+   For messages inserted by chat.js
+   ========================================================= */
+
+.chat-message.user-message {
+    justify-content: flex-end;
+}
+
+.chat-message.user-message .message-avatar {
+    order: 2;
+
+    background:
+        rgba(59, 130, 246, 0.12);
+}
+
+.chat-message.user-message .message-content {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+}
+
+.chat-message.user-message .message-bubble {
+    border-color:
+        rgba(96, 165, 250, 0.2);
+
+    border-radius:
+        13px
+        5px
+        13px
+        13px;
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(59, 130, 246, 0.17),
+            rgba(99, 102, 241, 0.1)
+        );
+
+    color: #e9f3ff;
+}
+
+
+/* =========================================================
+   13. CODE INSIDE CHAT
+   ========================================================= */
+
+.message-bubble code {
+    padding: 2px 5px;
+
+    border-radius: 5px;
+
+    background:
+        rgba(0, 0, 0, 0.27);
+
+    color: #bfdbfe;
+
+    font-family:
+        "JetBrains Mono",
+        "Fira Code",
+        Consolas,
+        monospace;
+
+    font-size: 0.71rem;
+}
+
+.message-bubble pre {
+    max-width: 100%;
+
+    margin: 10px 0 2px;
+    padding: 10px;
+
+    overflow-x: auto;
+
+    border: 1px solid rgba(148, 163, 184, 0.12);
+    border-radius: 8px;
+
+    background: #050c16;
+
+    color: #d8e4f2;
+
+    font-family:
+        "JetBrains Mono",
+        "Fira Code",
+        Consolas,
+        monospace;
+
+    font-size: 0.7rem;
+    line-height: 1.6;
+
+    white-space: pre;
+}
+
+
+/* =========================================================
+   14. TYPING INDICATOR
+   ========================================================= */
+
+.chat-typing-indicator {
+    min-height: 48px;
+
+    padding: 7px 13px;
+
+    display: flex;
+    align-items: center;
+
+    gap: 8px;
+
+    border-top: 1px solid rgba(148, 163, 184, 0.06);
+
+    color: var(--chat-text-muted);
+
+    font-size: 0.64rem;
+}
+
+.chat-typing-indicator[hidden] {
+    display: none;
+}
+
+.typing-bubble {
+    min-width: 52px;
+    min-height: 30px;
+
+    padding: 0 10px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: 4px;
+
+    border: 1px solid var(--chat-border);
+    border-radius: 10px;
+
+    background:
+        rgba(255, 255, 255, 0.028);
+}
+
+.typing-bubble span {
+    width: 5px;
+    height: 5px;
+
+    border-radius: 50%;
+
+    background: #7d91aa;
+
+    animation:
+        chatTypingDot
+        1.1s ease-in-out infinite;
+}
+
+.typing-bubble span:nth-child(2) {
+    animation-delay: 0.15s;
+}
+
+.typing-bubble span:nth-child(3) {
+    animation-delay: 0.3s;
+}
+
+@keyframes chatTypingDot {
+    0%,
+    60%,
+    100% {
+        transform: translateY(0);
+        opacity: 0.4;
+    }
+
+    30% {
+        transform: translateY(-3px);
+        opacity: 1;
+    }
+}
+
+
+/* =========================================================
+   15. QUICK ACTIONS
+   ========================================================= */
+
+.chat-quick-actions {
+    flex-shrink: 0;
+
+    padding: 8px 10px;
+
+    display: flex;
+
+    gap: 6px;
+
+    overflow-x: auto;
+
+    border-top: 1px solid var(--chat-border);
+    border-bottom: 1px solid var(--chat-border);
+
+    background:
+        rgba(4, 11, 21, 0.36);
+}
+
+.quick-action {
+    flex: 0 0 auto;
+
+    min-height: 32px;
+
+    padding: 0 9px;
+
+    border: 1px solid var(--chat-border);
+    border-radius: 999px;
+
+    background:
+        rgba(255, 255, 255, 0.022);
+
+    color: #95a6ba;
+
+    cursor: pointer;
+
+    font-size: 0.65rem;
+    font-weight: 600;
+
+    white-space: nowrap;
+
+    transition:
+        color 0.2s ease,
+        background 0.2s ease,
+        border-color 0.2s ease,
+        transform 0.2s ease;
+}
+
+.quick-action:hover {
+    transform: translateY(-1px);
+
+    color: #dcecff;
+
+    border-color:
+        rgba(96, 165, 250, 0.25);
+
+    background:
+        rgba(59, 130, 246, 0.07);
+}
+
+
+/* =========================================================
+   16. CHAT INPUT AREA
+   ========================================================= */
+
+.chat-input-area {
+    flex-shrink: 0;
+
+    padding: 10px;
+
+    background:
+        rgba(7, 17, 31, 0.96);
+}
+
+.chat-input-wrapper {
+    padding: 7px;
+
+    display: grid;
+    grid-template-columns:
+        minmax(0, 1fr)
+        auto;
+
+    align-items: end;
+
+    gap: 7px;
+
+    border: 1px solid var(--chat-border);
+    border-radius: 13px;
+
+    background: #081321;
+
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease,
+        background 0.2s ease;
+}
+
+.chat-input-wrapper:focus-within {
+    border-color:
+        rgba(96, 165, 250, 0.4);
+
+    background: #0a1728;
+
+    box-shadow:
+        0 0 0 3px rgba(59, 130, 246, 0.07);
+}
+
+
+/* =========================================================
+   17. TEXTAREA
+   ========================================================= */
+
+#chatInput {
+    width: 100%;
+
+    min-height: 38px;
+    max-height: 130px;
+
+    padding: 9px 8px;
+
+    resize: none;
+
+    outline: none;
+    border: none;
+
+    overflow-y: auto;
+
+    background: transparent;
+
+    color: #eaf1f9;
+
+    font-family: inherit;
+    font-size: 0.76rem;
+    line-height: 1.5;
+}
+
+#chatInput::placeholder {
+    color: #60738b;
+}
+
+
+/* =========================================================
+   18. INPUT ACTIONS
+   ========================================================= */
+
+.chat-input-actions {
+    display: flex;
+    align-items: center;
+
+    gap: 4px;
+}
+
+
+/* =========================================================
+   19. ATTACH / VOICE BUTTONS
+   ========================================================= */
+
+.chat-input-button {
+    width: 33px;
+    height: 33px;
+
+    display: grid;
+    place-items: center;
+
+    border: 1px solid transparent;
+    border-radius: 8px;
+
+    background: transparent;
+
+    color: #8092a8;
+
+    cursor: pointer;
+
+    font-size: 0.82rem;
+
+    transition:
+        color 0.2s ease,
+        background 0.2s ease,
+        border-color 0.2s ease;
+}
+
+.chat-input-button:hover {
+    color: #ffffff;
+
+    border-color: var(--chat-border);
+
+    background:
+        rgba(255, 255, 255, 0.04);
+}
+
+
+/* =========================================================
+   20. ACTIVE VOICE BUTTON
+   ========================================================= */
+
+#chatVoiceButton.active,
+#chatVoiceButton.listening {
+    color: #fecaca;
+
+    border-color:
+        rgba(239, 68, 68, 0.25);
+
+    background:
+        rgba(239, 68, 68, 0.08);
+}
+
+
+/* =========================================================
+   21. SEND BUTTON
+   ========================================================= */
+
+.chat-send-button {
+    width: 35px;
+    height: 35px;
+
+    display: grid;
+    place-items: center;
+
+    border: 1px solid rgba(96, 165, 250, 0.25);
+    border-radius: 9px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #3b82f6,
+            #6366f1
+        );
+
+    color: #ffffff;
+
+    cursor: pointer;
+
+    font-size: 0.85rem;
+
+    box-shadow:
+        0 7px 18px rgba(59, 130, 246, 0.2);
+
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease,
+        opacity 0.2s ease;
+}
+
+.chat-send-button:hover {
+    transform: translateY(-1px);
+
+    box-shadow:
+        0 10px 23px rgba(59, 130, 246, 0.28);
+}
+
+.chat-send-button:disabled {
+    opacity: 0.42;
+
+    cursor: not-allowed;
+
+    transform: none;
+    box-shadow: none;
+}
+
+
+/* =========================================================
+   22. VOICE STATUS
+   ========================================================= */
+
+.voice-status {
+    min-height: 46px;
+
+    padding: 8px 13px;
+
+    display: flex;
+    align-items: center;
+
+    gap: 8px;
+
+    border-top:
+        1px solid
+        rgba(239, 68, 68, 0.11);
+
+    background:
+        rgba(239, 68, 68, 0.035);
+
+    color: #f2b8bd;
+
+    font-size: 0.68rem;
+}
+
+.voice-status[hidden] {
+    display: none;
+}
+
+.voice-pulse {
+    width: 8px;
+    height: 8px;
+
+    border-radius: 50%;
+
+    background: var(--chat-danger);
+
+    box-shadow:
+        0 0 0 0
+        rgba(239, 68, 68, 0.4);
+
+    animation:
+        voicePulse
+        1.2s infinite;
+}
+
+@keyframes voicePulse {
+    0% {
+        box-shadow:
+            0 0 0 0
+            rgba(239, 68, 68, 0.42);
+    }
+
+    70% {
+        box-shadow:
+            0 0 0 8px
+            rgba(239, 68, 68, 0);
+    }
+
+    100% {
+        box-shadow:
+            0 0 0 0
+            rgba(239, 68, 68, 0);
+    }
+}
+
+
+/* =========================================================
+   23. STOP VOICE BUTTON
+   ========================================================= */
+
+#stopVoiceButton {
+    margin-left: auto;
+
+    min-height: 29px;
+
+    padding: 0 9px;
+
+    border: 1px solid rgba(239, 68, 68, 0.2);
+    border-radius: 7px;
+
+    background:
+        rgba(239, 68, 68, 0.07);
+
+    color: #fecaca;
+
+    cursor: pointer;
+
+    font-size: 0.62rem;
+    font-weight: 700;
+
+    transition:
+        background 0.2s ease,
+        color 0.2s ease;
+}
+
+#stopVoiceButton:hover {
+    color: #ffffff;
+
+    background:
+        rgba(239, 68, 68, 0.15);
+}
+
+
+/* =========================================================
+   24. ERROR MESSAGE STATE
+   ========================================================= */
+
+.chat-message.error-message
+.message-bubble {
+    border-color:
+        rgba(239, 68, 68, 0.18);
+
+    background:
+        rgba(239, 68, 68, 0.055);
+
+    color: #f1c4c7;
+}
+
+
+/* =========================================================
+   25. SUCCESS MESSAGE STATE
+   ========================================================= */
+
+.chat-message.success-message
+.message-bubble {
+    border-color:
+        rgba(34, 197, 94, 0.16);
+
+    background:
+        rgba(34, 197, 94, 0.045);
+
+    color: #c8eed4;
+}
+
+
+/* =========================================================
+   26. CHAT CONNECTION STATES
+   ========================================================= */
+
+.chat-container.disconnected
+.chat-online-dot {
+    background:
+        var(--chat-danger);
+
+    box-shadow:
+        0 0 8px
+        rgba(239, 68, 68, 0.38);
+}
+
+.chat-container.disconnected
+.chat-status {
+    color: #fca5a5;
+}
+
+.chat-container.connecting
+.chat-online-dot {
+    background:
+        var(--chat-warning);
+
+    animation:
+        chatConnectionPulse
+        1.1s infinite;
+}
+
+@keyframes chatConnectionPulse {
+    50% {
+        opacity: 0.4;
+    }
+}
+
+
+/* =========================================================
+   27. LOADING SEND BUTTON
+   ========================================================= */
+
+.chat-send-button.loading {
+    position: relative;
+
+    color: transparent;
+
+    pointer-events: none;
+}
+
+.chat-send-button.loading::after {
+    content: "";
+
+    width: 14px;
+    height: 14px;
+
+    position: absolute;
+
+    border:
+        2px solid
+        rgba(255, 255, 255, 0.25);
+
+    border-top-color:
+        #ffffff;
+
+    border-radius: 50%;
+
+    animation:
+        chatSendSpin
+        0.7s linear infinite;
+}
+
+@keyframes chatSendSpin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+
+/* =========================================================
+   28. SCROLLBAR
+   ========================================================= */
+
+.chat-messages::-webkit-scrollbar,
+.chat-quick-actions::-webkit-scrollbar,
+#chatInput::-webkit-scrollbar,
+.message-bubble pre::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+.chat-messages::-webkit-scrollbar-track,
+.chat-quick-actions::-webkit-scrollbar-track,
+#chatInput::-webkit-scrollbar-track,
+.message-bubble pre::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.chat-messages::-webkit-scrollbar-thumb,
+.chat-quick-actions::-webkit-scrollbar-thumb,
+#chatInput::-webkit-scrollbar-thumb,
+.message-bubble pre::-webkit-scrollbar-thumb {
+    border-radius: 999px;
+
+    background: #263a52;
+}
+
+.chat-messages::-webkit-scrollbar-thumb:hover {
+    background: #39536f;
+}
+
+
+/* =========================================================
+   29. ACCESSIBILITY
+   ========================================================= */
+
+.chat-container button:focus-visible,
+#chatInput:focus-visible {
+    outline: 2px solid var(--chat-primary-light);
+    outline-offset: 2px;
+}
+
+
+/* =========================================================
+   30. TABLET
+   ========================================================= */
+
+@media (max-width: 900px) {
+
+    .chat-header {
+        min-height: 66px;
+    }
+
+    .chat-messages {
+        padding:
+            14px
+            12px;
+    }
+
+    .message-bubble {
+        font-size: 0.74rem;
+    }
+}
+
+
+/* =========================================================
+   31. MOBILE
+   ========================================================= */
+
+@media (max-width: 650px) {
+
+    .chat-header {
+        padding:
+            11px
+            12px;
+    }
+
+    .chat-ai-avatar {
+        width: 40px;
+        height: 40px;
+    }
+
+    .chat-messages {
+        padding: 13px 10px;
+    }
+
+    .chat-message {
+        gap: 7px;
+    }
+
+    .message-content {
+        max-width:
+            calc(100% - 36px);
+    }
+
+    .message-bubble {
+        padding: 10px;
+
+        font-size: 0.72rem;
+    }
+
+    .chat-quick-actions {
+        padding:
+            7px
+            8px;
+    }
+
+    .chat-input-area {
+        padding: 8px;
+    }
+}
+
+
+/* =========================================================
+   32. VERY SMALL MOBILE
+   ========================================================= */
+
+@media (max-width: 420px) {
+
+    .chat-ai-profile h2 {
+        max-width: 165px;
+
+        font-size: 0.78rem;
+    }
+
+    .message-avatar {
+        width: 28px;
+        height: 28px;
+    }
+
+    .chat-input-wrapper {
+        grid-template-columns: 1fr;
+    }
+
+    .chat-input-actions {
+        justify-content: flex-end;
+
+        padding-top: 2px;
+    }
+
+    #chatInput {
+        min-height: 42px;
+    }
+}
+
+
+/* =========================================================
+   33. REDUCED MOTION
+   ========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+
+    .chat-message,
+    .typing-bubble span,
+    .voice-pulse,
+    .chat-send-button,
+    .quick-action,
+    .chat-input-button {
+        animation: none;
+        transition: none;
+    }
+}

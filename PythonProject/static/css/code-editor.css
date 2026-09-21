@@ -1,0 +1,696 @@
+/* =========================================================
+   AI CODING TEAMMATE
+   CODE-EDITOR.CSS
+   Modern IDE-Style Code Editor
+   ========================================================= */
+
+
+/* =========================================================
+   1. VARIABLES
+   ========================================================= */
+
+:root {
+    --editor-bg: #07111f;
+    --editor-surface: #0b1626;
+    --editor-surface-soft: #0f1e31;
+    --editor-surface-hover: #16263d;
+
+    --editor-border: rgba(148, 163, 184, 0.14);
+    --editor-border-strong: rgba(96, 165, 250, 0.3);
+
+    --editor-text: #e8eef7;
+    --editor-text-secondary: #9eacc0;
+    --editor-text-muted: #6f8097;
+
+    --editor-primary: #3b82f6;
+    --editor-primary-light: #60a5fa;
+    --editor-purple: #8b5cf6;
+
+    --editor-success: #22c55e;
+    --editor-warning: #f59e0b;
+
+    --editor-radius-sm: 9px;
+    --editor-radius-md: 14px;
+    --editor-radius-lg: 18px;
+
+    --editor-shadow:
+        0 18px 45px rgba(0, 0, 0, 0.28);
+}
+
+
+/* =========================================================
+   2. CODE EDITOR SECTION
+   ========================================================= */
+
+.code-editor-section {
+    width: min(100% - 40px, 1180px);
+
+    margin: 36px auto;
+    padding: 0;
+
+    overflow: hidden;
+
+    border: 1px solid var(--editor-border);
+    border-radius: var(--editor-radius-lg);
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(15, 30, 49, 0.96),
+            rgba(7, 17, 31, 0.98)
+        );
+
+    box-shadow: var(--editor-shadow);
+}
+
+
+/* =========================================================
+   3. EDITOR CONTAINER
+   ========================================================= */
+
+.code-editor-container {
+    position: relative;
+
+    min-height: 520px;
+
+    background:
+        linear-gradient(
+            180deg,
+            #07101c,
+            #050c16
+        );
+
+    border-bottom: 1px solid var(--editor-border);
+}
+
+
+/* =========================================================
+   4. DECORATIVE TOP BAR
+   ========================================================= */
+
+.code-editor-container::before {
+    content: "CODE EDITOR";
+
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+
+    height: 42px;
+
+    padding: 0 16px;
+
+    display: flex;
+    align-items: center;
+
+    border-bottom: 1px solid var(--editor-border);
+
+    background:
+        rgba(255, 255, 255, 0.02);
+
+    color: var(--editor-text-muted);
+
+    font-size: 0.66rem;
+    font-weight: 800;
+
+    letter-spacing: 0.13em;
+
+    pointer-events: none;
+}
+
+
+/* =========================================================
+   5. TEXTAREA CODE EDITOR
+   ========================================================= */
+
+.code-editor {
+    width: 100%;
+    height: 520px;
+
+    min-height: 520px;
+
+    padding:
+        58px 20px
+        22px;
+
+    resize: vertical;
+
+    outline: none;
+
+    border: none;
+
+    background: transparent;
+
+    color: var(--editor-text);
+
+    caret-color: var(--editor-primary-light);
+
+    font-family:
+        "JetBrains Mono",
+        "Fira Code",
+        "Cascadia Code",
+        Consolas,
+        "Courier New",
+        monospace;
+
+    font-size: 0.91rem;
+    line-height: 1.75;
+
+    tab-size: 4;
+
+    white-space: pre;
+    overflow: auto;
+
+    letter-spacing: 0.01em;
+
+    transition:
+        background 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.code-editor::placeholder {
+    color: #52657d;
+}
+
+.code-editor:focus {
+    background:
+        linear-gradient(
+            180deg,
+            rgba(10, 20, 35, 0.88),
+            rgba(5, 12, 22, 0.94)
+        );
+
+    box-shadow:
+        inset 0 0 0 1px
+        rgba(96, 165, 250, 0.06);
+}
+
+
+/* =========================================================
+   6. TEXT SELECTION
+   ========================================================= */
+
+.code-editor::selection {
+    background: rgba(59, 130, 246, 0.34);
+    color: #ffffff;
+}
+
+
+/* =========================================================
+   7. EDITOR ACTION AREA
+   ========================================================= */
+
+.code-editor-actions {
+    min-height: 64px;
+
+    padding: 10px 14px;
+
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+
+    gap: 9px;
+
+    background:
+        rgba(7, 17, 31, 0.92);
+}
+
+
+/* =========================================================
+   8. ACTION BUTTONS
+   ========================================================= */
+
+.editor-action-button {
+    min-width: 94px;
+    min-height: 42px;
+
+    padding: 0 18px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    border: 1px solid var(--editor-border);
+    border-radius: 10px;
+
+    background:
+        rgba(255, 255, 255, 0.035);
+
+    color: #c5d2e2;
+
+    cursor: pointer;
+
+    font-size: 0.8rem;
+    font-weight: 700;
+
+    transition:
+        transform 0.2s ease,
+        background 0.2s ease,
+        border-color 0.2s ease,
+        color 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.editor-action-button:hover {
+    transform: translateY(-2px);
+
+    color: #ffffff;
+
+    border-color:
+        rgba(96, 165, 250, 0.28);
+
+    background:
+        rgba(59, 130, 246, 0.07);
+}
+
+
+/* =========================================================
+   9. RUN BUTTON
+   ========================================================= */
+
+#runButton {
+    color: #c4f5d4;
+
+    border-color:
+        rgba(34, 197, 94, 0.22);
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(34, 197, 94, 0.11),
+            rgba(22, 163, 74, 0.06)
+        );
+}
+
+#runButton::before {
+    content: "▶";
+
+    margin-right: 7px;
+
+    font-size: 0.72rem;
+}
+
+#runButton:hover {
+    border-color:
+        rgba(34, 197, 94, 0.42);
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(34, 197, 94, 0.19),
+            rgba(22, 163, 74, 0.11)
+        );
+
+    box-shadow:
+        0 10px 24px
+        rgba(34, 197, 94, 0.12);
+}
+
+
+/* =========================================================
+   10. SAVE BUTTON
+   ========================================================= */
+
+#saveButton {
+    color: #d8e9ff;
+
+    border-color:
+        rgba(96, 165, 250, 0.22);
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(59, 130, 246, 0.12),
+            rgba(99, 102, 241, 0.08)
+        );
+}
+
+#saveButton::before {
+    content: "💾";
+
+    margin-right: 7px;
+
+    font-size: 0.78rem;
+}
+
+#saveButton:hover {
+    border-color:
+        rgba(96, 165, 250, 0.42);
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(59, 130, 246, 0.2),
+            rgba(99, 102, 241, 0.13)
+        );
+
+    box-shadow:
+        0 10px 24px
+        rgba(59, 130, 246, 0.13);
+}
+
+
+/* =========================================================
+   11. DISABLED STATES
+   ========================================================= */
+
+.editor-action-button:disabled {
+    opacity: 0.45;
+
+    cursor: not-allowed;
+
+    transform: none;
+
+    box-shadow: none;
+}
+
+
+/* =========================================================
+   12. LOADING STATE
+   ========================================================= */
+
+.editor-action-button.loading {
+    position: relative;
+
+    pointer-events: none;
+
+    color: transparent;
+}
+
+.editor-action-button.loading::after {
+    content: "";
+
+    width: 16px;
+    height: 16px;
+
+    position: absolute;
+
+    border: 2px solid
+        rgba(255, 255, 255, 0.25);
+
+    border-top-color: #ffffff;
+
+    border-radius: 50%;
+
+    animation:
+        editorButtonSpin
+        0.7s linear infinite;
+}
+
+@keyframes editorButtonSpin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+
+/* =========================================================
+   13. SAVED STATE
+   ========================================================= */
+
+#saveButton.saved {
+    color: #b7f7cc;
+
+    border-color:
+        rgba(34, 197, 94, 0.3);
+
+    background:
+        rgba(34, 197, 94, 0.1);
+}
+
+
+/* =========================================================
+   14. RUNNING STATE
+   ========================================================= */
+
+#runButton.running {
+    color: #fde7aa;
+
+    border-color:
+        rgba(245, 158, 11, 0.28);
+
+    background:
+        rgba(245, 158, 11, 0.08);
+}
+
+
+/* =========================================================
+   15. EDITOR ERROR STATE
+   ========================================================= */
+
+.code-editor.editor-error {
+    box-shadow:
+        inset 3px 0 0
+        var(--editor-danger, #ef4444);
+}
+
+
+/* =========================================================
+   16. OPTIONAL STATUS BAR
+   Can be added by JavaScript later
+   ========================================================= */
+
+.editor-status-bar {
+    min-height: 30px;
+
+    padding: 0 13px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 16px;
+
+    border-top: 1px solid var(--editor-border);
+
+    background: #07101d;
+
+    color: var(--editor-text-muted);
+
+    font-size: 0.67rem;
+}
+
+.editor-status-left,
+.editor-status-right {
+    display: flex;
+    align-items: center;
+
+    gap: 12px;
+}
+
+.editor-status-online {
+    color: #7ee6a0;
+}
+
+
+/* =========================================================
+   17. OPTIONAL RUN OUTPUT PANEL
+   ========================================================= */
+
+.code-output-panel {
+    border-top: 1px solid var(--editor-border);
+
+    background: #050c16;
+}
+
+.code-output-header {
+    min-height: 40px;
+
+    padding: 0 14px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    border-bottom: 1px solid var(--editor-border);
+
+    color: var(--editor-text-secondary);
+
+    font-size: 0.7rem;
+    font-weight: 700;
+
+    letter-spacing: 0.06em;
+}
+
+.code-output {
+    max-height: 250px;
+
+    padding: 15px;
+
+    overflow: auto;
+
+    color: #cdd9e7;
+
+    font-family:
+        "JetBrains Mono",
+        "Fira Code",
+        Consolas,
+        monospace;
+
+    font-size: 0.76rem;
+    line-height: 1.65;
+
+    white-space: pre-wrap;
+}
+
+
+/* =========================================================
+   18. SUCCESS OUTPUT
+   ========================================================= */
+
+.code-output.success {
+    color: #b5efc8;
+}
+
+
+/* =========================================================
+   19. ERROR OUTPUT
+   ========================================================= */
+
+.code-output.error {
+    color: #f5b9bd;
+}
+
+
+/* =========================================================
+   20. SCROLLBAR
+   ========================================================= */
+
+.code-editor::-webkit-scrollbar,
+.code-output::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+.code-editor::-webkit-scrollbar-track,
+.code-output::-webkit-scrollbar-track {
+    background: #050c16;
+}
+
+.code-editor::-webkit-scrollbar-thumb,
+.code-output::-webkit-scrollbar-thumb {
+    background: #263a52;
+
+    border-radius: 999px;
+}
+
+.code-editor::-webkit-scrollbar-thumb:hover,
+.code-output::-webkit-scrollbar-thumb:hover {
+    background: #38536f;
+}
+
+
+/* =========================================================
+   21. FOCUS ACCESSIBILITY
+   ========================================================= */
+
+.editor-action-button:focus-visible {
+    outline: 2px solid var(--editor-primary-light);
+    outline-offset: 3px;
+}
+
+
+/* =========================================================
+   22. TABLET
+   ========================================================= */
+
+@media (max-width: 900px) {
+
+    .code-editor-section {
+        width: min(
+            100% - 28px,
+            1180px
+        );
+
+        margin: 26px auto;
+    }
+
+    .code-editor-container,
+    .code-editor {
+        min-height: 470px;
+    }
+
+    .code-editor {
+        height: 470px;
+    }
+}
+
+
+/* =========================================================
+   23. MOBILE
+   ========================================================= */
+
+@media (max-width: 600px) {
+
+    .code-editor-section {
+        width: calc(100% - 20px);
+
+        margin: 18px auto;
+
+        border-radius: 14px;
+    }
+
+    .code-editor-container,
+    .code-editor {
+        min-height: 420px;
+    }
+
+    .code-editor {
+        height: 420px;
+
+        padding:
+            56px 14px
+            18px;
+
+        font-size: 0.8rem;
+        line-height: 1.7;
+    }
+
+    .code-editor-actions {
+        padding: 9px;
+
+        gap: 7px;
+    }
+
+    .editor-action-button {
+        flex: 1;
+
+        min-width: 0;
+    }
+}
+
+
+/* =========================================================
+   24. VERY SMALL MOBILE
+   ========================================================= */
+
+@media (max-width: 390px) {
+
+    .code-editor-container,
+    .code-editor {
+        min-height: 380px;
+    }
+
+    .code-editor {
+        height: 380px;
+
+        font-size: 0.75rem;
+    }
+}
+
+
+/* =========================================================
+   25. REDUCED MOTION
+   ========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+
+    .editor-action-button,
+    .code-editor {
+        transition: none;
+    }
+
+    .editor-action-button.loading::after {
+        animation: none;
+    }
+}

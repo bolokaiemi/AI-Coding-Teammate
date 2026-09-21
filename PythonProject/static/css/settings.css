@@ -1,0 +1,916 @@
+/* =========================================================
+   AI CODING TEAMMATE
+   SETTINGS.CSS
+   Modern Account / Preferences Interface
+   ========================================================= */
+
+
+/* =========================================================
+   1. VARIABLES
+   ========================================================= */
+
+:root {
+    --settings-bg: #07111f;
+    --settings-surface: #0d1726;
+    --settings-surface-soft: #101d30;
+    --settings-surface-hover: #16263d;
+
+    --settings-border: rgba(148, 163, 184, 0.14);
+    --settings-border-strong: rgba(96, 165, 250, 0.28);
+
+    --settings-text: #f4f7fb;
+    --settings-text-secondary: #9eacc0;
+    --settings-text-muted: #6f8097;
+
+    --settings-primary: #3b82f6;
+    --settings-primary-light: #60a5fa;
+    --settings-purple: #8b5cf6;
+
+    --settings-success: #22c55e;
+    --settings-warning: #f59e0b;
+    --settings-danger: #ef4444;
+
+    --settings-radius-sm: 9px;
+    --settings-radius-md: 14px;
+    --settings-radius-lg: 20px;
+
+    --settings-shadow:
+        0 20px 55px rgba(0, 0, 0, 0.26);
+}
+
+
+/* =========================================================
+   2. PAGE
+   ========================================================= */
+
+.dashboard-page {
+    width: min(1200px, calc(100% - 48px));
+
+    margin: 0 auto;
+
+    padding: 46px 0 90px;
+
+    color: var(--settings-text);
+}
+
+
+/* =========================================================
+   3. SETTINGS HEADER
+   ========================================================= */
+
+.dashboard-header {
+    margin-bottom: 28px;
+    padding: 32px 34px;
+
+    border: 1px solid var(--settings-border);
+    border-radius: var(--settings-radius-lg);
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(17, 32, 54, 0.94),
+            rgba(8, 18, 32, 0.96)
+        );
+
+    box-shadow: var(--settings-shadow);
+
+    position: relative;
+    overflow: hidden;
+}
+
+.dashboard-header::after {
+    content: "";
+
+    position: absolute;
+    right: -100px;
+    top: -130px;
+
+    width: 360px;
+    height: 360px;
+
+    border-radius: 50%;
+
+    background:
+        radial-gradient(
+            circle,
+            rgba(59, 130, 246, 0.14),
+            transparent 68%
+        );
+
+    pointer-events: none;
+}
+
+.dashboard-welcome {
+    position: relative;
+    z-index: 1;
+}
+
+.dashboard-badge,
+.card-label {
+    display: inline-block;
+
+    margin-bottom: 6px;
+
+    color: var(--settings-primary-light);
+
+    font-size: 0.66rem;
+    font-weight: 800;
+
+    letter-spacing: 0.14em;
+}
+
+.dashboard-welcome h1 {
+    margin-bottom: 9px;
+
+    color: #f8fbff;
+
+    font-size: clamp(2rem, 4vw, 3rem);
+
+    letter-spacing: -0.04em;
+}
+
+.dashboard-welcome p {
+    max-width: 650px;
+
+    color: var(--settings-text-secondary);
+
+    font-size: 0.93rem;
+    line-height: 1.7;
+}
+
+
+/* =========================================================
+   4. SETTINGS LAYOUT
+   ========================================================= */
+
+.settings-layout {
+    display: grid;
+    grid-template-columns: 240px minmax(0, 1fr);
+
+    gap: 22px;
+
+    align-items: start;
+}
+
+
+/* =========================================================
+   5. SETTINGS SIDEBAR
+   ========================================================= */
+
+.settings-sidebar {
+    position: sticky;
+    top: 90px;
+
+    padding: 10px;
+
+    display: grid;
+    gap: 5px;
+
+    border: 1px solid var(--settings-border);
+    border-radius: var(--settings-radius-md);
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(16, 29, 48, 0.9),
+            rgba(8, 18, 32, 0.94)
+        );
+
+    box-shadow:
+        0 14px 35px rgba(0, 0, 0, 0.16);
+}
+
+
+/* =========================================================
+   6. SETTINGS NAVIGATION
+   ========================================================= */
+
+.settings-nav-item {
+    width: 100%;
+    min-height: 46px;
+
+    padding: 0 13px;
+
+    display: flex;
+    align-items: center;
+
+    gap: 10px;
+
+    border: 1px solid transparent;
+    border-radius: 10px;
+
+    background: transparent;
+
+    color: var(--settings-text-secondary);
+
+    cursor: pointer;
+
+    font-size: 0.79rem;
+    font-weight: 600;
+
+    text-align: left;
+
+    transition:
+        background 0.2s ease,
+        color 0.2s ease,
+        border-color 0.2s ease,
+        transform 0.2s ease;
+}
+
+.settings-nav-item:hover {
+    color: #ffffff;
+
+    background: rgba(255, 255, 255, 0.04);
+
+    transform: translateX(2px);
+}
+
+.settings-nav-item.active {
+    color: #dcecff;
+
+    border-color: rgba(96, 165, 250, 0.2);
+
+    background:
+        linear-gradient(
+            90deg,
+            rgba(59, 130, 246, 0.14),
+            rgba(99, 102, 241, 0.06)
+        );
+}
+
+.settings-nav-item > span {
+    width: 22px;
+
+    display: inline-flex;
+    justify-content: center;
+
+    font-size: 1rem;
+}
+
+
+/* =========================================================
+   7. SETTINGS CONTENT
+   ========================================================= */
+
+.settings-content {
+    min-width: 0;
+}
+
+.settings-section {
+    display: none;
+
+    padding: 28px;
+
+    border: 1px solid var(--settings-border);
+    border-radius: var(--settings-radius-lg);
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(16, 29, 48, 0.87),
+            rgba(8, 18, 32, 0.94)
+        );
+
+    box-shadow:
+        0 16px 42px rgba(0, 0, 0, 0.18);
+
+    animation: settingsFadeIn 0.22s ease;
+}
+
+.settings-section.active {
+    display: block;
+}
+
+@keyframes settingsFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(4px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+
+/* =========================================================
+   8. SECTION HEADER
+   ========================================================= */
+
+.settings-section-header {
+    margin-bottom: 26px;
+    padding-bottom: 18px;
+
+    border-bottom: 1px solid var(--settings-border);
+}
+
+.settings-section-header h2 {
+    margin-bottom: 7px;
+
+    color: #f1f6fd;
+
+    font-size: 1.35rem;
+}
+
+.settings-section-header p {
+    max-width: 640px;
+
+    color: var(--settings-text-secondary);
+
+    font-size: 0.82rem;
+    line-height: 1.65;
+}
+
+
+/* =========================================================
+   9. SETTINGS FORM
+   ========================================================= */
+
+.settings-form {
+    max-width: 760px;
+}
+
+.settings-form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+
+    gap: 16px;
+}
+
+.form-group {
+    margin-bottom: 18px;
+}
+
+.form-group label {
+    display: block;
+
+    margin-bottom: 7px;
+
+    color: #becbda;
+
+    font-size: 0.74rem;
+    font-weight: 600;
+}
+
+.form-group input,
+.form-group select {
+    width: 100%;
+    min-height: 44px;
+
+    padding: 0 12px;
+
+    outline: none;
+
+    border: 1px solid var(--settings-border);
+    border-radius: 10px;
+
+    background: #081321;
+
+    color: #eef4fc;
+
+    font-size: 0.79rem;
+
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease,
+        background 0.2s ease;
+}
+
+.form-group input::placeholder {
+    color: #60738a;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+    border-color: rgba(96, 165, 250, 0.45);
+
+    background: #0b1728;
+
+    box-shadow:
+        0 0 0 3px rgba(59, 130, 246, 0.08);
+}
+
+.form-group select {
+    cursor: pointer;
+}
+
+
+/* =========================================================
+   10. SAVE BUTTON
+   ========================================================= */
+
+.settings-save-button {
+    min-height: 44px;
+
+    padding: 0 18px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    border: 1px solid rgba(96, 165, 250, 0.24);
+    border-radius: 10px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #3b82f6,
+            #6366f1
+        );
+
+    color: #ffffff;
+
+    cursor: pointer;
+
+    font-size: 0.8rem;
+    font-weight: 700;
+
+    box-shadow:
+        0 10px 24px rgba(59, 130, 246, 0.18);
+
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.settings-save-button:hover {
+    transform: translateY(-2px);
+
+    box-shadow:
+        0 15px 30px rgba(59, 130, 246, 0.26);
+}
+
+
+/* =========================================================
+   11. SETTINGS OPTIONS
+   ========================================================= */
+
+.settings-options {
+    display: grid;
+
+    gap: 12px;
+
+    margin-bottom: 22px;
+}
+
+
+/* =========================================================
+   12. TOGGLE CARD
+   ========================================================= */
+
+.settings-toggle {
+    position: relative;
+
+    padding: 15px 16px;
+
+    display: grid;
+    grid-template-columns: auto 1fr;
+
+    align-items: center;
+
+    gap: 14px;
+
+    border: 1px solid var(--settings-border);
+    border-radius: 12px;
+
+    background:
+        rgba(255, 255, 255, 0.022);
+
+    cursor: pointer;
+
+    transition:
+        border-color 0.2s ease,
+        background 0.2s ease;
+}
+
+.settings-toggle:hover {
+    border-color: rgba(96, 165, 250, 0.23);
+
+    background:
+        rgba(59, 130, 246, 0.035);
+}
+
+.settings-toggle input {
+    position: absolute;
+
+    opacity: 0;
+
+    pointer-events: none;
+}
+
+
+/* =========================================================
+   13. TOGGLE SWITCH
+   ========================================================= */
+
+.toggle-slider {
+    width: 42px;
+    height: 23px;
+
+    position: relative;
+
+    flex-shrink: 0;
+
+    border-radius: 999px;
+
+    background: #26364a;
+
+    transition:
+        background 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.toggle-slider::before {
+    content: "";
+
+    width: 17px;
+    height: 17px;
+
+    position: absolute;
+
+    left: 3px;
+    top: 3px;
+
+    border-radius: 50%;
+
+    background: #c6d0dc;
+
+    box-shadow:
+        0 2px 5px rgba(0, 0, 0, 0.3);
+
+    transition:
+        transform 0.2s ease,
+        background 0.2s ease;
+}
+
+.settings-toggle
+input:checked +
+.toggle-slider {
+    background:
+        linear-gradient(
+            135deg,
+            #3b82f6,
+            #6366f1
+        );
+
+    box-shadow:
+        0 0 0 3px rgba(59, 130, 246, 0.08);
+}
+
+.settings-toggle
+input:checked +
+.toggle-slider::before {
+    transform: translateX(19px);
+
+    background: #ffffff;
+}
+
+
+/* =========================================================
+   14. TOGGLE TEXT
+   ========================================================= */
+
+.toggle-content strong {
+    display: block;
+
+    margin-bottom: 4px;
+
+    color: #eaf1fa;
+
+    font-size: 0.8rem;
+}
+
+.toggle-content small {
+    display: block;
+
+    color: var(--settings-text-muted);
+
+    font-size: 0.71rem;
+    line-height: 1.55;
+}
+
+
+/* =========================================================
+   15. SECURITY CARD
+   ========================================================= */
+
+.security-card {
+    padding: 18px;
+
+    display: grid;
+    grid-template-columns: auto 1fr;
+
+    gap: 14px;
+
+    margin-bottom: 12px;
+
+    border: 1px solid var(--settings-border);
+    border-radius: 13px;
+
+    background:
+        rgba(255, 255, 255, 0.022);
+
+    transition:
+        background 0.2s ease,
+        border-color 0.2s ease;
+}
+
+.security-card:hover {
+    background:
+        rgba(255, 255, 255, 0.035);
+
+    border-color:
+        rgba(96, 165, 250, 0.2);
+}
+
+.security-card-icon {
+    width: 44px;
+    height: 44px;
+
+    display: grid;
+    place-items: center;
+
+    border-radius: 12px;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(59, 130, 246, 0.12),
+            rgba(139, 92, 246, 0.08)
+        );
+
+    border:
+        1px solid
+        rgba(96, 165, 250, 0.13);
+
+    font-size: 1.15rem;
+}
+
+.security-card-content h3 {
+    margin-bottom: 5px;
+
+    color: #edf4fc;
+
+    font-size: 0.93rem;
+}
+
+.security-card-content p {
+    margin-bottom: 9px;
+
+    color: var(--settings-text-secondary);
+
+    font-size: 0.76rem;
+    line-height: 1.6;
+}
+
+.security-action {
+    color: #8ebeff;
+
+    font-size: 0.75rem;
+    font-weight: 700;
+
+    transition: color 0.2s ease;
+}
+
+.security-action:hover {
+    color: #ffffff;
+}
+
+
+/* =========================================================
+   16. DANGER ZONE
+   ========================================================= */
+
+.danger-zone {
+    margin-top: 24px;
+    padding: 20px;
+
+    border: 1px solid rgba(239, 68, 68, 0.22);
+    border-radius: 13px;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(239, 68, 68, 0.055),
+            rgba(255, 255, 255, 0.012)
+        );
+}
+
+.danger-zone .card-label {
+    color: #fca5a5;
+}
+
+.danger-zone h3 {
+    margin-bottom: 6px;
+
+    color: #f8e1e2;
+
+    font-size: 1rem;
+}
+
+.danger-zone p {
+    max-width: 550px;
+
+    margin-bottom: 16px;
+
+    color: #ba9da2;
+
+    font-size: 0.77rem;
+    line-height: 1.6;
+}
+
+.danger-button {
+    min-height: 41px;
+
+    padding: 0 15px;
+
+    border: 1px solid rgba(239, 68, 68, 0.28);
+    border-radius: 9px;
+
+    background:
+        rgba(239, 68, 68, 0.09);
+
+    color: #fecaca;
+
+    cursor: pointer;
+
+    font-size: 0.76rem;
+    font-weight: 700;
+
+    transition:
+        background 0.2s ease,
+        border-color 0.2s ease,
+        transform 0.2s ease;
+}
+
+.danger-button:hover {
+    transform: translateY(-1px);
+
+    border-color:
+        rgba(239, 68, 68, 0.48);
+
+    background:
+        rgba(239, 68, 68, 0.16);
+
+    color: #ffffff;
+}
+
+
+/* =========================================================
+   17. FOCUS STATES
+   ========================================================= */
+
+.settings-nav-item:focus-visible,
+.settings-save-button:focus-visible,
+.danger-button:focus-visible,
+.form-group input:focus-visible,
+.form-group select:focus-visible {
+    outline: 2px solid var(--settings-primary-light);
+    outline-offset: 2px;
+}
+
+
+/* =========================================================
+   18. TABLET
+   ========================================================= */
+
+@media (max-width: 900px) {
+
+    .settings-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .settings-sidebar {
+        position: static;
+
+        display: flex;
+
+        overflow-x: auto;
+    }
+
+    .settings-nav-item {
+        width: auto;
+        min-width: max-content;
+
+        padding: 0 14px;
+    }
+}
+
+
+/* =========================================================
+   19. MOBILE
+   ========================================================= */
+
+@media (max-width: 650px) {
+
+    .dashboard-page {
+        width: calc(100% - 24px);
+
+        padding:
+            28px 0
+            70px;
+    }
+
+    .dashboard-header {
+        padding: 24px 19px;
+
+        border-radius: 16px;
+    }
+
+    .dashboard-welcome h1 {
+        font-size: 2rem;
+    }
+
+    .settings-section {
+        padding: 21px 17px;
+
+        border-radius: 16px;
+    }
+
+    .settings-form-grid {
+        grid-template-columns: 1fr;
+
+        gap: 0;
+    }
+
+    .settings-sidebar {
+        padding: 7px;
+    }
+
+    .settings-toggle {
+        padding: 13px;
+
+        gap: 11px;
+    }
+
+    .security-card {
+        padding: 15px;
+    }
+
+    .settings-save-button {
+        width: 100%;
+    }
+}
+
+
+/* =========================================================
+   20. VERY SMALL MOBILE
+   ========================================================= */
+
+@media (max-width: 400px) {
+
+    .settings-nav-item {
+        min-height: 42px;
+
+        font-size: 0.72rem;
+    }
+
+    .settings-section-header h2 {
+        font-size: 1.15rem;
+    }
+
+    .security-card {
+        grid-template-columns: 1fr;
+    }
+
+    .danger-button {
+        width: 100%;
+    }
+}
+
+
+/* =========================================================
+   21. SCROLLBAR
+   ========================================================= */
+
+.settings-sidebar::-webkit-scrollbar {
+    height: 6px;
+}
+
+.settings-sidebar::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.settings-sidebar::-webkit-scrollbar-thumb {
+    background: #2b4058;
+
+    border-radius: 999px;
+}
+
+
+/* =========================================================
+   22. REDUCED MOTION
+   ========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+
+    .settings-section,
+    .settings-nav-item,
+    .settings-save-button,
+    .settings-toggle,
+    .danger-button {
+        animation: none;
+        transition: none;
+    }
+}

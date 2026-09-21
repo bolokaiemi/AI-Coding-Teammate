@@ -1,0 +1,489 @@
+{% extends "base.html" %}
+
+{% block title %}My Projects | AI Coding Teammate{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+{% endblock %}
+
+{% block content %}
+
+<div class="dashboard-page">
+
+    <!-- Header -->
+    <section class="dashboard-header">
+
+        <div class="dashboard-welcome">
+
+            <span class="dashboard-badge">
+                PROJECT MANAGEMENT
+            </span>
+
+            <h1>
+                My Projects
+            </h1>
+
+            <p>
+                Manage your development projects and continue
+                working with your AI Coding Teammate.
+            </p>
+
+        </div>
+
+
+        <div class="dashboard-actions">
+
+            <a
+                href="{{ url_for('workspace.workspace') }}"
+                class="dashboard-primary-btn"
+            >
+                <span>＋</span>
+                New Project
+            </a>
+
+        </div>
+
+    </section>
+
+
+    <!-- Project Search -->
+    <section class="project-toolbar">
+
+        <div class="project-search">
+
+            <span class="search-icon">
+                🔍
+            </span>
+
+            <input
+                type="search"
+                id="projectSearch"
+                placeholder="Search your projects..."
+                autocomplete="off"
+            >
+
+        </div>
+
+
+        <div class="project-filter">
+
+            <label for="projectSort">
+                Sort:
+            </label>
+
+            <select id="projectSort">
+
+                <option value="recent">
+                    Recently Updated
+                </option>
+
+                <option value="name">
+                    Name
+                </option>
+
+                <option value="oldest">
+                    Oldest
+                </option>
+
+            </select>
+
+        </div>
+
+    </section>
+
+
+    <!-- Projects -->
+    <section class="projects-section">
+
+        {% if projects %}
+
+            <div
+                class="projects-grid"
+                id="projectsGrid"
+            >
+
+                {% for project in projects %}
+
+                <article
+                    class="project-card"
+                    data-project-name="{{ project.name|lower }}"
+                    data-project-date="{{ project.updated_at.timestamp()
+                        if project.updated_at else 0 }}"
+                >
+
+                    <div class="project-card-top">
+
+                        <div class="project-large-icon">
+                            💻
+                        </div>
+
+                        <button
+                            type="button"
+                            class="project-menu"
+                            aria-label="Project options"
+                            data-project-id="{{ project.id }}"
+                        >
+                            ⋮
+                        </button>
+
+                    </div>
+
+
+                    <div class="project-card-content">
+
+                        <h2>
+                            {{ project.name }}
+                        </h2>
+
+                        <p>
+                            {{ project.description|default(
+                                'No project description available.'
+                            ) }}
+                        </p>
+
+                    </div>
+
+
+                    <div class="project-technologies">
+
+                        {% if project.language %}
+
+                            <span>
+                                {{ project.language }}
+                            </span>
+
+                        {% endif %}
+
+                        {% if project.framework %}
+
+                            <span>
+                                {{ project.framework }}
+                            </span>
+
+                        {% endif %}
+
+                    </div>
+
+
+                    <div class="project-card-footer">
+
+                        <span class="project-updated">
+
+                            {% if project.updated_at %}
+                                Updated
+                                {{ project.updated_at.strftime('%d %b %Y') }}
+                            {% else %}
+                                Recently created
+                            {% endif %}
+
+                        </span>
+
+
+                        <a
+                            href="{{ url_for(
+                                'workspace.workspace',
+                                project_id=project.id
+                            ) }}"
+                            class="project-open"
+                        >
+                            Open →
+                        </a>
+
+                    </div>
+
+                </article>
+
+                {% endfor %}
+
+            </div>
+
+
+            <!-- Empty Search Result -->
+            <div
+                id="noProjectsFound"
+                class="empty-state"
+                style="display: none;"
+            >
+
+                <div class="empty-icon">
+                    🔍
+                </div>
+
+                <h3>
+                    No projects found
+                </h3>
+
+                <p>
+                    Try another search term.
+                </p>
+
+            </div>
+
+        {% else %}
+
+            <div class="empty-state">
+
+                <div class="empty-icon">
+                    📁
+                </div>
+
+                <h2>
+                    Your project space is empty
+                </h2>
+
+                <p>
+                    Create your first project and start building
+                    with your AI Coding Teammate.
+                </p>
+
+                <a
+                    href="{{ url_for('workspace.workspace') }}"
+                    class="empty-action"
+                >
+                    Create Your First Project →
+                </a>
+
+            </div>
+
+        {% endif %}
+
+    </section>
+
+
+    <!-- Project Workflow -->
+    <section class="project-workflow">
+
+        <div class="section-heading">
+
+            <span class="card-label">
+                AI-POWERED DEVELOPMENT
+            </span>
+
+            <h2>
+                One workspace. One teammate. Your project.
+            </h2>
+
+        </div>
+
+
+        <div class="workflow-mini-grid">
+
+            <div class="workflow-mini-card">
+
+                <span>01</span>
+
+                <h3>
+                    Create
+                </h3>
+
+                <p>
+                    Start a new development project.
+                </p>
+
+            </div>
+
+
+            <div class="workflow-mini-card">
+
+                <span>02</span>
+
+                <h3>
+                    Show
+                </h3>
+
+                <p>
+                    Give your AI teammate access to the problem.
+                </p>
+
+            </div>
+
+
+            <div class="workflow-mini-card">
+
+                <span>03</span>
+
+                <h3>
+                    Collaborate
+                </h3>
+
+                <p>
+                    Discuss errors and possible solutions.
+                </p>
+
+            </div>
+
+
+            <div class="workflow-mini-card">
+
+                <span>04</span>
+
+                <h3>
+                    Build
+                </h3>
+
+                <p>
+                    Apply corrections and continue development.
+                </p>
+
+            </div>
+
+        </div>
+
+    </section>
+
+</div>
+
+{% endblock %}
+
+
+{% block extra_js %}
+
+<script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+
+<script>
+"use strict";
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    const searchInput =
+        document.getElementById("projectSearch");
+
+    const sortSelect =
+        document.getElementById("projectSort");
+
+    const projectsGrid =
+        document.getElementById("projectsGrid");
+
+    const noProjectsFound =
+        document.getElementById("noProjectsFound");
+
+
+    if (!projectsGrid) {
+        return;
+    }
+
+
+    function getProjectCards() {
+
+        return Array.from(
+            projectsGrid.querySelectorAll(".project-card")
+        );
+
+    }
+
+
+    /* ---------------------------------------
+       Search
+    --------------------------------------- */
+
+    if (searchInput) {
+
+        searchInput.addEventListener(
+            "input",
+            function () {
+
+                const searchTerm =
+                    searchInput.value
+                        .trim()
+                        .toLowerCase();
+
+                let visibleProjects = 0;
+
+                getProjectCards().forEach(function (card) {
+
+                    const projectName =
+                        card.dataset.projectName || "";
+
+                    const matches =
+                        projectName.includes(searchTerm);
+
+                    card.style.display =
+                        matches ? "" : "block";
+
+                    if (!matches) {
+                        card.style.display = "none";
+                    } else {
+                        visibleProjects++;
+                    }
+
+                });
+
+
+                if (noProjectsFound) {
+
+                    noProjectsFound.style.display =
+                        visibleProjects === 0
+                            ? "block"
+                            : "none";
+
+                }
+
+            }
+        );
+
+    }
+
+
+    /* ---------------------------------------
+       Sorting
+    --------------------------------------- */
+
+    if (sortSelect) {
+
+        sortSelect.addEventListener(
+            "change",
+            function () {
+
+                const cards =
+                    getProjectCards();
+
+                const sortValue =
+                    sortSelect.value;
+
+
+                cards.sort(function (a, b) {
+
+                    if (sortValue === "name") {
+
+                        return (
+                            a.dataset.projectName || ""
+                        ).localeCompare(
+                            b.dataset.projectName || ""
+                        );
+
+                    }
+
+
+                    const dateA =
+                        Number(
+                            a.dataset.projectDate || 0
+                        );
+
+                    const dateB =
+                        Number(
+                            b.dataset.projectDate || 0
+                        );
+
+
+                    if (sortValue === "oldest") {
+                        return dateA - dateB;
+                    }
+
+                    return dateB - dateA;
+
+                });
+
+
+                cards.forEach(function (card) {
+                    projectsGrid.appendChild(card);
+                });
+
+            }
+        );
+
+    }
+
+});
+</script>
+
+{% endblock %}

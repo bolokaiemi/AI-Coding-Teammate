@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block title %}Code Editor | AI Coding Teammate{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/code-editor.css') }}">
+{% endblock %}
+
+{% block content %}
+<section class="code-editor-section">
+    <div class="code-editor-container">
+        <textarea id="codeEditor" class="code-editor" placeholder="Write your code here..." spellcheck="false"></textarea>
+    </div>
+    <div class="code-editor-actions">
+        <button id="runButton" class="editor-action-button">Run</button>
+        <button id="saveButton" class="editor-action-button">Save</button>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/code-editor.js') }}"></script>
+{% endblock %}

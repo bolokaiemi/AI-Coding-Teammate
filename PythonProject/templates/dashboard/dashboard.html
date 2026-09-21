@@ -1,0 +1,486 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard | AI Coding Teammate{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+{% endblock %}
+
+{% block content %}
+
+<div class="dashboard-page">
+
+    <!-- Dashboard Header -->
+    <section class="dashboard-header">
+
+        <div class="dashboard-welcome">
+            <span class="dashboard-badge">AI DEVELOPMENT WORKSPACE</span>
+
+            <h1>
+                Welcome back{% if current_user.is_authenticated and current_user.first_name %},
+                {{ current_user.first_name }}{% endif %} 👋
+            </h1>
+
+            <p>
+                Your AI Coding Teammate is ready to help you
+                build, debug, understand, and improve your code.
+            </p>
+        </div>
+
+        <div class="dashboard-actions">
+
+            <a
+                href="{{ url_for('workspace.workspace') }}"
+                class="dashboard-primary-btn"
+            >
+                <span>＋</span>
+                New Workspace
+            </a>
+
+        </div>
+
+    </section>
+
+
+    <!-- Quick Statistics -->
+    <section class="dashboard-stats">
+
+        <div class="stat-card">
+
+            <div class="stat-icon">
+                📁
+            </div>
+
+            <div class="stat-content">
+
+                <span class="stat-label">
+                    Projects
+                </span>
+
+                <strong class="stat-value">
+                    {{ project_count|default(0) }}
+                </strong>
+
+            </div>
+
+        </div>
+
+
+        <div class="stat-card">
+
+            <div class="stat-icon">
+                💻
+            </div>
+
+            <div class="stat-content">
+
+                <span class="stat-label">
+                    Code Sessions
+                </span>
+
+                <strong class="stat-value">
+                    {{ session_count|default(0) }}
+                </strong>
+
+            </div>
+
+        </div>
+
+
+        <div class="stat-card">
+
+            <div class="stat-icon">
+                🐛
+            </div>
+
+            <div class="stat-content">
+
+                <span class="stat-label">
+                    Issues Analyzed
+                </span>
+
+                <strong class="stat-value">
+                    {{ analysis_count|default(0) }}
+                </strong>
+
+            </div>
+
+        </div>
+
+
+        <div class="stat-card">
+
+            <div class="stat-icon">
+                🤖
+            </div>
+
+            <div class="stat-content">
+
+                <span class="stat-label">
+                    AI Sessions
+                </span>
+
+                <strong class="stat-value">
+                    {{ ai_session_count|default(0) }}
+                </strong>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- Main Dashboard Grid -->
+    <section class="dashboard-grid">
+
+        <!-- Recent Projects -->
+        <div class="dashboard-card projects-card">
+
+            <div class="card-header">
+
+                <div>
+                    <span class="card-label">YOUR WORK</span>
+                    <h2>Recent Projects</h2>
+                </div>
+
+                <a
+                    href="{{ url_for('dashboard.projects') }}"
+                    class="card-link"
+                >
+                    View all →
+                </a>
+
+            </div>
+
+
+            {% if projects %}
+
+                <div class="project-list">
+
+                    {% for project in projects %}
+
+                    <a
+                        href="{{ url_for('workspace.workspace', project_id=project.id) }}"
+                        class="project-item"
+                    >
+
+                        <div class="project-icon">
+                            💻
+                        </div>
+
+                        <div class="project-info">
+
+                            <h3>
+                                {{ project.name }}
+                            </h3>
+
+                            <p>
+                                {{ project.description|default('No description available.') }}
+                            </p>
+
+                            <span class="project-date">
+                                Updated
+                                {{ project.updated_at.strftime('%d %b %Y')
+                                   if project.updated_at else 'Recently' }}
+                            </span>
+
+                        </div>
+
+                        <span class="project-arrow">
+                            →
+                        </span>
+
+                    </a>
+
+                    {% endfor %}
+
+                </div>
+
+            {% else %}
+
+                <div class="empty-state">
+
+                    <div class="empty-icon">
+                        📂
+                    </div>
+
+                    <h3>
+                        No projects yet
+                    </h3>
+
+                    <p>
+                        Create your first project and start
+                        working with your AI Coding Teammate.
+                    </p>
+
+                    <a
+                        href="{{ url_for('workspace.workspace') }}"
+                        class="empty-action"
+                    >
+                        Create Your First Project
+                    </a>
+
+                </div>
+
+            {% endif %}
+
+        </div>
+
+
+        <!-- AI Teammate -->
+        <div class="dashboard-card ai-card">
+
+            <div class="ai-card-header">
+
+                <div class="ai-avatar">
+                    🤖
+                </div>
+
+                <div>
+
+                    <span class="online-indicator">
+                        <span></span>
+                        AI ONLINE
+                    </span>
+
+                    <h2>
+                        Your AI Teammate
+                    </h2>
+
+                </div>
+
+            </div>
+
+
+            <div class="ai-card-body">
+
+                <p>
+                    I'm ready to work with you. Show me your code,
+                    share your screen, upload an image, or tell me
+                    what you're trying to build.
+                </p>
+
+                <div class="ai-capabilities">
+
+                    <span>🔍 Debug</span>
+                    <span>💡 Explain</span>
+                    <span>✏️ Correct</span>
+                    <span>👁️ Analyze</span>
+
+                </div>
+
+            </div>
+
+
+            <a
+                href="{{ url_for('workspace.workspace') }}"
+                class="ai-start-button"
+            >
+                Start Working Together →
+            </a>
+
+        </div>
+
+    </section>
+
+
+    <!-- Development Tools -->
+    <section class="dashboard-tools">
+
+        <div class="section-heading">
+
+            <span class="card-label">
+                QUICK ACCESS
+            </span>
+
+            <h2>
+                Development Tools
+            </h2>
+
+            <p>
+                Jump directly into the tools you use most.
+            </p>
+
+        </div>
+
+
+        <div class="tools-grid">
+
+            <a
+                href="{{ url_for('workspace.workspace') }}"
+                class="tool-card"
+            >
+
+                <div class="tool-icon">
+                    💻
+                </div>
+
+                <h3>
+                    Code Editor
+                </h3>
+
+                <p>
+                    Write and edit your code while your AI
+                    teammate works alongside you.
+                </p>
+
+                <span>
+                    Open Editor →
+                </span>
+
+            </a>
+
+
+            <a
+                href="{{ url_for('workspace.workspace') }}"
+                class="tool-card"
+            >
+
+                <div class="tool-icon">
+                    👁️
+                </div>
+
+                <h3>
+                    AI Visualizer
+                </h3>
+
+                <p>
+                    Visually understand errors, code flow,
+                    corrections, and AI analysis.
+                </p>
+
+                <span>
+                    Open Visualizer →
+                </span>
+
+            </a>
+
+
+            <a
+                href="{{ url_for('workspace.workspace') }}"
+                class="tool-card"
+            >
+
+                <div class="tool-icon">
+                    🖥️
+                </div>
+
+                <h3>
+                    Screen Sharing
+                </h3>
+
+                <p>
+                    Show your AI teammate what is happening
+                    on your screen in real time.
+                </p>
+
+                <span>
+                    Share Screen →
+                </span>
+
+            </a>
+
+
+            <a
+                href="{{ url_for('workspace.workspace') }}"
+                class="tool-card"
+            >
+
+                <div class="tool-icon">
+                    🎥
+                </div>
+
+                <h3>
+                    Camera
+                </h3>
+
+                <p>
+                    Use your camera to show physical notes,
+                    devices, screens, or development setups.
+                </p>
+
+                <span>
+                    Open Camera →
+                </span>
+
+            </a>
+
+        </div>
+
+    </section>
+
+
+    <!-- Getting Started -->
+    <section class="getting-started">
+
+        <div class="getting-started-content">
+
+            <span class="card-label">
+                GETTING STARTED
+            </span>
+
+            <h2>
+                Build with your AI teammate
+            </h2>
+
+            <p>
+                You don't have to debug alone. Start a workspace,
+                show your problem, and let your AI teammate
+                analyze it with you.
+            </p>
+
+        </div>
+
+
+        <div class="getting-started-steps">
+
+            <div class="start-step">
+
+                <span>01</span>
+
+                <div>
+                    <strong>Show</strong>
+                    <p>Share your code or screen.</p>
+                </div>
+
+            </div>
+
+
+            <div class="start-step">
+
+                <span>02</span>
+
+                <div>
+                    <strong>Analyze</strong>
+                    <p>AI identifies the problem.</p>
+                </div>
+
+            </div>
+
+
+            <div class="start-step">
+
+                <span>03</span>
+
+                <div>
+                    <strong>Fix</strong>
+                    <p>Apply and understand the solution.</p>
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+</div>
+
+{% endblock %}
+
+
+{% block extra_js %}
+
+<script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+
+{% endblock %}

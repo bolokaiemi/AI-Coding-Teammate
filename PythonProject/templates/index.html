@@ -1,0 +1,681 @@
+{% extends "base.html" %}
+
+{% block title %}AI Coding Teammate | Your AI Development Partner{% endblock %}
+
+{% block content %}
+
+<!-- =========================================================
+     HERO SECTION
+     ========================================================= -->
+
+<section class="hero-section">
+
+
+<div class="hero-container">
+
+    <div class="hero-content">
+
+        <div class="hero-badge">
+            <span class="status-dot"></span>
+            AI Coding Teammate
+        </div>
+
+        <h1>
+            Don't Debug Alone.
+            <span>Build With Your AI Teammate.</span>
+        </h1>
+
+        <p class="hero-description">
+            Show your AI teammate your code, share your screen or
+            camera, talk about the problem, find errors, understand
+            what went wrong, and get corrected code.
+        </p>
+
+        <div class="hero-actions">
+
+            {% if current_user.is_authenticated %}
+
+                <a href="{{ url_for('workspace.workspace') }}"
+                   class="btn btn-primary">
+                    Open Workspace
+                    <span>→</span>
+                </a>
+
+                <a href="{{ url_for('dashboard.dashboard') }}"
+                   class="btn btn-secondary">
+                    Dashboard
+                </a>
+
+            {% else %}
+
+                <a href="{{ url_for('auth.register') }}"
+                   class="btn btn-primary">
+                    Start Coding
+                    <span>→</span>
+                </a>
+
+                <a href="{{ url_for('auth.login') }}"
+                   class="btn btn-secondary">
+                    Sign In
+                </a>
+
+            {% endif %}
+
+        </div>
+
+        <div class="hero-note">
+            <span>💻</span>
+            Built for freelancers, independent developers and
+            remote software engineers.
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         AI VISUALIZER PREVIEW
+         ===================================================== -->
+
+    <div class="hero-visual">
+
+        <div class="visualizer-window">
+
+            <div class="window-header">
+
+                <div class="window-dots">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+
+                <div class="window-title">
+                    🤖 AI Coding Teammate
+                </div>
+
+                <div class="ai-status">
+                    <span></span>
+                    Online
+                </div>
+
+            </div>
+
+
+            <div class="visualizer-body">
+
+                <!-- Code panel -->
+
+                <div class="preview-code">
+
+                    <div class="panel-title">
+                        <span>⌘</span>
+                        Code
+                    </div>
+
+                    <pre><code><span class="code-keyword">def</span> <span class="code-function">calculate_total</span>(price, tax):
+
+total = price + taxes
+
+<span class="code-keyword">return</span> total</code></pre>
+
+                    <div class="code-error">
+
+                        <span class="error-icon">!</span>
+
+                        <div>
+                            <strong>Potential error</strong>
+                            <small>
+                                Variable "taxes" may not be defined.
+                            </small>
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- AI panel -->
+
+                <div class="preview-ai">
+
+                    <div class="panel-title">
+                        <span>🤖</span>
+                        AI Analysis
+                    </div>
+
+                    <div class="ai-message">
+
+                        <div class="ai-avatar">
+                            🤖
+                        </div>
+
+                        <div class="message-content">
+
+                            <strong>
+                                I found a problem.
+                            </strong>
+
+                            <p>
+                                The function receives
+                                <code>tax</code>, but the code
+                                uses <code>taxes</code>.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="ai-suggestion">
+
+                        <div class="suggestion-header">
+                            <span>✓</span>
+                            Suggested Correction
+                        </div>
+
+                        <pre><code><span class="code-keyword">def</span> <span class="code-function">calculate_total</span>(price, tax):
+
+total = price + tax
+
+<span class="code-keyword">return</span> total</code></pre>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="visualizer-footer">
+
+                <span>●</span>
+                AI is analyzing your code...
+
+                <div class="typing-indicator">
+                    <i></i>
+                    <i></i>
+                    <i></i>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+</section>
+
+<!-- =========================================================
+     WHAT THE AI TEAMMATE CAN DO
+     ========================================================= -->
+
+<section class="features-section">
+
+
+<div class="section-container">
+
+    <div class="section-heading">
+
+        <span class="section-label">
+            YOUR DIGITAL TEAMMATE
+        </span>
+
+        <h2>
+            More Than a Chatbot
+        </h2>
+
+        <p>
+            Your AI teammate can see your development context,
+            communicate with you, analyze your code and help you
+            solve problems.
+        </p>
+
+    </div>
+
+
+    <div class="features-grid">
+
+        <!-- Feature 1 -->
+
+        <article class="feature-card">
+
+            <div class="feature-icon">
+                👁️
+            </div>
+
+            <h3>
+                See Your Work
+            </h3>
+
+            <p>
+                Show your teammate code through the workspace,
+                screen sharing, camera, screenshots, images
+                and other visual input.
+            </p>
+
+        </article>
+
+
+        <!-- Feature 2 -->
+
+        <article class="feature-card">
+
+            <div class="feature-icon">
+                🐛
+            </div>
+
+            <h3>
+                Find Errors
+            </h3>
+
+            <p>
+                Let the AI analyze your code and identify
+                syntax, runtime, logical and implementation
+                problems.
+            </p>
+
+        </article>
+
+
+        <!-- Feature 3 -->
+
+        <article class="feature-card">
+
+            <div class="feature-icon">
+                💡
+            </div>
+
+            <h3>
+                Explain Problems
+            </h3>
+
+            <p>
+                Ask questions and receive explanations that
+                help you understand why your code is behaving
+                incorrectly.
+            </p>
+
+        </article>
+
+
+        <!-- Feature 4 -->
+
+        <article class="feature-card">
+
+            <div class="feature-icon">
+                ⚡
+            </div>
+
+            <h3>
+                Correct Your Code
+            </h3>
+
+            <p>
+                Get corrected code together with an explanation
+                of what changed and why the correction works.
+            </p>
+
+        </article>
+
+
+        <!-- Feature 5 -->
+
+        <article class="feature-card">
+
+            <div class="feature-icon">
+                🎤
+            </div>
+
+            <h3>
+                Talk Naturally
+            </h3>
+
+            <p>
+                Communicate with your AI teammate through
+                text and eventually voice for a more natural
+                development experience.
+            </p>
+
+        </article>
+
+
+        <!-- Feature 6 -->
+
+        <article class="feature-card">
+
+            <div class="feature-icon">
+                📊
+            </div>
+
+            <h3>
+                Visualize the Problem
+            </h3>
+
+            <p>
+                Understand errors through visual highlights,
+                code relationships, explanations and suggested
+                corrections.
+            </p>
+
+        </article>
+
+    </div>
+
+</div>
+
+
+</section>
+
+<!-- =========================================================
+     HOW IT WORKS
+     ========================================================= -->
+
+<section class="workflow-section">
+
+
+<div class="section-container">
+
+    <div class="section-heading">
+
+        <span class="section-label">
+            HOW IT WORKS
+        </span>
+
+        <h2>
+            Work Together With Your AI
+        </h2>
+
+        <p>
+            Your teammate stays beside you while you develop,
+            helping you understand and solve problems.
+        </p>
+
+    </div>
+
+
+    <div class="workflow">
+
+        <!-- Step 1 -->
+
+        <div class="workflow-step">
+
+            <div class="workflow-number">
+                01
+            </div>
+
+            <div class="workflow-icon">
+                💻
+            </div>
+
+            <h3>
+                Show
+            </h3>
+
+            <p>
+                Give your AI teammate your code, screen,
+                camera input or project context.
+            </p>
+
+        </div>
+
+
+        <div class="workflow-line"></div>
+
+
+        <!-- Step 2 -->
+
+        <div class="workflow-step">
+
+            <div class="workflow-number">
+                02
+            </div>
+
+            <div class="workflow-icon">
+                🔍
+            </div>
+
+            <h3>
+                Analyze
+            </h3>
+
+            <p>
+                The AI analyzes your code and identifies
+                potential problems.
+            </p>
+
+        </div>
+
+
+        <div class="workflow-line"></div>
+
+
+        <!-- Step 3 -->
+
+        <div class="workflow-step">
+
+            <div class="workflow-number">
+                03
+            </div>
+
+            <div class="workflow-icon">
+                💬
+            </div>
+
+            <h3>
+                Communicate
+            </h3>
+
+            <p>
+                Ask questions, discuss the problem and
+                understand what is happening.
+            </p>
+
+        </div>
+
+
+        <div class="workflow-line"></div>
+
+
+        <!-- Step 4 -->
+
+        <div class="workflow-step">
+
+            <div class="workflow-number">
+                04
+            </div>
+
+            <div class="workflow-icon">
+                🛠️
+            </div>
+
+            <h3>
+                Fix
+            </h3>
+
+            <p>
+                Receive corrected code and continue building
+                your project with your AI teammate.
+            </p>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+</section>
+
+<!-- =========================================================
+     FREELANCER SECTION
+     ========================================================= -->
+
+<section class="freelancer-section">
+
+
+<div class="section-container">
+
+    <div class="freelancer-content">
+
+        <span class="section-label">
+            BUILT FOR INDEPENDENT DEVELOPERS
+        </span>
+
+        <h2>
+            Your Remote Coding Partner Is Always There.
+        </h2>
+
+        <p>
+            Freelancers often have to make technical decisions,
+            debug problems and solve difficult issues without
+            another developer sitting beside them.
+        </p>
+
+        <p>
+            AI Coding Teammate is designed to provide that
+            additional pair of eyes whenever you need one.
+        </p>
+
+        <div class="freelancer-list">
+
+            <div>
+                <span>✓</span>
+                Debug difficult problems
+            </div>
+
+            <div>
+                <span>✓</span>
+                Understand unfamiliar code
+            </div>
+
+            <div>
+                <span>✓</span>
+                Brainstorm technical solutions
+            </div>
+
+            <div>
+                <span>✓</span>
+                Review and improve your code
+            </div>
+
+            <div>
+                <span>✓</span>
+                Work with an AI partner remotely
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div class="freelancer-card">
+
+        <div class="teammate-avatar">
+            🤖
+        </div>
+
+        <div class="teammate-status">
+            <span></span>
+            Your AI teammate is ready
+        </div>
+
+        <div class="teammate-message">
+
+            <p>
+                "Show me what you're working on.
+                Let's solve it together."
+            </p>
+
+        </div>
+
+        <div class="teammate-actions">
+
+            <span>💻 Code</span>
+            <span>🖥 Screen</span>
+            <span>📷 Camera</span>
+            <span>🎤 Voice</span>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+</section>
+
+<!-- =========================================================
+     CTA SECTION
+     ========================================================= -->
+
+<section class="cta-section">
+
+
+<div class="cta-container">
+
+    <div class="cta-icon">
+        🤖
+    </div>
+
+    <h2>
+        Stop Debugging Alone.
+    </h2>
+
+    <p>
+        Start building with an AI teammate that can
+        understand, explain and help solve your code.
+    </p>
+
+    {% if current_user.is_authenticated %}
+
+        <a href="{{ url_for('workspace.workspace') }}"
+           class="btn btn-primary btn-large">
+            Open Your Workspace
+            <span>→</span>
+        </a>
+
+    {% else %}
+
+        <a href="{{ url_for('auth.register') }}"
+           class="btn btn-primary btn-large">
+            Create Your Workspace
+            <span>→</span>
+        </a>
+
+    {% endif %}
+
+</div>
+
+
+</section>
+
+{% endblock %}
+
+{% block extra_js %}
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+
+        /*
+         * Small animation for the AI visualizer preview.
+         * The real-time visualizer will eventually be handled
+         * by visualizer.js inside the workspace.
+         */
+
+        const dots = document.querySelectorAll(
+            ".typing-indicator i"
+        );
+
+        dots.forEach((dot, index) => {
+
+            dot.style.animationDelay =
+                `${index * 0.2}s`;
+
+        });
+
+    });
+</script>
+
+{% endblock %}

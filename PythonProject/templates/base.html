@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+
+<title>
+    {% block title %}AI Coding Teammate{% endblock %}
+</title>
+
+<meta name="description"
+      content="AI Coding Teammate - Your intelligent AI partner for coding, debugging, and software development.">
+
+<meta name="theme-color" content="#0f172a">
+
+<!-- Favicon -->
+<link rel="icon"
+      href="{{ url_for('static', filename='icons/favicon.ico') }}"
+      type="image/x-icon">
+
+<!-- Main CSS -->
+<link rel="stylesheet"
+      href="{{ url_for('static', filename='css/style.css') }}">
+
+
+<link rel="stylesheet" href="{{ url_for('static', filename='css/navbar.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/sidebar.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/workspace.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/code-editor.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/visualizer.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/chat.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/auth.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/responsive.css') }}">
+{% block extra_css %}{% endblock %}
+
+
+</head>
+
+
+<body>
+
+
+<!-- ============================= -->
+<!-- Navigation -->
+<!-- ============================= -->
+
+<header class="main-header">
+
+    <nav class="navbar">
+
+        <!-- Logo -->
+        <a href="{{ url_for('main.index') }}" class="brand">
+
+            <div class="brand-icon">
+                🤖
+            </div>
+
+            <div class="brand-text">
+                <span class="brand-title">
+                    AI Coding
+                </span>
+
+                <span class="brand-subtitle">
+                    Teammate
+                </span>
+            </div>
+
+        </a>
+
+        <!-- Mobile Menu Button -->
+        <button
+            class="menu-toggle"
+            id="menuToggle"
+            type="button"
+            aria-label="Toggle navigation"
+            aria-expanded="false">
+
+            <span></span>
+            <span></span>
+            <span></span>
+
+        </button>
+
+        <!-- Navigation Links -->
+        <div class="nav-menu" id="navMenu">
+
+            <a href="{{ url_for('main.index') }}"
+               class="nav-link">
+                Home
+            </a>
+
+            {% if current_user.is_authenticated %}
+
+                <a href="{{ url_for('dashboard.dashboard') }}"
+                   class="nav-link">
+                    Dashboard
+                </a>
+
+                <a href="{{ url_for('workspace.workspace') }}"
+                   class="nav-link">
+                    Workspace
+                </a>
+
+                <a href="{{ url_for('auth.logout') }}"
+                   class="nav-link">
+                    Logout
+                </a>
+
+            {% else %}
+
+                <a href="{{ url_for('auth.login') }}"
+                   class="nav-link">
+                    Login
+                </a>
+
+                <a href="{{ url_for('auth.register') }}"
+                   class="nav-button">
+                    Get Started
+                </a>
+
+            {% endif %}
+
+        </div>
+
+    </nav>
+
+</header>
+
+
+<!-- ============================= -->
+<!-- Flash Messages -->
+<!-- ============================= -->
+
+<section class="flash-container">
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+
+        {% if messages %}
+
+            {% for category, message in messages %}
+
+                <div class="flash-message flash-{{ category }}"
+                     role="alert">
+
+                    <span class="flash-text">
+                        {{ message }}
+                    </span>
+
+                    <button
+                        type="button"
+                        class="flash-close"
+                        onclick="this.parentElement.remove()"
+                        aria-label="Close message">
+
+                        &times;
+
+                    </button>
+
+                </div>
+
+            {% endfor %}
+
+        {% endif %}
+
+    {% endwith %}
+
+</section>
+<script src="https://cdn.socket.io/4.8.1/socket.io.min.js"></script>
+
+
+
+
+
+<!-- ============================= -->
+<!-- Main Content -->
+<!-- ============================= -->
+
+<main id="main-content">
+
+    {% block content %}
+    {% endblock %}
+
+</main>
+
+
+<!-- ============================= -->
+<!-- Footer -->
+<!-- ============================= -->
+
+<footer class="main-footer">
+
+    <div class="footer-container">
+
+        <div class="footer-brand">
+
+            <h3>
+                🤖 AI Coding Teammate
+            </h3>
+
+            <p>
+                Your intelligent coding partner for
+                debugging, understanding, and building software.
+            </p>
+
+        </div>
+
+
+        <div class="footer-links">
+
+            <div class="footer-column">
+
+                <h4>Platform</h4>
+
+                <a href="{{ url_for('main.index') }}">
+                    Home
+                </a>
+
+                {% if current_user.is_authenticated %}
+
+                    <a href="{{ url_for('dashboard.dashboard') }}">
+                        Dashboard
+                    </a>
+
+                    <a href="{{ url_for('workspace.workspace') }}">
+                        Workspace
+                    </a>
+
+                {% endif %}
+
+            </div>
+
+
+            <div class="footer-column">
+
+                <h4>Account</h4>
+
+                {% if current_user.is_authenticated %}
+
+                    <a href="{{ url_for('dashboard.settings') }}">
+                        Settings
+                    </a>
+
+                    <a href="{{ url_for('auth.logout') }}">
+                        Logout
+                    </a>
+
+                {% else %}
+
+                    <a href="{{ url_for('auth.login') }}">
+                        Login
+                    </a>
+
+                    <a href="{{ url_for('auth.register') }}">
+                        Register
+                    </a>
+
+                {% endif %}
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div class="footer-bottom">
+
+        <p>
+            &copy; {{ current_year|default(2026) }}
+            AI Coding Teammate.
+            All rights reserved.
+        </p>
+
+        <p>
+            Built for independent developers and freelancers.
+        </p>
+<div class="footer-ligo">
+        <a href="{{ url_for('main.datenschutz') }}">
+    Datenschutz
+</a>
+
+<a href="{{ url_for('main.impressum') }}">
+    Impressum
+</a>
+    </div>
+
+    </div>
+
+</footer>
+
+
+<!-- ============================= -->
+<!-- Main JavaScript -->
+<!-- ============================= -->
+<script src="https://cdn.socket.io/4.8.1/socket.io.min.js"></script>
+<script src="{{ url_for('static', filename='js/app.js') }}"></script>
+<script src="{{ url_for('static', filename='js/websocket.js') }}"></script>
+<script src="{{ url_for('static', filename='js/code-editor.js') }}"></script>
+<script src="{{ url_for('static', filename='js/code-analysis.js') }}"></script>
+<script src="{{ url_for('static', filename='js/visualizer.js') }}"></script>
+<script src="{{ url_for('static', filename='js/chat.js') }}"></script>
+<script src="{{ url_for('static', filename='js/screen-share.js') }}"></script>
+<script src="{{ url_for('static', filename='js/camera.js') }}"></script>
+<script src="{{ url_for('static', filename='js/image-video.js') }}"></script>
+<script src="{{ url_for('static', filename='js/voice.js') }}"></script>
+<script src="{{ url_for('static', filename='js/project.js') }}"></script>
+<script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+
+<script src="{{ url_for('static', filename='js/app.js') }}"></script>
+
+{% block extra_js %}{% endblock %}
+
+
+</body>
+</html>

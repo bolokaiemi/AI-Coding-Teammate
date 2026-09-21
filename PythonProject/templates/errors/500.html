@@ -1,0 +1,126 @@
+{% extends "base.html" %}
+
+{% block title %}Server Error | AI Coding Teammate{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet"
+      href="{{ url_for('static', filename='css/style.css') }}">
+{% endblock %}
+
+{% block content %}
+
+<section class="error-page">
+
+    <div class="error-container">
+
+        <div class="error-visual">
+
+            <div class="error-code">
+                500
+            </div>
+
+            <div class="error-ai-icon">
+                ⚙️
+            </div>
+
+        </div>
+
+
+        <div class="error-content">
+
+            <span class="error-label">
+                SERVER ERROR
+            </span>
+
+            <h1>
+                Something went wrong on our side.
+            </h1>
+
+            <p>
+                Our AI Coding Teammate encountered an unexpected
+                problem while processing your request.
+                Your project data has not been intentionally deleted.
+            </p>
+
+
+            <div class="error-actions">
+
+                <a
+                    href="{{ url_for('main.index') }}"
+                    class="error-primary-button"
+                >
+                    ← Back to Home
+                </a>
+
+
+                {% if current_user.is_authenticated %}
+
+                <a
+                    href="{{ url_for('dashboard.dashboard') }}"
+                    class="error-secondary-button"
+                >
+                    Return to Dashboard
+                </a>
+
+                {% else %}
+
+                <a
+                    href="{{ url_for('auth.login') }}"
+                    class="error-secondary-button"
+                >
+                    Sign In
+                </a>
+
+                {% endif %}
+
+            </div>
+
+        </div>
+
+
+        <div class="error-ai-message">
+
+            <span class="error-message-icon">
+                🤖
+            </span>
+
+            <div>
+
+                <strong>
+                    AI Teammate
+                </strong>
+
+                <p>
+                    I hit an unexpected error while handling
+                    your request. Please try again. If the
+                    problem continues, we'll investigate it.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <!-- Optional error reference -->
+
+        {% if error_id %}
+
+        <div class="error-reference">
+
+            <span>
+                Error Reference:
+            </span>
+
+            <code>
+                {{ error_id }}
+            </code>
+
+        </div>
+
+        {% endif %}
+
+    </div>
+
+</section>
+
+{% endblock %}

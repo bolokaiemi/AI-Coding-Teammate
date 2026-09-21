@@ -1,0 +1,788 @@
+{% extends "base.html" %}
+
+{% block title %}Settings | AI Coding Teammate{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+{% endblock %}
+
+{% block content %}
+
+<div class="dashboard-page">
+
+    <!-- Header -->
+    <section class="dashboard-header">
+
+        <div class="dashboard-welcome">
+
+            <span class="dashboard-badge">
+                ACCOUNT SETTINGS
+            </span>
+
+            <h1>
+                Settings
+            </h1>
+
+            <p>
+                Manage your profile, AI teammate preferences,
+                notifications, and account settings.
+            </p>
+
+        </div>
+
+    </section>
+
+
+    <div class="settings-layout">
+
+        <!-- Settings Navigation -->
+        <aside class="settings-sidebar">
+
+            <button
+                type="button"
+                class="settings-nav-item active"
+                data-settings-section="profile"
+            >
+                <span>👤</span>
+                Profile
+            </button>
+
+
+            <button
+                type="button"
+                class="settings-nav-item"
+                data-settings-section="ai"
+            >
+                <span>🤖</span>
+                AI Teammate
+            </button>
+
+
+            <button
+                type="button"
+                class="settings-nav-item"
+                data-settings-section="notifications"
+            >
+                <span>🔔</span>
+                Notifications
+            </button>
+
+
+            <button
+                type="button"
+                class="settings-nav-item"
+                data-settings-section="security"
+            >
+                <span>🔐</span>
+                Security
+            </button>
+
+        </aside>
+
+
+        <!-- Settings Content -->
+        <main class="settings-content">
+
+
+            <!-- Profile -->
+            <section
+                class="settings-section active"
+                id="settings-profile"
+            >
+
+                <div class="settings-section-header">
+
+                    <span class="card-label">
+                        PROFILE
+                    </span>
+
+                    <h2>
+                        Profile Information
+                    </h2>
+
+                    <p>
+                        Update the information associated with
+                        your AI Coding Teammate account.
+                    </p>
+
+                </div>
+
+
+                <form
+                    method="POST"
+                    action="{{ url_for('dashboard.settings') }}"
+                    class="settings-form"
+                >
+
+                    {% if csrf_token is defined %}
+                        <input
+                            type="hidden"
+                            name="csrf_token"
+                            value="{{ csrf_token() }}"
+                        >
+                    {% endif %}
+
+
+                    <input
+                        type="hidden"
+                        name="section"
+                        value="profile"
+                    >
+
+
+                    <div class="settings-form-grid">
+
+                        <!-- First Name -->
+                        <div class="form-group">
+
+                            <label for="first_name">
+                                First Name
+                            </label>
+
+                            <input
+                                type="text"
+                                id="first_name"
+                                name="first_name"
+                                value="{{ current_user.first_name|default('') }}"
+                                autocomplete="given-name"
+                            >
+
+                        </div>
+
+
+                        <!-- Last Name -->
+                        <div class="form-group">
+
+                            <label for="last_name">
+                                Last Name
+                            </label>
+
+                            <input
+                                type="text"
+                                id="last_name"
+                                name="last_name"
+                                value="{{ current_user.last_name|default('') }}"
+                                autocomplete="family-name"
+                            >
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- Email -->
+                    <div class="form-group">
+
+                        <label for="email">
+                            Email Address
+                        </label>
+
+                        <input
+                            type="email"
+                            id="email"
+                            name="email"
+                            value="{{ current_user.email|default('') }}"
+                            autocomplete="email"
+                        >
+
+                    </div>
+
+
+                    <!-- Role -->
+                    <div class="form-group">
+
+                        <label for="occupation">
+                            Developer Role
+                        </label>
+
+                        <input
+                            type="text"
+                            id="occupation"
+                            name="occupation"
+                            value="{{ current_user.occupation|default('') }}"
+                            placeholder="e.g. Freelance Software Developer"
+                        >
+
+                    </div>
+
+
+                    <button
+                        type="submit"
+                        class="settings-save-button"
+                    >
+                        Save Profile
+                    </button>
+
+                </form>
+
+            </section>
+
+
+            <!-- AI Preferences -->
+            <section
+                class="settings-section"
+                id="settings-ai"
+            >
+
+                <div class="settings-section-header">
+
+                    <span class="card-label">
+                        AI TEAMMATE
+                    </span>
+
+                    <h2>
+                        AI Preferences
+                    </h2>
+
+                    <p>
+                        Customize how your AI Coding Teammate
+                        communicates and assists you.
+                    </p>
+
+                </div>
+
+
+                <form
+                    method="POST"
+                    action="{{ url_for('dashboard.settings') }}"
+                    class="settings-form"
+                >
+
+                    {% if csrf_token is defined %}
+                        <input
+                            type="hidden"
+                            name="csrf_token"
+                            value="{{ csrf_token() }}"
+                        >
+                    {% endif %}
+
+
+                    <input
+                        type="hidden"
+                        name="section"
+                        value="ai"
+                    >
+
+
+                    <!-- Response Style -->
+                    <div class="form-group">
+
+                        <label for="response_style">
+                            Response Style
+                        </label>
+
+                        <select
+                            id="response_style"
+                            name="response_style"
+                        >
+
+                            <option
+                                value="balanced"
+                                {% if ai_preferences and
+                                   ai_preferences.response_style == 'balanced' %}
+                                    selected
+                                {% endif %}
+                            >
+                                Balanced
+                            </option>
+
+                            <option
+                                value="concise"
+                                {% if ai_preferences and
+                                   ai_preferences.response_style == 'concise' %}
+                                    selected
+                                {% endif %}
+                            >
+                                Concise
+                            </option>
+
+                            <option
+                                value="detailed"
+                                {% if ai_preferences and
+                                   ai_preferences.response_style == 'detailed' %}
+                                    selected
+                                {% endif %}
+                            >
+                                Detailed
+                            </option>
+
+                            <option
+                                value="teaching"
+                                {% if ai_preferences and
+                                   ai_preferences.response_style == 'teaching' %}
+                                    selected
+                                {% endif %}
+                            >
+                                Teaching / Step-by-Step
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <!-- Explanation Level -->
+                    <div class="form-group">
+
+                        <label for="explanation_level">
+                            Code Explanation Level
+                        </label>
+
+                        <select
+                            id="explanation_level"
+                            name="explanation_level"
+                        >
+
+                            <option value="basic">
+                                Basic
+                            </option>
+
+                            <option value="intermediate">
+                                Intermediate
+                            </option>
+
+                            <option value="advanced">
+                                Advanced
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <!-- AI Toggles -->
+                    <div class="settings-options">
+
+                        <label class="settings-toggle">
+
+                            <input
+                                type="checkbox"
+                                name="auto_analysis"
+                                value="1"
+                                {% if ai_preferences and
+                                   ai_preferences.auto_analysis %}
+                                    checked
+                                {% endif %}
+                            >
+
+                            <span class="toggle-slider"></span>
+
+                            <span class="toggle-content">
+
+                                <strong>
+                                    Automatic Code Analysis
+                                </strong>
+
+                                <small>
+                                    Allow the AI to analyze code
+                                    when changes are detected.
+                                </small>
+
+                            </span>
+
+                        </label>
+
+
+                        <label class="settings-toggle">
+
+                            <input
+                                type="checkbox"
+                                name="visual_explanations"
+                                value="1"
+                                {% if ai_preferences and
+                                   ai_preferences.visual_explanations %}
+                                    checked
+                                {% endif %}
+                            >
+
+                            <span class="toggle-slider"></span>
+
+                            <span class="toggle-content">
+
+                                <strong>
+                                    Visual Explanations
+                                </strong>
+
+                                <small>
+                                    Show visual error indicators,
+                                    code flow, and corrections.
+                                </small>
+
+                            </span>
+
+                        </label>
+
+                    </div>
+
+
+                    <button
+                        type="submit"
+                        class="settings-save-button"
+                    >
+                        Save AI Preferences
+                    </button>
+
+                </form>
+
+            </section>
+
+
+            <!-- Notifications -->
+            <section
+                class="settings-section"
+                id="settings-notifications"
+            >
+
+                <div class="settings-section-header">
+
+                    <span class="card-label">
+                        NOTIFICATIONS
+                    </span>
+
+                    <h2>
+                        Notification Preferences
+                    </h2>
+
+                    <p>
+                        Choose which notifications you want
+                        to receive.
+                    </p>
+
+                </div>
+
+
+                <form
+                    method="POST"
+                    action="{{ url_for('dashboard.settings') }}"
+                    class="settings-form"
+                >
+
+                    {% if csrf_token is defined %}
+                        <input
+                            type="hidden"
+                            name="csrf_token"
+                            value="{{ csrf_token() }}"
+                        >
+                    {% endif %}
+
+
+                    <input
+                        type="hidden"
+                        name="section"
+                        value="notifications"
+                    >
+
+
+                    <div class="settings-options">
+
+                        <label class="settings-toggle">
+
+                            <input
+                                type="checkbox"
+                                name="email_notifications"
+                                value="1"
+                                checked
+                            >
+
+                            <span class="toggle-slider"></span>
+
+                            <span class="toggle-content">
+
+                                <strong>
+                                    Email Notifications
+                                </strong>
+
+                                <small>
+                                    Receive important account
+                                    and project notifications.
+                                </small>
+
+                            </span>
+
+                        </label>
+
+
+                        <label class="settings-toggle">
+
+                            <input
+                                type="checkbox"
+                                name="analysis_notifications"
+                                value="1"
+                                checked
+                            >
+
+                            <span class="toggle-slider"></span>
+
+                            <span class="toggle-content">
+
+                                <strong>
+                                    Analysis Notifications
+                                </strong>
+
+                                <small>
+                                    Receive notifications when
+                                    important AI analysis is completed.
+                                </small>
+
+                            </span>
+
+                        </label>
+
+
+                        <label class="settings-toggle">
+
+                            <input
+                                type="checkbox"
+                                name="product_updates"
+                                value="1"
+                                checked
+                            >
+
+                            <span class="toggle-slider"></span>
+
+                            <span class="toggle-content">
+
+                                <strong>
+                                    Product Updates
+                                </strong>
+
+                                <small>
+                                    Receive updates about new
+                                    AI Coding Teammate features.
+                                </small>
+
+                            </span>
+
+                        </label>
+
+                    </div>
+
+
+                    <button
+                        type="submit"
+                        class="settings-save-button"
+                    >
+                        Save Notification Settings
+                    </button>
+
+                </form>
+
+            </section>
+
+
+            <!-- Security -->
+            <section
+                class="settings-section"
+                id="settings-security"
+            >
+
+                <div class="settings-section-header">
+
+                    <span class="card-label">
+                        SECURITY
+                    </span>
+
+                    <h2>
+                        Account Security
+                    </h2>
+
+                    <p>
+                        Manage your password and account security.
+                    </p>
+
+                </div>
+
+
+                <!-- Change Password -->
+                <div class="security-card">
+
+                    <div class="security-card-icon">
+                        🔑
+                    </div>
+
+                    <div class="security-card-content">
+
+                        <h3>
+                            Change Password
+                        </h3>
+
+                        <p>
+                            Update your account password regularly
+                            to keep your account secure.
+                        </p>
+
+                        <a
+                            href="{{ url_for('auth.forgot_password') }}"
+                            class="security-action"
+                        >
+                            Reset Password →
+                        </a>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Account Information -->
+                <div class="security-card">
+
+                    <div class="security-card-icon">
+                        🛡️
+                    </div>
+
+                    <div class="security-card-content">
+
+                        <h3>
+                            Account Protection
+                        </h3>
+
+                        <p>
+                            Your account credentials are protected
+                            and should never be shared with anyone.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Danger Zone -->
+                <div class="danger-zone">
+
+                    <span class="card-label">
+                        DANGER ZONE
+                    </span>
+
+                    <h3>
+                        Delete Account
+                    </h3>
+
+                    <p>
+                        Permanently delete your account and
+                        associated development data.
+                    </p>
+
+                    <button
+                        type="button"
+                        class="danger-button"
+                        id="deleteAccountButton"
+                    >
+                        Delete My Account
+                    </button>
+
+                </div>
+
+            </section>
+
+        </main>
+
+    </div>
+
+</div>
+
+{% endblock %}
+
+
+{% block extra_js %}
+
+<script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+
+<script>
+"use strict";
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    const navigationItems =
+        document.querySelectorAll(".settings-nav-item");
+
+    const settingsSections =
+        document.querySelectorAll(".settings-section");
+
+
+    /* ---------------------------------------
+       Settings Navigation
+    --------------------------------------- */
+
+    navigationItems.forEach(function (item) {
+
+        item.addEventListener("click", function () {
+
+            const target =
+                item.dataset.settingsSection;
+
+
+            navigationItems.forEach(function (navItem) {
+                navItem.classList.remove("active");
+            });
+
+
+            settingsSections.forEach(function (section) {
+                section.classList.remove("active");
+            });
+
+
+            item.classList.add("active");
+
+
+            const targetSection =
+                document.getElementById(
+                    "settings-" + target
+                );
+
+
+            if (targetSection) {
+                targetSection.classList.add("active");
+            }
+
+        });
+
+    });
+
+
+    /* ---------------------------------------
+       Delete Account Confirmation
+    --------------------------------------- */
+
+    const deleteButton =
+        document.getElementById("deleteAccountButton");
+
+
+    if (deleteButton) {
+
+        deleteButton.addEventListener(
+            "click",
+            function () {
+
+                const confirmed =
+                    window.confirm(
+                        "Are you sure you want to delete your account? " +
+                        "This action cannot be undone."
+                    );
+
+
+                if (confirmed) {
+
+                    /*
+                     * The actual account deletion should be
+                     * handled by a protected Flask route.
+                     *
+                     * This button intentionally does not
+                     * delete anything from the browser.
+                     */
+
+                    window.alert(
+                        "Account deletion requires confirmation " +
+                        "through the secure account endpoint."
+                    );
+
+                }
+
+            }
+        );
+
+    }
+
+});
+</script>
+
+{% endblock %}

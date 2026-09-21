@@ -1,0 +1,1081 @@
+/* =========================================================
+   AI CODING TEAMMATE
+   PROJECT PANEL.CSS
+   Modern Project Explorer / File Tree
+   ========================================================= */
+
+
+/* =========================================================
+   1. VARIABLES
+   ========================================================= */
+
+:root {
+    --project-panel-bg: #0b1524;
+    --project-panel-bg-soft: #0f1d31;
+    --project-panel-bg-hover: #16263d;
+
+    --project-panel-border: rgba(148, 163, 184, 0.14);
+    --project-panel-border-strong: rgba(96, 165, 250, 0.28);
+
+    --project-panel-text: #f4f7fb;
+    --project-panel-text-secondary: #9eacc0;
+    --project-panel-text-muted: #718198;
+
+    --project-panel-primary: #3b82f6;
+    --project-panel-primary-light: #60a5fa;
+
+    --project-panel-success: #22c55e;
+    --project-panel-warning: #f59e0b;
+    --project-panel-danger: #ef4444;
+
+    --project-panel-radius-sm: 8px;
+    --project-panel-radius-md: 11px;
+    --project-panel-radius-lg: 16px;
+
+    --project-panel-shadow:
+        0 18px 50px rgba(0, 0, 0, 0.28);
+}
+
+
+/* =========================================================
+   2. MAIN PROJECT PANEL
+   ========================================================= */
+
+.project-panel-container {
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+
+    display: flex;
+    flex-direction: column;
+
+    overflow: hidden;
+
+    background:
+        linear-gradient(
+            180deg,
+            rgba(13, 24, 40, 0.98),
+            rgba(8, 17, 31, 0.99)
+        );
+
+    color: var(--project-panel-text);
+}
+
+
+/* =========================================================
+   3. PANEL HEADER
+   ========================================================= */
+
+.project-panel-header {
+    min-height: 72px;
+
+    padding: 15px 15px 13px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 12px;
+
+    border-bottom: 1px solid var(--project-panel-border);
+
+    background:
+        rgba(255, 255, 255, 0.018);
+}
+
+.project-panel-header > div {
+    min-width: 0;
+}
+
+.project-panel-label {
+    display: block;
+
+    margin-bottom: 3px;
+
+    color: var(--project-panel-primary-light);
+
+    font-size: 0.62rem;
+    font-weight: 800;
+
+    letter-spacing: 0.14em;
+}
+
+.project-panel-header h2 {
+    overflow: hidden;
+
+    color: #f1f6fd;
+
+    font-size: 0.92rem;
+    font-weight: 700;
+
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+
+/* =========================================================
+   4. OPTIONS BUTTON
+   ========================================================= */
+
+.panel-options-button {
+    width: 34px;
+    height: 34px;
+
+    flex-shrink: 0;
+
+    display: grid;
+    place-items: center;
+
+    border: 1px solid transparent;
+    border-radius: 9px;
+
+    background: transparent;
+
+    color: var(--project-panel-text-muted);
+
+    cursor: pointer;
+
+    font-size: 1.3rem;
+    line-height: 1;
+
+    transition:
+        background 0.2s ease,
+        color 0.2s ease,
+        border-color 0.2s ease;
+}
+
+.panel-options-button:hover {
+    color: #ffffff;
+
+    background: rgba(255, 255, 255, 0.05);
+
+    border-color: var(--project-panel-border);
+}
+
+
+/* =========================================================
+   5. PROJECT ACTION BUTTONS
+   ========================================================= */
+
+.project-panel-actions {
+    padding: 10px 11px;
+
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+
+    gap: 6px;
+
+    border-bottom: 1px solid var(--project-panel-border);
+}
+
+.panel-action {
+    min-width: 0;
+    min-height: 39px;
+
+    padding: 0 8px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: 5px;
+
+    border: 1px solid var(--project-panel-border);
+    border-radius: 8px;
+
+    background:
+        rgba(255, 255, 255, 0.025);
+
+    color: var(--project-panel-text-secondary);
+
+    cursor: pointer;
+
+    font-size: 0.7rem;
+    font-weight: 600;
+
+    transition:
+        background 0.2s ease,
+        border-color 0.2s ease,
+        color 0.2s ease,
+        transform 0.2s ease;
+}
+
+.panel-action:hover {
+    color: #ffffff;
+
+    background: rgba(59, 130, 246, 0.08);
+
+    border-color: rgba(96, 165, 250, 0.24);
+
+    transform: translateY(-1px);
+}
+
+.panel-action span {
+    overflow: hidden;
+
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+
+/* =========================================================
+   6. SEARCH
+   ========================================================= */
+
+.project-file-search {
+    position: relative;
+
+    margin: 10px 11px 8px;
+}
+
+.project-file-search > span {
+    position: absolute;
+
+    left: 11px;
+    top: 50%;
+
+    transform: translateY(-50%);
+
+    z-index: 2;
+
+    opacity: 0.7;
+
+    font-size: 0.75rem;
+
+    pointer-events: none;
+}
+
+.project-file-search input {
+    width: 100%;
+    min-height: 38px;
+
+    padding:
+        0 12px
+        0 34px;
+
+    outline: none;
+
+    border: 1px solid var(--project-panel-border);
+    border-radius: 9px;
+
+    background: #08111e;
+
+    color: #eef4fc;
+
+    font-size: 0.75rem;
+
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease,
+        background 0.2s ease;
+}
+
+.project-file-search input::placeholder {
+    color: #60748d;
+}
+
+.project-file-search input:focus {
+    border-color: rgba(96, 165, 250, 0.42);
+
+    background: #0b1728;
+
+    box-shadow:
+        0 0 0 3px rgba(59, 130, 246, 0.08);
+}
+
+
+/* =========================================================
+   7. FILE TREE CONTAINER
+   ========================================================= */
+
+.project-file-tree {
+    flex: 1;
+
+    min-height: 0;
+
+    padding: 4px 7px 10px;
+
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+
+/* =========================================================
+   8. FILE TREE GROUP
+   ========================================================= */
+
+.file-tree-group {
+    width: 100%;
+}
+
+.folder-children {
+    position: relative;
+
+    margin-left: 10px;
+    padding-left: 8px;
+
+    border-left: 1px solid rgba(148, 163, 184, 0.1);
+}
+
+.folder-children.hidden {
+    display: none;
+}
+
+
+/* =========================================================
+   9. FILE TREE ITEM
+   ========================================================= */
+
+.file-tree-item {
+    position: relative;
+
+    width: 100%;
+    min-height: 34px;
+
+    padding: 5px 8px;
+
+    display: flex;
+    align-items: center;
+
+    gap: 7px;
+
+    border: 1px solid transparent;
+    border-radius: 7px;
+
+    color: var(--project-panel-text-secondary);
+
+    cursor: pointer;
+
+    user-select: none;
+
+    transition:
+        background 0.15s ease,
+        border-color 0.15s ease,
+        color 0.15s ease;
+}
+
+.file-tree-item + .file-tree-item {
+    margin-top: 1px;
+}
+
+.file-tree-item:hover {
+    color: #e9f1fb;
+
+    background:
+        rgba(255, 255, 255, 0.035);
+}
+
+
+/* =========================================================
+   10. ACTIVE FILE
+   ========================================================= */
+
+.file-tree-item.active {
+    color: #dcebff;
+
+    border-color:
+        rgba(96, 165, 250, 0.15);
+
+    background:
+        linear-gradient(
+            90deg,
+            rgba(59, 130, 246, 0.12),
+            rgba(59, 130, 246, 0.045)
+        );
+}
+
+.file-tree-item.active::before {
+    content: "";
+
+    position: absolute;
+
+    left: -1px;
+    top: 6px;
+    bottom: 6px;
+
+    width: 2px;
+
+    border-radius: 10px;
+
+    background: var(--project-panel-primary-light);
+
+    box-shadow:
+        0 0 8px rgba(96, 165, 250, 0.45);
+}
+
+
+/* =========================================================
+   11. FILE / FOLDER ICON
+   ========================================================= */
+
+.file-tree-icon {
+    width: 18px;
+
+    flex-shrink: 0;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    font-size: 0.82rem;
+}
+
+
+/* =========================================================
+   12. FILE NAME
+   ========================================================= */
+
+.file-tree-name {
+    min-width: 0;
+
+    flex: 1;
+
+    overflow: hidden;
+
+    white-space: nowrap;
+    text-overflow: ellipsis;
+
+    font-size: 0.75rem;
+    font-weight: 500;
+}
+
+
+/* =========================================================
+   13. FOLDER ITEMS
+   ========================================================= */
+
+.file-tree-item.folder {
+    color: #c5d1e0;
+
+    font-weight: 600;
+}
+
+.file-tree-item.folder:hover {
+    color: #ffffff;
+}
+
+.folder-arrow {
+    width: 12px;
+
+    flex-shrink: 0;
+
+    color: #6f829a;
+
+    font-size: 0.58rem;
+
+    transition:
+        transform 0.18s ease;
+}
+
+.file-tree-item.folder.expanded .folder-arrow {
+    transform: rotate(0deg);
+}
+
+.file-tree-item.folder:not(.expanded)
+.folder-arrow {
+    transform: rotate(0deg);
+}
+
+
+/* =========================================================
+   14. FILE TYPE COLORS
+   Optional enhancement using data-file-name
+   ========================================================= */
+
+.file-tree-item[data-file-name$=".py"]
+.file-tree-name {
+    color: #b7cff0;
+}
+
+.file-tree-item[data-file-name$=".js"]
+.file-tree-name {
+    color: #e5d98e;
+}
+
+.file-tree-item[data-file-name$=".html"]
+.file-tree-name {
+    color: #e8b39c;
+}
+
+.file-tree-item[data-file-name$=".css"]
+.file-tree-name {
+    color: #a9c6ff;
+}
+
+.file-tree-item[data-file-name$=".json"]
+.file-tree-name {
+    color: #e4cf92;
+}
+
+.file-tree-item[data-file-name$=".md"]
+.file-tree-name {
+    color: #b2bdd0;
+}
+
+
+/* =========================================================
+   15. EMPTY FILE TREE
+   ========================================================= */
+
+.project-file-tree:empty::after {
+    content: "No files in this project.";
+
+    display: block;
+
+    padding: 30px 15px;
+
+    text-align: center;
+
+    color: var(--project-panel-text-muted);
+
+    font-size: 0.73rem;
+}
+
+
+/* =========================================================
+   16. PROJECT PANEL FOOTER
+   ========================================================= */
+
+.project-panel-footer {
+    flex-shrink: 0;
+
+    padding: 11px 13px;
+
+    display: grid;
+
+    gap: 7px;
+
+    border-top: 1px solid var(--project-panel-border);
+
+    background:
+        rgba(4, 11, 21, 0.42);
+}
+
+.project-info-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 15px;
+
+    color: var(--project-panel-text-muted);
+
+    font-size: 0.67rem;
+}
+
+.project-info-row strong {
+    max-width: 130px;
+
+    overflow: hidden;
+
+    color: #b8c5d6;
+
+    font-size: 0.68rem;
+    font-weight: 600;
+
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+
+/* =========================================================
+   17. AI MEMORY STATUS
+   ========================================================= */
+
+.memory-status {
+    display: inline-flex;
+    align-items: center;
+
+    gap: 5px;
+
+    color: #7fdfa0;
+
+    font-size: 0.67rem;
+    font-weight: 600;
+}
+
+
+/* =========================================================
+   18. WORKSPACE MODAL
+   ========================================================= */
+
+.workspace-modal {
+    position: fixed;
+    inset: 0;
+
+    z-index: 3000;
+
+    display: grid;
+    place-items: center;
+
+    padding: 20px;
+
+    background:
+        rgba(2, 7, 15, 0.72);
+
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+}
+
+.workspace-modal[hidden] {
+    display: none;
+}
+
+
+/* =========================================================
+   19. MODAL CONTENT
+   ========================================================= */
+
+.workspace-modal-content {
+    width: min(100%, 430px);
+
+    overflow: hidden;
+
+    border: 1px solid var(--project-panel-border-strong);
+    border-radius: 17px;
+
+    background:
+        linear-gradient(
+            145deg,
+            #101e32,
+            #091423
+        );
+
+    box-shadow:
+        0 30px 90px rgba(0, 0, 0, 0.48);
+
+    animation:
+        projectModalIn
+        0.2s ease;
+}
+
+@keyframes projectModalIn {
+    from {
+        opacity: 0;
+
+        transform:
+            translateY(8px)
+            scale(0.98);
+    }
+
+    to {
+        opacity: 1;
+
+        transform:
+            translateY(0)
+            scale(1);
+    }
+}
+
+
+/* =========================================================
+   20. MODAL HEADER
+   ========================================================= */
+
+.workspace-modal-header {
+    min-height: 58px;
+
+    padding: 0 17px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 15px;
+
+    border-bottom: 1px solid var(--project-panel-border);
+
+    background:
+        rgba(255, 255, 255, 0.018);
+}
+
+.workspace-modal-header h3 {
+    color: #f1f6fd;
+
+    font-size: 0.95rem;
+}
+
+.modal-close {
+    width: 31px;
+    height: 31px;
+
+    display: grid;
+    place-items: center;
+
+    border: none;
+    border-radius: 8px;
+
+    background: transparent;
+
+    color: var(--project-panel-text-muted);
+
+    cursor: pointer;
+
+    transition:
+        background 0.2s ease,
+        color 0.2s ease;
+}
+
+.modal-close:hover {
+    color: #ffffff;
+
+    background:
+        rgba(239, 68, 68, 0.1);
+}
+
+
+/* =========================================================
+   21. MODAL FORM
+   ========================================================= */
+
+.workspace-modal form {
+    padding: 19px;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+
+    margin-bottom: 7px;
+
+    color: #b9c6d7;
+
+    font-size: 0.74rem;
+    font-weight: 600;
+}
+
+.form-group input {
+    width: 100%;
+    min-height: 43px;
+
+    padding: 0 12px;
+
+    outline: none;
+
+    border: 1px solid var(--project-panel-border);
+    border-radius: 9px;
+
+    background: #07111f;
+
+    color: #eef4fc;
+
+    font-size: 0.8rem;
+
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.form-group input::placeholder {
+    color: #61748c;
+}
+
+.form-group input:focus {
+    border-color: rgba(96, 165, 250, 0.48);
+
+    box-shadow:
+        0 0 0 3px rgba(59, 130, 246, 0.08);
+}
+
+
+/* =========================================================
+   22. MODAL ACTIONS
+   ========================================================= */
+
+.modal-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+
+    gap: 8px;
+}
+
+.modal-primary-button,
+.modal-secondary-button {
+    min-height: 40px;
+
+    padding: 0 15px;
+
+    border-radius: 9px;
+
+    cursor: pointer;
+
+    font-size: 0.75rem;
+    font-weight: 700;
+
+    transition:
+        background 0.2s ease,
+        color 0.2s ease,
+        border-color 0.2s ease,
+        transform 0.2s ease;
+}
+
+.modal-primary-button {
+    border: 1px solid rgba(96, 165, 250, 0.24);
+
+    background:
+        linear-gradient(
+            135deg,
+            #3b82f6,
+            #6366f1
+        );
+
+    color: #ffffff;
+
+    box-shadow:
+        0 8px 22px rgba(59, 130, 246, 0.18);
+}
+
+.modal-primary-button:hover {
+    transform: translateY(-1px);
+
+    box-shadow:
+        0 12px 28px rgba(59, 130, 246, 0.25);
+}
+
+.modal-secondary-button {
+    border: 1px solid var(--project-panel-border);
+
+    background:
+        rgba(255, 255, 255, 0.025);
+
+    color: #adbccd;
+}
+
+.modal-secondary-button:hover {
+    color: #ffffff;
+
+    background:
+        rgba(255, 255, 255, 0.055);
+
+    border-color:
+        var(--project-panel-border-strong);
+}
+
+
+/* =========================================================
+   23. DRAG AND DROP STATES
+   Useful when upload JS is connected
+   ========================================================= */
+
+.project-panel-container.drag-over {
+    position: relative;
+}
+
+.project-panel-container.drag-over::after {
+    content: "Drop files to upload";
+
+    position: absolute;
+
+    inset: 10px;
+
+    z-index: 20;
+
+    display: grid;
+    place-items: center;
+
+    border: 2px dashed rgba(96, 165, 250, 0.52);
+    border-radius: 13px;
+
+    background:
+        rgba(7, 17, 31, 0.88);
+
+    color: #bfdbfe;
+
+    font-size: 0.8rem;
+    font-weight: 700;
+
+    pointer-events: none;
+}
+
+
+/* =========================================================
+   24. FILE ITEM CONTEXT STATES
+   ========================================================= */
+
+.file-tree-item.renaming {
+    background:
+        rgba(59, 130, 246, 0.07);
+}
+
+.file-tree-item.uploading {
+    opacity: 0.6;
+}
+
+.file-tree-item.error {
+    border-color:
+        rgba(239, 68, 68, 0.18);
+
+    background:
+        rgba(239, 68, 68, 0.05);
+}
+
+
+/* =========================================================
+   25. FILE TREE INLINE RENAME INPUT
+   ========================================================= */
+
+.file-rename-input {
+    width: 100%;
+
+    min-height: 27px;
+
+    padding: 2px 6px;
+
+    outline: none;
+
+    border: 1px solid rgba(96, 165, 250, 0.45);
+    border-radius: 5px;
+
+    background: #07111f;
+
+    color: #ffffff;
+
+    font-size: 0.73rem;
+
+    box-shadow:
+        0 0 0 2px rgba(59, 130, 246, 0.07);
+}
+
+
+/* =========================================================
+   26. SCROLLBAR
+   ========================================================= */
+
+.project-panel-container
+::-webkit-scrollbar {
+    width: 7px;
+    height: 7px;
+}
+
+.project-panel-container
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.project-panel-container
+::-webkit-scrollbar-thumb {
+    border-radius: 999px;
+
+    background: #263950;
+}
+
+.project-panel-container
+::-webkit-scrollbar-thumb:hover {
+    background: #38516d;
+}
+
+
+/* =========================================================
+   27. FOCUS STATES
+   ========================================================= */
+
+.project-panel-container
+button:focus-visible,
+.project-panel-container
+input:focus-visible {
+    outline: 2px solid var(--project-panel-primary-light);
+    outline-offset: 2px;
+}
+
+
+/* =========================================================
+   28. RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 1100px) {
+
+    .project-panel-actions {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+    .panel-action span {
+        display: none;
+    }
+}
+
+
+/* =========================================================
+   29. MOBILE PROJECT PANEL
+   ========================================================= */
+
+@media (max-width: 700px) {
+
+    .project-panel-container {
+        min-height: 100vh;
+    }
+
+    .project-panel-header {
+        min-height: 68px;
+
+        padding:
+            14px 13px;
+    }
+
+    .project-panel-actions {
+        padding:
+            9px;
+    }
+
+    .panel-action {
+        min-height: 38px;
+    }
+
+    .project-file-search {
+        margin:
+            9px
+            9px
+            7px;
+    }
+
+    .project-file-tree {
+        padding-left: 6px;
+        padding-right: 6px;
+    }
+}
+
+
+/* =========================================================
+   30. VERY SMALL SCREENS
+   ========================================================= */
+
+@media (max-width: 420px) {
+
+    .workspace-modal-content {
+        border-radius: 14px;
+    }
+
+    .workspace-modal form {
+        padding: 16px;
+    }
+
+    .modal-actions {
+        flex-direction: column-reverse;
+    }
+
+    .modal-primary-button,
+    .modal-secondary-button {
+        width: 100%;
+    }
+}
+
+
+/* =========================================================
+   31. REDUCED MOTION
+   ========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+
+    .workspace-modal-content,
+    .file-tree-item,
+    .panel-action,
+    .modal-primary-button,
+    .modal-secondary-button,
+    .panel-options-button {
+        animation: none;
+        transition: none;
+    }
+}

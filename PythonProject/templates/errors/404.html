@@ -1,0 +1,105 @@
+{% extends "base.html" %}
+
+{% block title %}Page Not Found | AI Coding Teammate{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet"
+      href="{{ url_for('static', filename='css/style.css') }}">
+{% endblock %}
+
+{% block content %}
+
+<section class="error-page">
+
+    <div class="error-container">
+
+        <div class="error-visual">
+
+            <div class="error-code">
+                404
+            </div>
+
+            <div class="error-ai-icon">
+                🤖
+            </div>
+
+        </div>
+
+
+        <div class="error-content">
+
+            <span class="error-label">
+                PAGE NOT FOUND
+            </span>
+
+            <h1>
+                Looks like this code path doesn't exist.
+            </h1>
+
+            <p>
+                The page you're looking for may have been moved,
+                deleted, or the URL may be incorrect.
+            </p>
+
+
+            <div class="error-actions">
+
+                <a
+                    href="{{ url_for('main.index') }}"
+                    class="error-primary-button"
+                >
+                    ← Back to Home
+                </a>
+
+                {% if current_user.is_authenticated %}
+
+                <a
+                    href="{{ url_for('dashboard.dashboard') }}"
+                    class="error-secondary-button"
+                >
+                    Open Dashboard
+                </a>
+
+                {% else %}
+
+                <a
+                    href="{{ url_for('auth.login') }}"
+                    class="error-secondary-button"
+                >
+                    Sign In
+                </a>
+
+                {% endif %}
+
+            </div>
+
+        </div>
+
+
+        <div class="error-ai-message">
+
+            <span class="error-message-icon">
+                💡
+            </span>
+
+            <div>
+
+                <strong>
+                    AI Teammate
+                </strong>
+
+                <p>
+                    Don't worry. Even the best developers
+                    occasionally end up on the wrong path.
+                    Let's get you back to your workspace.
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+{% endblock %}

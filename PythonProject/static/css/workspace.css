@@ -1,0 +1,1132 @@
+/* =========================================================
+   AI CODING TEAMMATE
+   WORKSPACE.CSS
+   Modern IDE Workspace Layout
+   ========================================================= */
+
+
+/* =========================================================
+   1. WORKSPACE VARIABLES
+   ========================================================= */
+
+:root {
+    --workspace-bg: #07111f;
+    --workspace-surface: #0d1726;
+    --workspace-surface-soft: #101d30;
+    --workspace-surface-hover: #16253b;
+
+    --workspace-border: rgba(148, 163, 184, 0.14);
+    --workspace-border-strong: rgba(96, 165, 250, 0.28);
+
+    --workspace-text: #f4f7fb;
+    --workspace-text-secondary: #9cabc0;
+    --workspace-text-muted: #6f8097;
+
+    --workspace-primary: #3b82f6;
+    --workspace-primary-light: #60a5fa;
+
+    --workspace-success: #22c55e;
+    --workspace-warning: #f59e0b;
+    --workspace-danger: #ef4444;
+
+    --workspace-radius-sm: 9px;
+    --workspace-radius-md: 14px;
+    --workspace-radius-lg: 20px;
+
+    --workspace-shadow:
+        0 18px 50px rgba(0, 0, 0, 0.28);
+
+    --workspace-header-height: 72px;
+    --workspace-toolbar-height: 58px;
+}
+
+
+/* =========================================================
+   2. WORKSPACE PAGE
+   ========================================================= */
+
+.workspace-page {
+    width: 100%;
+    min-height: 100vh;
+
+    display: flex;
+    flex-direction: column;
+
+    background:
+        radial-gradient(
+            circle at 30% 0%,
+            rgba(59, 130, 246, 0.06),
+            transparent 32%
+        ),
+        #07111f;
+
+    color: var(--workspace-text);
+}
+
+
+/* =========================================================
+   3. WORKSPACE TOP HEADER
+   ========================================================= */
+
+.workspace-header {
+    min-height: var(--workspace-header-height);
+
+    padding: 10px 18px;
+
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+
+    gap: 18px;
+
+    position: sticky;
+    top: 0;
+
+    z-index: 900;
+
+    background: rgba(7, 17, 31, 0.92);
+
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+
+    border-bottom: 1px solid var(--workspace-border);
+}
+
+
+/* =========================================================
+   4. WORKSPACE BRAND
+   ========================================================= */
+
+.workspace-brand {
+    display: flex;
+    align-items: center;
+
+    gap: 12px;
+
+    min-width: 0;
+}
+
+.workspace-menu-button {
+    width: 40px;
+    height: 40px;
+
+    flex-shrink: 0;
+
+    display: grid;
+    place-items: center;
+
+    border: 1px solid var(--workspace-border);
+    border-radius: 10px;
+
+    background: rgba(255, 255, 255, 0.035);
+
+    color: var(--workspace-text);
+
+    cursor: pointer;
+
+    font-size: 1rem;
+
+    transition:
+        background 0.2s ease,
+        border-color 0.2s ease,
+        transform 0.2s ease;
+}
+
+.workspace-menu-button:hover {
+    background: rgba(255, 255, 255, 0.065);
+    border-color: var(--workspace-border-strong);
+    transform: translateY(-1px);
+}
+
+.workspace-project-icon {
+    width: 42px;
+    height: 42px;
+
+    flex-shrink: 0;
+
+    display: grid;
+    place-items: center;
+
+    border-radius: 11px;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(59, 130, 246, 0.18),
+            rgba(139, 92, 246, 0.12)
+        );
+
+    border: 1px solid rgba(96, 165, 250, 0.16);
+
+    font-size: 1.2rem;
+}
+
+.workspace-project-info {
+    min-width: 0;
+}
+
+.workspace-label {
+    display: block;
+
+    margin-bottom: 2px;
+
+    color: var(--workspace-text-muted);
+
+    font-size: 0.66rem;
+    font-weight: 800;
+
+    letter-spacing: 0.13em;
+}
+
+.workspace-project-info h1 {
+    overflow: hidden;
+
+    color: #f8fbff;
+
+    font-size: 0.98rem;
+    font-weight: 700;
+
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+
+/* =========================================================
+   5. AI STATUS
+   ========================================================= */
+
+.workspace-status {
+    display: flex;
+    align-items: center;
+
+    gap: 8px;
+
+    padding: 8px 13px;
+
+    border: 1px solid rgba(34, 197, 94, 0.12);
+    border-radius: 999px;
+
+    background: rgba(34, 197, 94, 0.055);
+
+    color: #b9f6cd;
+
+    font-size: 0.77rem;
+    font-weight: 600;
+
+    white-space: nowrap;
+}
+
+.status-dot {
+    width: 8px;
+    height: 8px;
+
+    border-radius: 50%;
+
+    background: #64748b;
+}
+
+.status-dot.online {
+    background: var(--workspace-success);
+
+    box-shadow:
+        0 0 0 4px rgba(34, 197, 94, 0.1),
+        0 0 10px rgba(34, 197, 94, 0.4);
+}
+
+.status-dot.offline {
+    background: var(--workspace-danger);
+}
+
+
+/* =========================================================
+   6. WORKSPACE HEADER ACTIONS
+   ========================================================= */
+
+.workspace-actions {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+
+    gap: 8px;
+}
+
+.workspace-action-button {
+    min-height: 40px;
+
+    padding: 0 13px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: 7px;
+
+    border: 1px solid var(--workspace-border);
+    border-radius: 10px;
+
+    background: rgba(255, 255, 255, 0.035);
+
+    color: #cbd7e6;
+
+    cursor: pointer;
+
+    font-size: 0.82rem;
+    font-weight: 600;
+
+    transition:
+        background 0.2s ease,
+        border-color 0.2s ease,
+        color 0.2s ease,
+        transform 0.2s ease;
+}
+
+.workspace-action-button:hover {
+    color: #ffffff;
+
+    background: rgba(255, 255, 255, 0.07);
+
+    border-color: rgba(96, 165, 250, 0.28);
+
+    transform: translateY(-1px);
+}
+
+.workspace-action-button.run-button {
+    border-color: rgba(34, 197, 94, 0.22);
+
+    background: rgba(34, 197, 94, 0.07);
+
+    color: #baf3cb;
+}
+
+.workspace-action-button.run-button:hover {
+    background: rgba(34, 197, 94, 0.13);
+}
+
+
+/* =========================================================
+   7. WORKSPACE BODY
+   ========================================================= */
+
+.workspace-body {
+    flex: 1;
+
+    min-height: 0;
+
+    display: grid;
+
+    grid-template-columns:
+        minmax(220px, 250px)
+        minmax(0, 1fr)
+        minmax(280px, 340px);
+
+    overflow: hidden;
+}
+
+
+/* =========================================================
+   8. PROJECT PANEL
+   ========================================================= */
+
+.workspace-project-panel {
+    min-width: 0;
+
+    overflow-y: auto;
+    overflow-x: hidden;
+
+    background:
+        linear-gradient(
+            180deg,
+            rgba(13, 23, 38, 0.96),
+            rgba(8, 16, 29, 0.97)
+        );
+
+    border-right: 1px solid var(--workspace-border);
+
+    transition:
+        width 0.25s ease,
+        transform 0.25s ease;
+}
+
+.workspace-project-panel.collapsed {
+    width: 0;
+    overflow: hidden;
+}
+
+
+/* =========================================================
+   9. MAIN DEVELOPMENT AREA
+   ========================================================= */
+
+.workspace-main {
+    min-width: 0;
+    min-height: 0;
+
+    display: grid;
+    grid-template-rows:
+        minmax(320px, 1fr)
+        minmax(220px, 0.72fr);
+
+    background: #07111f;
+
+    overflow: hidden;
+}
+
+
+/* =========================================================
+   10. CODE SECTION
+   ========================================================= */
+
+.workspace-code-section {
+    min-width: 0;
+    min-height: 0;
+
+    overflow: hidden;
+
+    border-bottom: 1px solid var(--workspace-border);
+
+    background: #080f1b;
+}
+
+
+/* =========================================================
+   11. VISUALIZER SECTION
+   ========================================================= */
+
+.workspace-visualizer-section {
+    min-width: 0;
+    min-height: 0;
+
+    overflow-y: auto;
+
+    background:
+        linear-gradient(
+            180deg,
+            rgba(11, 22, 38, 0.98),
+            rgba(7, 17, 31, 0.98)
+        );
+}
+
+
+/* =========================================================
+   12. CHAT PANEL
+   ========================================================= */
+
+.workspace-chat-panel {
+    min-width: 0;
+    min-height: 0;
+
+    overflow: hidden;
+
+    border-left: 1px solid var(--workspace-border);
+
+    background:
+        linear-gradient(
+            180deg,
+            rgba(13, 23, 38, 0.97),
+            rgba(8, 16, 29, 0.99)
+        );
+}
+
+
+/* =========================================================
+   13. MEDIA TOOLBAR
+   ========================================================= */
+
+.workspace-media-toolbar {
+    min-height: var(--workspace-toolbar-height);
+
+    padding: 8px 16px;
+
+    display: flex;
+    align-items: center;
+
+    gap: 8px;
+
+    position: sticky;
+    bottom: 0;
+
+    z-index: 850;
+
+    background: rgba(7, 17, 31, 0.94);
+
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+
+    border-top: 1px solid var(--workspace-border);
+}
+
+.media-tool-button {
+    min-height: 40px;
+
+    padding: 0 12px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: 7px;
+
+    color: #b8c6d8;
+
+    background: rgba(255, 255, 255, 0.025);
+
+    border: 1px solid var(--workspace-border);
+    border-radius: 10px;
+
+    cursor: pointer;
+
+    font-size: 0.78rem;
+    font-weight: 600;
+
+    transition:
+        background 0.2s ease,
+        color 0.2s ease,
+        border-color 0.2s ease;
+}
+
+.media-tool-button:hover {
+    color: #ffffff;
+
+    background: rgba(59, 130, 246, 0.08);
+
+    border-color: rgba(96, 165, 250, 0.27);
+}
+
+.media-tool-button.active {
+    color: #d8ebff;
+
+    background: rgba(59, 130, 246, 0.14);
+
+    border-color: rgba(96, 165, 250, 0.4);
+}
+
+
+/* =========================================================
+   14. CONNECTION STATUS
+   ========================================================= */
+
+.media-status {
+    margin-left: auto;
+
+    display: flex;
+    align-items: center;
+
+    gap: 7px;
+
+    color: var(--workspace-text-muted);
+
+    font-size: 0.74rem;
+}
+
+.connection-dot {
+    width: 7px;
+    height: 7px;
+
+    border-radius: 50%;
+
+    background: var(--workspace-warning);
+
+    box-shadow:
+        0 0 8px rgba(245, 158, 11, 0.28);
+}
+
+.connection-dot.connected {
+    background: var(--workspace-success);
+
+    box-shadow:
+        0 0 8px rgba(34, 197, 94, 0.42);
+}
+
+.connection-dot.disconnected {
+    background: var(--workspace-danger);
+
+    box-shadow:
+        0 0 8px rgba(239, 68, 68, 0.35);
+}
+
+
+/* =========================================================
+   15. MEDIA PREVIEW
+   ========================================================= */
+
+.media-preview-container {
+    position: fixed;
+
+    right: 24px;
+    bottom: 82px;
+
+    z-index: 1200;
+
+    width: min(390px, calc(100vw - 32px));
+
+    overflow: hidden;
+
+    border: 1px solid var(--workspace-border-strong);
+    border-radius: 16px;
+
+    background: #09111e;
+
+    box-shadow:
+        0 28px 80px rgba(0, 0, 0, 0.48);
+}
+
+.media-preview-container[hidden] {
+    display: none;
+}
+
+.media-preview-header {
+    min-height: 44px;
+
+    padding: 0 12px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    border-bottom: 1px solid var(--workspace-border);
+
+    background: rgba(255, 255, 255, 0.025);
+}
+
+.media-preview-header strong {
+    color: #dce7f4;
+
+    font-size: 0.8rem;
+}
+
+.media-preview-header button {
+    width: 30px;
+    height: 30px;
+
+    display: grid;
+    place-items: center;
+
+    border: none;
+    border-radius: 8px;
+
+    background: transparent;
+
+    color: var(--workspace-text-secondary);
+
+    cursor: pointer;
+
+    transition:
+        color 0.2s ease,
+        background 0.2s ease;
+}
+
+.media-preview-header button:hover {
+    color: #ffffff;
+
+    background: rgba(239, 68, 68, 0.12);
+}
+
+#workspaceVideoPreview {
+    width: 100%;
+    max-height: 260px;
+
+    object-fit: cover;
+
+    background: #02060c;
+}
+
+
+/* =========================================================
+   16. ANALYSIS OVERLAY
+   ========================================================= */
+
+.analysis-overlay {
+    position: fixed;
+    inset: 0;
+
+    z-index: 2000;
+
+    display: grid;
+    place-items: center;
+
+    padding: 20px;
+
+    background: rgba(2, 7, 15, 0.72);
+
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+}
+
+.analysis-overlay[hidden] {
+    display: none;
+}
+
+.analysis-overlay-content {
+    width: min(100%, 390px);
+
+    padding: 34px;
+
+    text-align: center;
+
+    border: 1px solid rgba(96, 165, 250, 0.18);
+    border-radius: 20px;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(15, 29, 49, 0.97),
+            rgba(8, 17, 31, 0.99)
+        );
+
+    box-shadow:
+        0 30px 90px rgba(0, 0, 0, 0.42);
+}
+
+.analysis-overlay-content h3 {
+    margin-top: 20px;
+    margin-bottom: 8px;
+
+    color: #f1f6fd;
+
+    font-size: 1.05rem;
+}
+
+.analysis-overlay-content p {
+    color: var(--workspace-text-secondary);
+
+    font-size: 0.84rem;
+}
+
+
+/* =========================================================
+   17. ANALYSIS SPINNER
+   ========================================================= */
+
+.analysis-spinner {
+    width: 48px;
+    height: 48px;
+
+    margin: 0 auto;
+
+    border: 3px solid rgba(96, 165, 250, 0.12);
+    border-top-color: var(--workspace-primary-light);
+
+    border-radius: 50%;
+
+    animation: workspaceSpin 0.8s linear infinite;
+}
+
+@keyframes workspaceSpin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+
+/* =========================================================
+   18. GENERAL WORKSPACE CARDS
+   ========================================================= */
+
+.workspace-card {
+    border: 1px solid var(--workspace-border);
+    border-radius: var(--workspace-radius-md);
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(16, 29, 48, 0.82),
+            rgba(10, 19, 34, 0.86)
+        );
+
+    box-shadow:
+        0 12px 32px rgba(0, 0, 0, 0.18);
+}
+
+
+/* =========================================================
+   19. WORKSPACE TITLES
+   ========================================================= */
+
+.workspace-section-title {
+    min-height: 44px;
+
+    padding: 0 14px;
+
+    display: flex;
+    align-items: center;
+
+    gap: 8px;
+
+    color: #dce7f5;
+
+    border-bottom: 1px solid var(--workspace-border);
+
+    font-size: 0.77rem;
+    font-weight: 700;
+
+    letter-spacing: 0.04em;
+
+    background: rgba(255, 255, 255, 0.018);
+}
+
+
+/* =========================================================
+   20. WORKSPACE INPUTS
+   ========================================================= */
+
+.workspace-page input,
+.workspace-page textarea,
+.workspace-page select {
+    outline: none;
+
+    color: #eef4fc;
+
+    background: #091321;
+
+    border: 1px solid var(--workspace-border);
+    border-radius: 9px;
+
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease,
+        background 0.2s ease;
+}
+
+.workspace-page input:focus,
+.workspace-page textarea:focus,
+.workspace-page select:focus {
+    border-color: rgba(96, 165, 250, 0.48);
+
+    background: #0c1829;
+
+    box-shadow:
+        0 0 0 3px rgba(59, 130, 246, 0.09);
+}
+
+
+/* =========================================================
+   21. SCROLLBARS
+   ========================================================= */
+
+.workspace-page ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+.workspace-page ::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.workspace-page ::-webkit-scrollbar-thumb {
+    background: #26384f;
+
+    border-radius: 999px;
+}
+
+.workspace-page ::-webkit-scrollbar-thumb:hover {
+    background: #354e6c;
+}
+
+
+/* =========================================================
+   22. PANEL OPEN/CLOSED STATES
+   ========================================================= */
+
+.workspace-project-panel.is-hidden {
+    display: none;
+}
+
+.workspace-chat-panel.is-hidden {
+    display: none;
+}
+
+.workspace-body.project-panel-hidden {
+    grid-template-columns:
+        minmax(0, 1fr)
+        minmax(280px, 340px);
+}
+
+.workspace-body.chat-panel-hidden {
+    grid-template-columns:
+        minmax(220px, 250px)
+        minmax(0, 1fr);
+}
+
+.workspace-body.project-panel-hidden.chat-panel-hidden {
+    grid-template-columns: 1fr;
+}
+
+
+/* =========================================================
+   23. LOADING / DISABLED STATES
+   ========================================================= */
+
+.workspace-page button:disabled {
+    opacity: 0.5;
+
+    cursor: not-allowed;
+
+    transform: none;
+}
+
+.workspace-page .loading {
+    pointer-events: none;
+
+    opacity: 0.65;
+}
+
+
+/* =========================================================
+   24. TABLET RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 1100px) {
+
+    .workspace-body {
+        grid-template-columns:
+            220px
+            minmax(0, 1fr)
+            300px;
+    }
+
+    .workspace-action-button span,
+    .media-tool-button span {
+        display: none;
+    }
+
+    .workspace-action-button,
+    .media-tool-button {
+        width: 40px;
+        padding: 0;
+    }
+}
+
+
+/* =========================================================
+   25. SMALL TABLET
+   ========================================================= */
+
+@media (max-width: 900px) {
+
+    .workspace-header {
+        grid-template-columns: 1fr auto;
+    }
+
+    .workspace-status {
+        display: none;
+    }
+
+    .workspace-body {
+        grid-template-columns:
+            210px
+            minmax(0, 1fr);
+    }
+
+    .workspace-chat-panel {
+        position: fixed;
+
+        top: var(--workspace-header-height);
+        right: 0;
+        bottom: var(--workspace-toolbar-height);
+
+        z-index: 1000;
+
+        width: min(340px, 88vw);
+
+        transform: translateX(100%);
+
+        box-shadow:
+            -20px 0 60px rgba(0, 0, 0, 0.35);
+
+        transition: transform 0.25s ease;
+    }
+
+    .workspace-chat-panel.open {
+        transform: translateX(0);
+    }
+}
+
+
+/* =========================================================
+   26. MOBILE
+   ========================================================= */
+
+@media (max-width: 700px) {
+
+    .workspace-header {
+        min-height: auto;
+
+        padding: 9px 12px;
+
+        grid-template-columns: 1fr auto;
+    }
+
+    .workspace-project-icon {
+        display: none;
+    }
+
+    .workspace-project-info h1 {
+        max-width: 160px;
+
+        font-size: 0.86rem;
+    }
+
+    .workspace-label {
+        font-size: 0.58rem;
+    }
+
+    .workspace-actions {
+        gap: 5px;
+    }
+
+    .workspace-action-button {
+        width: 37px;
+        min-height: 37px;
+
+        border-radius: 9px;
+    }
+
+    .workspace-body {
+        display: block;
+
+        overflow: auto;
+    }
+
+    .workspace-project-panel {
+        position: fixed;
+
+        top: 0;
+        left: 0;
+        bottom: 0;
+
+        z-index: 1600;
+
+        width: min(280px, 85vw);
+
+        transform: translateX(-100%);
+
+        box-shadow:
+            20px 0 60px rgba(0, 0, 0, 0.42);
+
+        transition: transform 0.25s ease;
+    }
+
+    .workspace-project-panel.open {
+        transform: translateX(0);
+    }
+
+    .workspace-main {
+        min-height: calc(
+            100vh -
+            var(--workspace-header-height) -
+            var(--workspace-toolbar-height)
+        );
+
+        display: flex;
+        flex-direction: column;
+    }
+
+    .workspace-code-section {
+        min-height: 52vh;
+    }
+
+    .workspace-visualizer-section {
+        min-height: 38vh;
+    }
+
+    .workspace-chat-panel {
+        top: 0;
+        bottom: 0;
+
+        width: min(350px, 92vw);
+
+        z-index: 1650;
+    }
+
+    .workspace-media-toolbar {
+        overflow-x: auto;
+
+        padding: 8px 10px;
+
+        gap: 6px;
+    }
+
+    .media-tool-button {
+        flex: 0 0 40px;
+    }
+
+    .media-status {
+        flex: 0 0 auto;
+
+        margin-left: 6px;
+
+        white-space: nowrap;
+    }
+
+    .media-preview-container {
+        left: 12px;
+        right: 12px;
+
+        bottom: 72px;
+
+        width: auto;
+    }
+}
+
+
+/* =========================================================
+   27. VERY SMALL MOBILE
+   ========================================================= */
+
+@media (max-width: 430px) {
+
+    .workspace-project-info h1 {
+        max-width: 115px;
+    }
+
+    .workspace-menu-button {
+        width: 36px;
+        height: 36px;
+    }
+
+    .workspace-action-button {
+        width: 35px;
+        min-height: 35px;
+    }
+
+    .analysis-overlay-content {
+        padding: 28px 20px;
+    }
+
+    .media-status #connectionStatus {
+        display: none;
+    }
+}
+
+
+/* =========================================================
+   28. OPTIONAL FULLSCREEN WORKSPACE
+   ========================================================= */
+
+.workspace-page.fullscreen-workspace {
+    position: fixed;
+    inset: 0;
+
+    z-index: 5000;
+}
+
+
+/* =========================================================
+   29. SUBTLE ENTRY ANIMATION
+   ========================================================= */
+
+.workspace-page {
+    animation: workspaceFadeIn 0.32s ease;
+}
+
+@keyframes workspaceFadeIn {
+
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+

@@ -1,0 +1,205 @@
+{% extends "base.html" %}
+
+{% block title %}Login | AI Coding Teammate{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/auth.css') }}">
+{% endblock %}
+
+{% block content %}
+
+<section class="auth-page">
+    <div class="auth-container">
+
+        <!-- Login Header -->
+        <div class="auth-header">
+            <div class="auth-icon">
+                <span>🤖</span>
+            </div>
+
+            <h1>Welcome Back</h1>
+
+            <p>
+                Sign in to continue working with your AI Coding Teammate.
+            </p>
+        </div>
+
+        <!-- Login Card -->
+        <div class="auth-card">
+
+            <form
+                method="POST"
+                action="{{ url_for('auth.login') }}"
+                class="auth-form"
+                novalidate
+            >
+
+                <!-- CSRF Token -->
+                {% if csrf_token is defined %}
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                {% endif %}
+
+                <!-- Email -->
+                <div class="form-group">
+
+                    <label for="email">
+                        Email Address
+                    </label>
+
+                    <input
+                        type="email"
+                        id="email"
+                        name="email"
+                        placeholder="Enter your email address"
+                        value="{{ request.form.get('email', '') }}"
+                        autocomplete="email"
+                        required
+                    >
+
+                </div>
+
+                <!-- Password -->
+                <div class="form-group">
+
+                    <div class="password-label-row">
+
+                        <label for="password">
+                            Password
+                        </label>
+
+                        <a
+                            href="{{ url_for('auth.forgot_password') }}"
+                            class="forgot-password"
+                        >
+                            Forgot password?
+                        </a>
+
+                    </div>
+
+                    <div class="password-wrapper">
+
+                        <input
+                            type="password"
+                            id="password"
+                            name="password"
+                            placeholder="Enter your password"
+                            autocomplete="current-password"
+                            required
+                        >
+
+                        <button
+                            type="button"
+                            class="password-toggle"
+                            id="togglePassword"
+                            aria-label="Show password"
+                        >
+                            👁
+                        </button>
+
+                    </div>
+
+                </div>
+
+                <!-- Remember Me -->
+                <div class="form-options">
+
+                    <label class="remember-me">
+
+                        <input
+                            type="checkbox"
+                            name="remember"
+                            value="1"
+                        >
+
+                        <span>Remember me</span>
+
+                    </label>
+
+                </div>
+
+                <!-- Login Button -->
+                <button
+                    type="submit"
+                    class="auth-submit"
+                >
+                    <span>Sign In</span>
+                    <span class="submit-arrow">→</span>
+                </button>
+
+            </form>
+
+            <!-- Divider -->
+            <div class="auth-divider">
+                <span>OR</span>
+            </div>
+
+            <!-- Register -->
+            <div class="auth-register">
+
+                <p>
+                    Don't have an account?
+                    <a href="{{ url_for('auth.register') }}">
+                        Create an account
+                    </a>
+                </p>
+
+            </div>
+
+        </div>
+
+        <!-- Security Notice -->
+        <div class="auth-security">
+
+            <span class="security-icon">🔒</span>
+
+            <p>
+                Your account and development projects are protected
+                with secure authentication.
+            </p>
+
+        </div>
+
+    </div>
+</section>
+
+{% endblock %}
+
+
+{% block extra_js %}
+
+<script>
+"use strict";
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    const passwordInput = document.getElementById("password");
+    const togglePassword = document.getElementById("togglePassword");
+
+    if (passwordInput && togglePassword) {
+
+        togglePassword.addEventListener("click", function () {
+
+            const isPassword =
+                passwordInput.getAttribute("type") === "password";
+
+            passwordInput.setAttribute(
+                "type",
+                isPassword ? "text" : "password"
+            );
+
+            togglePassword.textContent =
+                isPassword ? "🙈" : "👁";
+
+            togglePassword.setAttribute(
+                "aria-label",
+                isPassword ? "Hide password" : "Show password"
+            );
+
+        });
+
+    }
+
+});
+</script>
+
+{% endblock %}

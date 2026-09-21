@@ -1,0 +1,144 @@
+/* =========================================================
+   RESPONSIVE DESIGN
+   ========================================================= */
+
+@media (max-width: 1100px) {
+
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .project-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .workspace-main {
+        grid-template-columns: 1fr;
+    }
+
+    .workspace-right {
+        display: none;
+    }
+}
+
+@media (max-width: 850px) {
+
+    .sidebar {
+        transform: translateX(-100%);
+    }
+
+    .sidebar.open {
+        transform: translateX(0);
+    }
+
+    .sidebar-overlay.active {
+        display: block;
+    }
+
+    .navbar-menu-toggle {
+        display: flex;
+    }
+
+    .dashboard {
+        margin-left: 0;
+    }
+
+    .workspace {
+        margin-left: 0;
+    }
+
+    .dashboard-header {
+        flex-direction: column;
+        gap: 15px;
+    }
+}
+
+@media (max-width: 650px) {
+
+    .container {
+        width: min(100% - 24px, 1200px);
+    }
+
+    .navbar {
+        height: 60px;
+    }
+
+    .navbar-container {
+        padding: 0 12px;
+    }
+
+    .navbar-brand span {
+        display: none;
+    }
+
+    .sidebar {
+        top: 60px;
+        width: 280px;
+    }
+
+    .dashboard {
+        min-height: calc(100vh - 60px);
+        padding: 18px 12px;
+    }
+
+    .dashboard-title {
+        font-size: 23px;
+    }
+
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .project-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .dashboard-actions {
+        width: 100%;
+        flex-wrap: wrap;
+    }
+
+    .dashboard-actions .btn {
+        flex: 1;
+    }
+
+    .auth-page {
+        padding: 15px;
+    }
+
+    .auth-card {
+        padding: 24px 18px;
+    }
+
+    .workspace-toolbar {
+        overflow-x: auto;
+    }
+
+    .workspace-toolbar-left,
+    .workspace-toolbar-right {
+        flex-shrink: 0;
+    }
+
+    .workspace-btn span {
+        display: none;
+    }
+}
+
+@media (max-width: 450px) {
+
+    .navbar-actions .btn {
+        display: none;
+    }
+
+    .stat-card {
+        padding: 16px;
+    }
+
+    .project-card {
+        padding: 16px;
+    }
+
+    .auth-title {
+        font-size: 22px;
+    }
+}

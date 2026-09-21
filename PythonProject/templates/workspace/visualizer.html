@@ -1,0 +1,406 @@
+<div class="visualizer-container">
+
+    <!-- =====================================================
+         VISUALIZER HEADER
+    ====================================================== -->
+
+    <div class="visualizer-header">
+
+        <div>
+
+            <span class="visualizer-label">
+                AI VISUALIZER
+            </span>
+
+            <h2>
+                Understanding Your Code
+            </h2>
+
+        </div>
+
+
+        <div class="visualizer-status">
+
+            <span
+                id="visualizerStatusDot"
+                class="visualizer-status-dot"
+            ></span>
+
+            <span id="visualizerStatus">
+                Ready
+            </span>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         VISUALIZER TABS
+    ====================================================== -->
+
+    <div class="visualizer-tabs">
+
+        <button
+            type="button"
+            class="visualizer-tab active"
+            data-view="analysis"
+        >
+            🔍 Analysis
+        </button>
+
+
+        <button
+            type="button"
+            class="visualizer-tab"
+            data-view="errors"
+        >
+            ⚠️ Errors
+        </button>
+
+
+        <button
+            type="button"
+            class="visualizer-tab"
+            data-view="flow"
+        >
+            🔄 Code Flow
+        </button>
+
+
+        <button
+            type="button"
+            class="visualizer-tab"
+            data-view="correction"
+        >
+            🛠 Correction
+        </button>
+
+
+        <button
+            type="button"
+            class="visualizer-tab"
+            data-view="screen"
+        >
+            🖥️ Screen
+        </button>
+
+    </div>
+
+
+    <!-- =====================================================
+         VISUALIZER CONTENT
+    ====================================================== -->
+
+    <div class="visualizer-content">
+
+
+        <!-- ================================================
+             ANALYSIS VIEW
+        ================================================= -->
+
+        <div
+            id="visualizerAnalysis"
+            class="visualizer-view active"
+        >
+
+            <div class="visualizer-empty">
+
+                <div class="visualizer-large-icon">
+                    👁️
+                </div>
+
+                <h3>
+                    AI analysis will appear here
+                </h3>
+
+                <p>
+                    Run an analysis or show your AI teammate
+                    your code to understand what is happening.
+                </p>
+
+                <button
+                    type="button"
+                    id="startAnalysisButton"
+                    class="visualizer-primary-button"
+                >
+                    🔍 Analyze Code
+                </button>
+
+            </div>
+
+        </div>
+
+
+        <!-- ================================================
+             ERRORS VIEW
+        ================================================= -->
+
+        <div
+            id="visualizerErrors"
+            class="visualizer-view"
+        >
+
+            <div class="analysis-summary">
+
+                <div class="summary-icon">
+                    ⚠️
+                </div>
+
+                <div>
+
+                    <span class="summary-label">
+                        DETECTED ISSUES
+                    </span>
+
+                    <h3 id="errorCount">
+                        No errors detected
+                    </h3>
+
+                </div>
+
+            </div>
+
+
+            <div
+                id="errorList"
+                class="error-list"
+            >
+
+                <div class="visualizer-empty small">
+
+                    <p>
+                        Errors detected by the AI will
+                        appear here.
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- ================================================
+             CODE FLOW VIEW
+        ================================================= -->
+
+        <div
+            id="visualizerFlow"
+            class="visualizer-view"
+        >
+
+            <div class="flow-header">
+
+                <h3>
+                    Code Execution Flow
+                </h3>
+
+                <p>
+                    Visual representation of how your code
+                    moves through its major operations.
+                </p>
+
+            </div>
+
+
+            <div
+                id="codeFlowCanvas"
+                class="code-flow-canvas"
+            >
+
+                <div class="flow-placeholder">
+
+                    <span>
+                        🔄
+                    </span>
+
+                    <p>
+                        Code flow will be generated
+                        after analysis.
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- ================================================
+             CORRECTION VIEW
+        ================================================= -->
+
+        <div
+            id="visualizerCorrection"
+            class="visualizer-view"
+        >
+
+            <div class="correction-header">
+
+                <h3>
+                    Suggested Correction
+                </h3>
+
+                <p>
+                    Your AI teammate can explain what changed
+                    and why.
+                </p>
+
+            </div>
+
+
+            <div class="correction-comparison">
+
+                <div class="correction-panel">
+
+                    <div class="correction-panel-header">
+                        Before
+                    </div>
+
+                    <pre
+                        id="originalCode"
+                    >No correction available yet.</pre>
+
+                </div>
+
+
+                <div class="correction-arrow">
+                    →
+                </div>
+
+
+                <div class="correction-panel">
+
+                    <div class="correction-panel-header">
+                        After
+                    </div>
+
+                    <pre
+                        id="correctedCode"
+                    >Corrected code will appear here.</pre>
+
+                </div>
+
+            </div>
+
+
+            <div
+                id="correctionExplanation"
+                class="correction-explanation"
+            >
+
+                <strong>
+                    Why this correction?
+                </strong>
+
+                <p>
+                    Ask your AI teammate to explain the
+                    suggested correction.
+                </p>
+
+            </div>
+
+
+            <div class="correction-actions">
+
+                <button
+                    type="button"
+                    id="applyCorrectionButton"
+                    class="visualizer-primary-button"
+                    disabled
+                >
+                    Apply Correction
+                </button>
+
+                <button
+                    type="button"
+                    id="explainCorrectionButton"
+                    class="visualizer-secondary-button"
+                >
+                    Explain Changes
+                </button>
+
+            </div>
+
+        </div>
+
+
+        <!-- ================================================
+             SCREEN VIEW
+        ================================================= -->
+
+        <div
+            id="visualizerScreen"
+            class="visualizer-view"
+        >
+
+            <div class="screen-analysis-container">
+
+                <div class="screen-preview">
+
+                    <video
+                        id="visualizerScreenVideo"
+                        autoplay
+                        muted
+                        playsinline
+                    ></video>
+
+                    <div
+                        id="screenAnalysisOverlay"
+                        class="screen-analysis-overlay"
+                    ></div>
+
+                </div>
+
+
+                <div class="screen-analysis-info">
+
+                    <span class="summary-label">
+                        LIVE VISION
+                    </span>
+
+                    <h3>
+                        AI Screen Analysis
+                    </h3>
+
+                    <p id="screenAnalysisText">
+                        Share your screen so your AI teammate
+                        can see what you are working on.
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         AI INSIGHT FOOTER
+    ====================================================== -->
+
+    <div class="visualizer-insight">
+
+        <div class="insight-icon">
+            💡
+        </div>
+
+        <div>
+
+            <strong>
+                AI Insight
+            </strong>
+
+            <p id="aiInsightText">
+                Your AI teammate will provide useful
+                development insights here.
+            </p>
+
+        </div>
+
+    </div>
+
+</div>

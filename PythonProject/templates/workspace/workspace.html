@@ -1,0 +1,358 @@
+{% extends "base.html" %}
+
+{% block title %}Workspace | AI Coding Teammate{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet"
+      href="{{ url_for('static', filename='css/workspace.css') }}">
+
+<link rel="stylesheet"
+      href="{{ url_for('static', filename='css/code-editor.css') }}">
+
+<link rel="stylesheet"
+      href="{{ url_for('static', filename='css/visualizer.css') }}">
+
+<link rel="stylesheet"
+      href="{{ url_for('static', filename='css/chat.css') }}">
+{% endblock %}
+
+
+{% block content %}
+
+<div class="workspace-page">
+
+    <!-- =====================================================
+         WORKSPACE TOP BAR
+    ====================================================== -->
+
+    <header class="workspace-header">
+
+        <div class="workspace-brand">
+
+            <button
+                type="button"
+                id="workspaceMenuButton"
+                class="workspace-menu-button"
+                aria-label="Toggle project panel"
+            >
+                ☰
+            </button>
+
+            <div class="workspace-project-icon">
+                💻
+            </div>
+
+            <div class="workspace-project-info">
+
+                <span class="workspace-label">
+                    PROJECT
+                </span>
+
+                <h1 id="workspaceProjectName">
+                    {{ project.name if project else 'New Project' }}
+                </h1>
+
+            </div>
+
+        </div>
+
+
+        <!-- Workspace Status -->
+
+        <div class="workspace-status">
+
+            <span
+                id="aiStatusIndicator"
+                class="status-dot online"
+            ></span>
+
+            <span id="aiStatusText">
+                AI Teammate Online
+            </span>
+
+        </div>
+
+
+        <!-- Workspace Actions -->
+
+        <div class="workspace-actions">
+
+            <button
+                type="button"
+                id="saveProjectButton"
+                class="workspace-action-button"
+                title="Save project"
+            >
+                💾
+                <span>Save</span>
+            </button>
+
+
+            <button
+                type="button"
+                id="runCodeButton"
+                class="workspace-action-button run-button"
+                title="Run code"
+            >
+                ▶
+                <span>Run</span>
+            </button>
+
+
+            <button
+                type="button"
+                id="shareWorkspaceButton"
+                class="workspace-action-button"
+                title="Share workspace"
+            >
+                🔗
+                <span>Share</span>
+            </button>
+
+        </div>
+
+    </header>
+
+
+    <!-- =====================================================
+         WORKSPACE BODY
+    ====================================================== -->
+
+    <div class="workspace-body" id="workspaceBody">
+
+
+        <!-- =================================================
+             PROJECT PANEL
+        ================================================== -->
+
+        <aside
+            class="workspace-project-panel"
+            id="workspaceProjectPanel"
+        >
+
+            {% include "workspace/project_panel.html" %}
+
+        </aside>
+
+
+        <!-- =================================================
+             MAIN DEVELOPMENT AREA
+        ================================================== -->
+
+        <main class="workspace-main">
+
+
+            <!-- =============================================
+                 CODE EDITOR
+            ============================================== -->
+
+            <section
+                class="workspace-code-section"
+                id="codeSection"
+            >
+
+                {% include "workspace/code_editor.html" %}
+
+            </section>
+
+
+            <!-- =============================================
+                 AI VISUALIZER
+            ============================================== -->
+
+            <section
+                class="workspace-visualizer-section"
+                id="visualizerSection"
+            >
+
+                {% include "workspace/visualizer.html" %}
+
+            </section>
+
+        </main>
+
+
+        <!-- =================================================
+             AI CHAT
+        ================================================== -->
+
+        <aside
+            class="workspace-chat-panel"
+            id="workspaceChatPanel"
+        >
+
+            {% include "workspace/chat.html" %}
+
+        </aside>
+
+    </div>
+
+
+    <!-- =====================================================
+         MEDIA / SCREEN SHARE TOOLBAR
+    ====================================================== -->
+
+    <div class="workspace-media-toolbar">
+
+        <button
+            type="button"
+            id="shareScreenButton"
+            class="media-tool-button"
+        >
+            🖥️
+            <span>Share Screen</span>
+        </button>
+
+
+        <button
+            type="button"
+            id="cameraButton"
+            class="media-tool-button"
+        >
+            📷
+            <span>Camera</span>
+        </button>
+
+
+        <button
+            type="button"
+            id="uploadMediaButton"
+            class="media-tool-button"
+        >
+            🖼️
+            <span>Image / Video</span>
+        </button>
+
+
+        <button
+            type="button"
+            id="voiceButton"
+            class="media-tool-button"
+        >
+            🎤
+            <span>Voice</span>
+        </button>
+
+
+        <div class="media-status">
+
+            <span
+                id="connectionIndicator"
+                class="connection-dot"
+            ></span>
+
+            <span id="connectionStatus">
+                Connecting...
+            </span>
+
+        </div>
+
+    </div>
+
+
+    <!-- Hidden media input -->
+
+    <input
+        type="file"
+        id="mediaUploadInput"
+        accept="image/*,video/*"
+        hidden
+    >
+
+
+    <!-- =====================================================
+         CAMERA / SCREEN PREVIEW
+    ====================================================== -->
+
+    <div
+        id="mediaPreviewContainer"
+        class="media-preview-container"
+        hidden
+    >
+
+        <div class="media-preview-header">
+
+            <strong id="mediaPreviewTitle">
+                Live Preview
+            </strong>
+
+            <button
+                type="button"
+                id="closeMediaPreview"
+            >
+                ✕
+            </button>
+
+        </div>
+
+
+        <video
+            id="workspaceVideoPreview"
+            autoplay
+            muted
+            playsinline
+        ></video>
+
+
+        <canvas
+            id="workspaceCaptureCanvas"
+            hidden
+        ></canvas>
+
+    </div>
+
+
+    <!-- =====================================================
+         AI ANALYSIS OVERLAY
+    ====================================================== -->
+
+    <div
+        id="analysisOverlay"
+        class="analysis-overlay"
+        hidden
+    >
+
+        <div class="analysis-overlay-content">
+
+            <div class="analysis-spinner"></div>
+
+            <h3>
+                AI Teammate is analyzing...
+            </h3>
+
+            <p id="analysisProgress">
+                Examining your code.
+            </p>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}
+
+
+{% block extra_js %}
+
+<script src="{{ url_for('static', filename='js/websocket.js') }}"></script>
+
+<script src="{{ url_for('static', filename='js/code-editor.js') }}"></script>
+
+<script src="{{ url_for('static', filename='js/code-analysis.js') }}"></script>
+
+<script src="{{ url_for('static', filename='js/visualizer.js') }}"></script>
+
+<script src="{{ url_for('static', filename='js/chat.js') }}"></script>
+
+<script src="{{ url_for('static', filename='js/screen-share.js') }}"></script>
+
+<script src="{{ url_for('static', filename='js/camera.js') }}"></script>
+
+<script src="{{ url_for('static', filename='js/image-video.js') }}"></script>
+
+<script src="{{ url_for('static', filename='js/voice.js') }}"></script>
+
+<script src="{{ url_for('static', filename='js/project.js') }}"></script>
+
+{% endblock %}

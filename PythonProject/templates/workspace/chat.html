@@ -1,0 +1,252 @@
+<div class="chat-container">
+
+    <!-- =====================================================
+         CHAT HEADER
+    ====================================================== -->
+
+    <div class="chat-header">
+
+        <div class="chat-ai-profile">
+
+            <div class="chat-ai-avatar">
+                🤖
+
+                <span class="chat-online-dot"></span>
+            </div>
+
+            <div>
+
+                <span class="chat-status">
+                    ONLINE
+                </span>
+
+                <h2>
+                    AI Coding Teammate
+                </h2>
+
+            </div>
+
+        </div>
+
+
+        <button
+            type="button"
+            id="chatOptionsButton"
+            class="chat-options-button"
+            aria-label="Chat options"
+        >
+            ⋮
+        </button>
+
+    </div>
+
+
+    <!-- =====================================================
+         CONVERSATION
+    ====================================================== -->
+
+    <div
+        id="chatMessages"
+        class="chat-messages"
+    >
+
+        <!-- AI Welcome Message -->
+
+        <div class="chat-message ai-message">
+
+            <div class="message-avatar">
+                🤖
+            </div>
+
+            <div class="message-content">
+
+                <span class="message-sender">
+                    AI Teammate
+                </span>
+
+                <div class="message-bubble">
+
+                    <p>
+                        Hey! I'm ready to work with you.
+                    </p>
+
+                    <p>
+                        Show me your code, share your screen,
+                        upload an image, or tell me what
+                        you're trying to build.
+                    </p>
+
+                    <p>
+                        We'll figure it out together.
+                    </p>
+
+                </div>
+
+                <span class="message-time">
+                    Now
+                </span>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         TYPING INDICATOR
+    ====================================================== -->
+
+    <div
+        id="chatTypingIndicator"
+        class="chat-typing-indicator"
+        hidden
+    >
+
+        <div class="message-avatar">
+            🤖
+        </div>
+
+        <div class="typing-bubble">
+
+            <span></span>
+            <span></span>
+            <span></span>
+
+        </div>
+
+        <span>
+            AI is thinking...
+        </span>
+
+    </div>
+
+
+    <!-- =====================================================
+         QUICK ACTIONS
+    ====================================================== -->
+
+    <div class="chat-quick-actions">
+
+        <button
+            type="button"
+            class="quick-action"
+            data-message="Please explain this code to me."
+        >
+            💡 Explain Code
+        </button>
+
+
+        <button
+            type="button"
+            class="quick-action"
+            data-message="Please find the error in my code."
+        >
+            🐛 Find Error
+        </button>
+
+
+        <button
+            type="button"
+            class="quick-action"
+            data-message="Please correct this code."
+        >
+            🛠 Correct Code
+        </button>
+
+
+        <button
+            type="button"
+            class="quick-action"
+            data-message="Please review my code and suggest improvements."
+        >
+            🔍 Review Code
+        </button>
+
+    </div>
+
+
+    <!-- =====================================================
+         CHAT INPUT
+    ====================================================== -->
+
+    <form
+        id="chatForm"
+        class="chat-input-area"
+    >
+
+        <div class="chat-input-wrapper">
+
+            <textarea
+                id="chatInput"
+                name="message"
+                rows="1"
+                placeholder="Ask your AI teammate..."
+                autocomplete="off"
+            ></textarea>
+
+
+            <div class="chat-input-actions">
+
+                <button
+                    type="button"
+                    id="attachCodeButton"
+                    class="chat-input-button"
+                    title="Attach code"
+                >
+                    📎
+                </button>
+
+
+                <button
+                    type="button"
+                    id="chatVoiceButton"
+                    class="chat-input-button"
+                    title="Voice input"
+                >
+                    🎤
+                </button>
+
+
+                <button
+                    type="submit"
+                    id="sendChatButton"
+                    class="chat-send-button"
+                    title="Send message"
+                >
+                    ➤
+                </button>
+
+            </div>
+
+        </div>
+
+    </form>
+
+
+    <!-- =====================================================
+         VOICE STATUS
+    ====================================================== -->
+
+    <div
+        id="voiceStatus"
+        class="voice-status"
+        hidden
+    >
+
+        <span class="voice-pulse"></span>
+
+        <span>
+            Listening...
+        </span>
+
+        <button
+            type="button"
+            id="stopVoiceButton"
+        >
+            Stop
+        </button>
+
+    </div>
+
+</div>

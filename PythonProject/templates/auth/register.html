@@ -1,0 +1,363 @@
+{% extends "base.html" %}
+
+{% block title %}Create Account | AI Coding Teammate{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/auth.css') }}">
+{% endblock %}
+
+{% block content %}
+
+<section class="auth-page">
+    <div class="auth-container">
+
+        <!-- Header -->
+        <div class="auth-header">
+            <div class="auth-icon">
+                <span>🤖</span>
+            </div>
+
+            <h1>Create Your Account</h1>
+
+            <p>
+                Start building with your AI Coding Teammate.
+            </p>
+        </div>
+
+        <!-- Registration Card -->
+        <div class="auth-card">
+
+            <form
+                method="POST"
+                action="{{ url_for('auth.register') }}"
+                class="auth-form"
+                novalidate
+            >
+
+                {% if csrf_token is defined %}
+                    <input
+                        type="hidden"
+                        name="csrf_token"
+                        value="{{ csrf_token() }}"
+                    >
+                {% endif %}
+
+                <!-- First Name -->
+                <div class="form-group">
+
+                    <label for="first_name">
+                        First Name
+                    </label>
+
+                    <input
+                        type="text"
+                        id="first_name"
+                        name="first_name"
+                        placeholder="Enter your first name"
+                        value="{{ request.form.get('first_name', '') }}"
+                        autocomplete="given-name"
+                        required
+                    >
+
+                </div>
+
+                <!-- Last Name -->
+                <div class="form-group">
+
+                    <label for="last_name">
+                        Last Name
+                    </label>
+
+                    <input
+                        type="text"
+                        id="last_name"
+                        name="last_name"
+                        placeholder="Enter your last name"
+                        value="{{ request.form.get('last_name', '') }}"
+                        autocomplete="family-name"
+                        required
+                    >
+
+                </div>
+
+                <!-- Email -->
+                <div class="form-group">
+
+                    <label for="email">
+                        Email Address
+                    </label>
+
+                    <input
+                        type="email"
+                        id="email"
+                        name="email"
+                        placeholder="Enter your email address"
+                        value="{{ request.form.get('email', '') }}"
+                        autocomplete="email"
+                        required
+                    >
+
+                </div>
+
+                <!-- Password -->
+                <div class="form-group">
+
+                    <label for="password">
+                        Password
+                    </label>
+
+                    <div class="password-wrapper">
+
+                        <input
+                            type="password"
+                            id="password"
+                            name="password"
+                            placeholder="Create a password"
+                            autocomplete="new-password"
+                            minlength="8"
+                            required
+                        >
+
+                        <button
+                            type="button"
+                            class="password-toggle"
+                            id="togglePassword"
+                            aria-label="Show password"
+                        >
+                            👁
+                        </button>
+
+                    </div>
+
+                    <small class="form-help">
+                        Password must contain at least 8 characters.
+                    </small>
+
+                </div>
+
+                <!-- Confirm Password -->
+                <div class="form-group">
+
+                    <label for="confirm_password">
+                        Confirm Password
+                    </label>
+
+                    <div class="password-wrapper">
+
+                        <input
+                            type="password"
+                            id="confirm_password"
+                            name="confirm_password"
+                            placeholder="Confirm your password"
+                            autocomplete="new-password"
+                            minlength="8"
+                            required
+                        >
+
+                        <button
+                            type="button"
+                            class="password-toggle"
+                            id="toggleConfirmPassword"
+                            aria-label="Show password"
+                        >
+                            👁
+                        </button>
+
+                    </div>
+
+                    <small
+                        id="passwordMatchMessage"
+                        class="form-help"
+                    ></small>
+
+                </div>
+
+                <!-- Terms -->
+                <div class="form-options">
+
+                    <label class="remember-me">
+
+                        <input
+                            type="checkbox"
+                            id="terms"
+                            name="terms"
+                            value="1"
+                            required
+                        >
+
+                        <span>
+                            I agree to the
+                            <a href="#" class="inline-link">
+                                Terms of Service
+                            </a>
+                            and
+                            <a href="#" class="inline-link">
+                                Privacy Policy
+                            </a>.
+                        </span>
+
+                    </label>
+
+                </div>
+
+                <!-- Submit -->
+                <button
+                    type="submit"
+                    class="auth-submit"
+                >
+                    <span>Create Account</span>
+                    <span class="submit-arrow">→</span>
+                </button>
+
+            </form>
+
+            <!-- Divider -->
+            <div class="auth-divider">
+                <span>OR</span>
+            </div>
+
+            <!-- Login -->
+            <div class="auth-register">
+
+                <p>
+                    Already have an account?
+                    <a href="{{ url_for('auth.login') }}">
+                        Sign in
+                    </a>
+                </p>
+
+            </div>
+
+        </div>
+
+        <!-- Security Notice -->
+        <div class="auth-security">
+
+            <span class="security-icon">🔒</span>
+
+            <p>
+                Your account information is securely protected.
+            </p>
+
+        </div>
+
+    </div>
+</section>
+
+{% endblock %}
+
+
+{% block extra_js %}
+
+<script>
+"use strict";
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    const passwordInput =
+        document.getElementById("password");
+
+    const confirmPasswordInput =
+        document.getElementById("confirm_password");
+
+    const togglePassword =
+        document.getElementById("togglePassword");
+
+    const toggleConfirmPassword =
+        document.getElementById("toggleConfirmPassword");
+
+    const passwordMatchMessage =
+        document.getElementById("passwordMatchMessage");
+
+
+    /* ---------------------------------------
+       Show / Hide Password
+    --------------------------------------- */
+
+    function setupPasswordToggle(button, input) {
+
+        if (!button || !input) {
+            return;
+        }
+
+        button.addEventListener("click", function () {
+
+            const isPassword =
+                input.getAttribute("type") === "password";
+
+            input.setAttribute(
+                "type",
+                isPassword ? "text" : "password"
+            );
+
+            button.textContent =
+                isPassword ? "🙈" : "👁";
+
+            button.setAttribute(
+                "aria-label",
+                isPassword ? "Hide password" : "Show password"
+            );
+
+        });
+    }
+
+
+    setupPasswordToggle(
+        togglePassword,
+        passwordInput
+    );
+
+    setupPasswordToggle(
+        toggleConfirmPassword,
+        confirmPasswordInput
+    );
+
+
+    /* ---------------------------------------
+       Password Confirmation
+    --------------------------------------- */
+
+    function checkPasswordMatch() {
+
+        if (!passwordInput || !confirmPasswordInput) {
+            return;
+        }
+
+        if (!confirmPasswordInput.value) {
+
+            passwordMatchMessage.textContent = "";
+
+            return;
+        }
+
+        if (
+            passwordInput.value ===
+            confirmPasswordInput.value
+        ) {
+
+            passwordMatchMessage.textContent =
+                "Passwords match.";
+
+        } else {
+
+            passwordMatchMessage.textContent =
+                "Passwords do not match.";
+
+        }
+    }
+
+
+    passwordInput.addEventListener(
+        "input",
+        checkPasswordMatch
+    );
+
+    confirmPasswordInput.addEventListener(
+        "input",
+        checkPasswordMatch
+    );
+
+});
+</script>
+
+{% endblock %}

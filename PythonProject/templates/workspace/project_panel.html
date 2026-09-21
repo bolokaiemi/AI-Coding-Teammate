@@ -1,0 +1,418 @@
+<div class="project-panel-container">
+
+    <!-- =====================================================
+         PROJECT PANEL HEADER
+    ====================================================== -->
+
+    <div class="project-panel-header">
+
+        <div>
+
+            <span class="project-panel-label">
+                PROJECT
+            </span>
+
+            <h2>
+                {{ project.name if project else 'My Project' }}
+            </h2>
+
+        </div>
+
+
+        <button
+            type="button"
+            id="projectPanelOptions"
+            class="panel-options-button"
+            aria-label="Project options"
+        >
+            ⋮
+        </button>
+
+    </div>
+
+
+    <!-- =====================================================
+         PROJECT ACTIONS
+    ====================================================== -->
+
+    <div class="project-panel-actions">
+
+        <button
+            type="button"
+            id="newFileButton"
+            class="panel-action"
+        >
+            📄
+            <span>New File</span>
+        </button>
+
+
+        <button
+            type="button"
+            id="newFolderButton"
+            class="panel-action"
+        >
+            📁
+            <span>New Folder</span>
+        </button>
+
+
+        <button
+            type="button"
+            id="uploadProjectButton"
+            class="panel-action"
+        >
+            ⬆️
+            <span>Upload</span>
+        </button>
+
+    </div>
+
+
+    <!-- =====================================================
+         PROJECT SEARCH
+    ====================================================== -->
+
+    <div class="project-file-search">
+
+        <span>
+            🔍
+        </span>
+
+        <input
+            type="search"
+            id="projectFileSearch"
+            placeholder="Search files..."
+            autocomplete="off"
+        >
+
+    </div>
+
+
+    <!-- =====================================================
+         FILE TREE
+    ====================================================== -->
+
+    <div
+        id="projectFileTree"
+        class="project-file-tree"
+    >
+
+        {% if files %}
+
+            {% for file in files %}
+
+            <div
+                class="file-tree-item
+                {% if current_file and current_file.id == file.id %}
+                    active
+                {% endif %}"
+                data-file-id="{{ file.id }}"
+                data-file-name="{{ file.name }}"
+            >
+
+                <span class="file-tree-icon">
+
+                    {% if file.is_folder %}
+                        📁
+                    {% elif file.name.endswith('.py') %}
+                        🐍
+                    {% elif file.name.endswith('.js') %}
+                        🟨
+                    {% elif file.name.endswith('.html') %}
+                        🌐
+                    {% elif file.name.endswith('.css') %}
+                        🎨
+                    {% elif file.name.endswith('.json') %}
+                        🧾
+                    {% elif file.name.endswith('.sql') %}
+                        🗄️
+                    {% else %}
+                        📄
+                    {% endif %}
+
+                </span>
+
+
+                <span class="file-tree-name">
+                    {{ file.name }}
+                </span>
+
+            </div>
+
+            {% endfor %}
+
+        {% else %}
+
+            <!-- Default project structure -->
+
+            <div class="file-tree-group">
+
+                <div
+                    class="file-tree-item folder expanded"
+                    data-folder="root"
+                >
+
+                    <span class="folder-arrow">
+                        ▼
+                    </span>
+
+                    <span class="file-tree-icon">
+                        📁
+                    </span>
+
+                    <span class="file-tree-name">
+                        {{ project.name if project else 'project' }}
+                    </span>
+
+                </div>
+
+
+                <div class="folder-children">
+
+                    <div
+                        class="file-tree-item active"
+                        data-file-name="main.py"
+                    >
+
+                        <span class="file-tree-icon">
+                            🐍
+                        </span>
+
+                        <span class="file-tree-name">
+                            main.py
+                        </span>
+
+                    </div>
+
+
+                    <div
+                        class="file-tree-item"
+                        data-file-name="app.py"
+                    >
+
+                        <span class="file-tree-icon">
+                            🐍
+                        </span>
+
+                        <span class="file-tree-name">
+                            app.py
+                        </span>
+
+                    </div>
+
+
+                    <div
+                        class="file-tree-item"
+                        data-file-name="requirements.txt"
+                    >
+
+                        <span class="file-tree-icon">
+                            📦
+                        </span>
+
+                        <span class="file-tree-name">
+                            requirements.txt
+                        </span>
+
+                    </div>
+
+
+                    <div
+                        class="file-tree-item"
+                        data-file-name="README.md"
+                    >
+
+                        <span class="file-tree-icon">
+                            📘
+                        </span>
+
+                        <span class="file-tree-name">
+                            README.md
+                        </span>
+
+                    </div>
+
+
+                    <div
+                        class="file-tree-item folder"
+                        data-folder="templates"
+                    >
+
+                        <span class="folder-arrow">
+                            ▶
+                        </span>
+
+                        <span class="file-tree-icon">
+                            📁
+                        </span>
+
+                        <span class="file-tree-name">
+                            templates
+                        </span>
+
+                    </div>
+
+
+                    <div
+                        class="file-tree-item folder"
+                        data-folder="static"
+                    >
+
+                        <span class="folder-arrow">
+                            ▶
+                        </span>
+
+                        <span class="file-tree-icon">
+                            📁
+                        </span>
+
+                        <span class="file-tree-name">
+                            static
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        {% endif %}
+
+    </div>
+
+
+    <!-- =====================================================
+         PROJECT INFORMATION
+    ====================================================== -->
+
+    <div class="project-panel-footer">
+
+        <div class="project-info-row">
+
+            <span>
+                Files
+            </span>
+
+            <strong>
+                {{ files|length if files else 4 }}
+            </strong>
+
+        </div>
+
+
+        <div class="project-info-row">
+
+            <span>
+                Language
+            </span>
+
+            <strong>
+                {{ project.language if project and project.language else 'Python' }}
+            </strong>
+
+        </div>
+
+
+        <div class="project-info-row">
+
+            <span>
+                AI Memory
+            </span>
+
+            <span class="memory-status">
+                ● Active
+            </span>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =========================================================
+     NEW FILE MODAL
+========================================================== -->
+
+<div
+    id="newFileModal"
+    class="workspace-modal"
+    hidden
+>
+
+    <div class="workspace-modal-content">
+
+        <div class="workspace-modal-header">
+
+            <h3>
+                Create New File
+            </h3>
+
+            <button
+                type="button"
+                class="modal-close"
+                data-close-modal="newFileModal"
+            >
+                ✕
+            </button>
+
+        </div>
+
+
+        <form id="newFileForm">
+
+            <div class="form-group">
+
+                <label for="newFileName">
+                    File Name
+                </label>
+
+                <input
+                    type="text"
+                    id="newFileName"
+                    name="file_name"
+                    placeholder="example.py"
+                    required
+                >
+
+            </div>
+
+
+            <div class="modal-actions">
+
+                <button
+                    type="button"
+                    class="modal-secondary-button"
+                    data-close-modal="newFileModal"
+                >
+                    Cancel
+                </button>
+
+                <button
+                    type="submit"
+                    class="modal-primary-button"
+                >
+                    Create File
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+
+<!-- =========================================================
+     UPLOAD PROJECT INPUT
+========================================================== -->
+
+<input
+    type="file"
+    id="projectUploadInput"
+    hidden
+    multiple
+    accept=".py,.js,.ts,.html,.css,.json,.sql,.md,.txt,.java,.cpp,.c,.go,.rs"
+>
