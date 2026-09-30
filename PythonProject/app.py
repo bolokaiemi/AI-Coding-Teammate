@@ -21,7 +21,6 @@ Combines:
 import logging
 import os
 import uuid
-from routes.workspace_routes import workspace_bp
 
 from dotenv import load_dotenv
 
@@ -55,9 +54,10 @@ load_dotenv()
 
 login_manager = LoginManager()
 
-socketio = SocketIO(
-    async_mode="threading",
-)
+# Do not force async_mode="threading".
+# Flask-SocketIO will select the available async backend.
+socketio = SocketIO()
+
 
 # ============================================================
 # FLASK-LOGIN CONFIGURATION
@@ -202,6 +202,7 @@ def create_app(config_name=None):
             False,
         ),
     )
+
     # --------------------------------------------------------
     # Create required directories
     # --------------------------------------------------------
@@ -211,8 +212,6 @@ def create_app(config_name=None):
     # --------------------------------------------------------
     # Register blueprints
     # --------------------------------------------------------
-
-
 
     register_blueprints(app)
 
@@ -723,5 +722,5 @@ if __name__ == "__main__":
         host=host,
         port=port,
         debug=debug_mode,
-        allow_unsafe_werkzeug=True
+        allow_unsafe_werkzeug=True,
     )

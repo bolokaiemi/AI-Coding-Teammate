@@ -1,822 +1,452 @@
-{% extends "base.html" %}
+<!-- =========================================================
+     PROJECT FILE TREE PARTIAL
+
+     File:
+     templates/workspace/_file_tree.html
+
+     PURPOSE:
+     Render ONLY project files and folders.
+
+     IMPORTANT:
+     - Do NOT extend base.html here.
+     - Do NOT create another project panel.
+     - Do NOT create another data-file-tree container.
+     - Do NOT add upload buttons here.
+     - Do NOT add New File / New Folder buttons here.
+
+     The parent container belongs to:
+     workspace/project_panel.html
+========================================================== -->
 
 
-{% block title %}
-Workspace | AI Coding Teammate
-{% endblock %}
-
-
-{% block extra_css %}
-
-<link
-    rel="stylesheet"
-    href="{{ url_for('static', filename='css/workspace.css') }}"
->
-
-<link
-    rel="stylesheet"
-    href="{{ url_for('static', filename='css/code-editor.css') }}"
->
-
-<link
-    rel="stylesheet"
-    href="{{ url_for('static', filename='css/visualizer.css') }}"
->
-
-<link
-    rel="stylesheet"
-    href="{{ url_for('static', filename='css/chat.css') }}"
->
-
-{% endblock %}
-
-
-{% block content %}
-
-<div
-    class="workspace-page"
-    id="workspacePage"
-    data-workspace
-    data-project-id="{{ project.id if project else '' }}"
->
+{% if files %}
 
 
     <!-- =====================================================
-         WORKSPACE HEADER
-    ====================================================== -->
-
-    <header class="workspace-header">
-
-
-        <!-- =================================================
-             PROJECT BRAND / INFORMATION
-        ================================================== -->
-
-        <div class="workspace-brand">
-
-            <button
-                type="button"
-                id="workspaceMenuButton"
-                class="workspace-menu-button"
-                aria-label="Toggle project panel"
-                aria-controls="workspaceProjectPanel"
-                aria-expanded="true"
-            >
-                ☰
-            </button>
-
-
-            <div
-                class="workspace-project-icon"
-                aria-hidden="true"
-            >
-                💻
-            </div>
-
-
-            <div class="workspace-project-info">
-
-                <span class="workspace-label">
-                    PROJECT
-                </span>
-
-                <h1 id="workspaceProjectName">
-                    {{ project.name if project else 'New Project' }}
-                </h1>
-
-            </div>
-
-        </div>
-
-
-        <!-- =================================================
-             AI TEAMMATE STATUS
-        ================================================== -->
-
-        <div
-            class="workspace-status"
-            aria-live="polite"
-        >
-
-            <span
-                id="aiStatusIndicator"
-                class="status-dot online"
-                aria-hidden="true"
-            ></span>
-
-            <span id="aiStatusText">
-                AI Teammate Online
-            </span>
-
-        </div>
-
-
-        <!-- =================================================
-             WORKSPACE ACTIONS
-        ================================================== -->
-
-        <div class="workspace-actions">
-
-
-            <!-- SAVE -->
-
-            <button
-                type="button"
-                id="saveProjectButton"
-                class="workspace-action-button"
-                title="Save project"
-            >
-
-                <span aria-hidden="true">
-                    💾
-                </span>
-
-                <span>
-                    Save
-                </span>
-
-            </button>
-
-
-            <!-- RUN -->
-
-            <button
-                type="button"
-                id="runCodeButton"
-                class="workspace-action-button run-button"
-                title="Run code"
-            >
-
-                <span aria-hidden="true">
-                    ▶
-                </span>
-
-                <span>
-                    Run
-                </span>
-
-            </button>
-
-
-            <!-- SHARE -->
-
-            <button
-                type="button"
-                id="shareWorkspaceButton"
-                class="workspace-action-button"
-                title="Share workspace"
-            >
-
-                <span aria-hidden="true">
-                    🔗
-                </span>
-
-                <span>
-                    Share
-                </span>
-
-            </button>
-
-        </div>
-
-    </header>
-
-
-    <!-- =====================================================
-         WORKSPACE BODY
+         PROJECT HAS FILES
     ====================================================== -->
 
     <div
-        class="workspace-body"
-        id="workspaceBody"
+        class="file-tree-root"
+        data-file-tree-root
     >
 
 
-        <!-- =================================================
-             LEFT PROJECT PANEL
-        ================================================== -->
-
-        <aside
-            class="workspace-project-panel"
-            id="workspaceProjectPanel"
-            aria-label="Project navigation and files"
-        >
+        {% for file in files %}
 
 
-            <!-- =============================================
-                 EXISTING PROJECT PANEL
-            ============================================== -->
+            <!-- =================================================
+                 FOLDER
+            ================================================== -->
 
-            <div class="workspace-project-panel-content">
+            {% if file.is_folder %}
 
-                {% include "workspace/project_panel.html" %}
-
-            </div>
-
-
-            <!-- =============================================
-                 PROJECT FILE MANAGER
-            ============================================== -->
-
-            <section
-                class="workspace-file-manager"
-                id="workspaceFileManager"
-                aria-label="Project file manager"
-            >
+                <div
+                    class="file-tree-node file-tree-folder"
+                    data-file-tree-node
+                    data-folder
+                    data-folder-id="{{ file.id }}"
+                    data-file-id="{{ file.id }}"
+                    data-file-name="{{ file.name }}"
+                >
 
 
-                <!-- =========================================
-                     FILE MANAGER HEADER
-                ========================================== -->
-
-                <div class="workspace-file-manager-header">
-
-                    <div class="workspace-file-manager-heading">
-
-                        <span class="workspace-label">
-                            FILES
-                        </span>
-
-                        <h2 class="workspace-file-manager-title">
-                            Project Files
-                        </h2>
-
-                    </div>
-
-
-                    <!-- REFRESH -->
+                    <!-- FOLDER ROW -->
 
                     <button
                         type="button"
-                        class="workspace-file-refresh"
-                        data-file-tree-refresh
-                        title="Refresh project files"
-                        aria-label="Refresh project files"
+                        class="file-tree-item file-tree-folder-button"
+                        data-folder-toggle
+                        data-folder-id="{{ file.id }}"
+                        aria-expanded="false"
+                        title="{{ file.name }}"
                     >
-                        ↻
-                    </button>
-
-                </div>
 
 
-                <!-- =========================================
-                     FILE MANAGER ACTIONS
-                ========================================== -->
-
-                <div class="workspace-file-actions">
-
-
-                    <!-- NEW FOLDER -->
-
-                    <button
-                        type="button"
-                        class="workspace-file-action-button"
-                        data-create-folder
-                        title="Create a new folder"
-                    >
+                        <!-- EXPAND / COLLAPSE ARROW -->
 
                         <span
-                            class="workspace-file-action-icon"
+                            class="folder-arrow"
+                            aria-hidden="true"
+                        >
+                            ▶
+                        </span>
+
+
+                        <!-- FOLDER ICON -->
+
+                        <span
+                            class="file-tree-icon"
                             aria-hidden="true"
                         >
                             📁
                         </span>
 
-                        <span>
-                            New Folder
+
+                        <!-- FOLDER NAME -->
+
+                        <span class="file-tree-name">
+                            {{ file.name }}
                         </span>
 
                     </button>
 
 
-                    <!-- UPLOAD FILE -->
+                    <!-- =========================================
+                         FOLDER CHILDREN
 
-                    <button
-                        type="button"
-                        class="workspace-file-action-button"
-                        data-project-upload
-                        title="Upload project files"
+                         If your backend later provides children,
+                         they can be rendered inside this container.
+                    ========================================== -->
+
+                    <div
+                        class="folder-children"
+                        data-folder-children="{{ file.id }}"
+                        hidden
                     >
 
-                        <span
-                            class="workspace-file-action-icon"
-                            aria-hidden="true"
-                        >
-                            ⬆
-                        </span>
+                        {% if file.children is defined and file.children %}
 
-                        <span>
-                            Upload File
-                        </span>
-
-                    </button>
-
-                </div>
+                            {% for child in file.children %}
 
 
-                <!-- =========================================
-                     HIDDEN PROJECT FILE UPLOAD INPUT
-                ========================================== -->
+                                <!-- CHILD FOLDER -->
 
-                <input
-                    type="file"
-                    id="projectUploadInput"
-                    data-project-upload-input
-                    multiple
-                    hidden
-                >
+                                {% if child.is_folder %}
+
+                                    <div
+                                        class="file-tree-item file-tree-child folder"
+                                        data-folder
+                                        data-folder-id="{{ child.id }}"
+                                        data-file-id="{{ child.id }}"
+                                        data-file-name="{{ child.name }}"
+                                    >
+
+                                        <span
+                                            class="folder-arrow"
+                                            aria-hidden="true"
+                                        >
+                                            ▶
+                                        </span>
+
+                                        <span
+                                            class="file-tree-icon"
+                                            aria-hidden="true"
+                                        >
+                                            📁
+                                        </span>
+
+                                        <span class="file-tree-name">
+                                            {{ child.name }}
+                                        </span>
+
+                                    </div>
 
 
-                <!-- =========================================
-                     PROJECT FILE TREE
-                ========================================== -->
+                                <!-- CHILD FILE -->
 
-                <div
-                    class="file-tree"
-                    id="workspaceFileTree"
-                    data-file-tree
-                    aria-live="polite"
-                >
+                                {% else %}
 
-                    <!--
-                        project.js requests:
+                                    <button
+                                        type="button"
+                                        class="file-tree-item file-tree-child
+                                        {% if current_file and current_file.id == child.id %}
+                                            active
+                                        {% endif %}"
+                                        data-file
+                                        data-file-id="{{ child.id }}"
+                                        data-file-name="{{ child.name }}"
+                                        title="{{ child.name }}"
+                                    >
 
-                        GET /workspace/file_tree
+                                        <!-- FILE ICON -->
 
-                        The returned
-                        workspace/_file_tree.html
-                        content is inserted here.
-                    -->
+                                        <span
+                                            class="file-tree-icon"
+                                            aria-hidden="true"
+                                        >
 
-                    <div class="file-tree-loading">
+                                            {% if child.name.endswith('.py') %}
+                                                🐍
 
-                        <span
-                            class="file-tree-loading-icon"
-                            aria-hidden="true"
-                        >
-                            📂
-                        </span>
+                                            {% elif child.name.endswith('.js') %}
+                                                🟨
 
-                        <span>
-                            Loading project files...
-                        </span>
+                                            {% elif child.name.endswith('.ts') %}
+                                                🔷
+
+                                            {% elif child.name.endswith('.html') %}
+                                                🌐
+
+                                            {% elif child.name.endswith('.css') %}
+                                                🎨
+
+                                            {% elif child.name.endswith('.json') %}
+                                                🧾
+
+                                            {% elif child.name.endswith('.sql') %}
+                                                🗄️
+
+                                            {% elif child.name.endswith('.md') %}
+                                                📘
+
+                                            {% elif child.name.endswith('.txt') %}
+                                                📄
+
+                                            {% elif child.name.endswith('.java') %}
+                                                ☕
+
+                                            {% elif child.name.endswith('.cpp') %}
+                                                ⚙️
+
+                                            {% elif child.name.endswith('.c') %}
+                                                ⚙️
+
+                                            {% elif child.name.endswith('.go') %}
+                                                🔵
+
+                                            {% elif child.name.endswith('.rs') %}
+                                                🦀
+
+                                            {% elif child.name.endswith('.php') %}
+                                                🐘
+
+                                            {% elif child.name.endswith('.rb') %}
+                                                💎
+
+                                            {% elif child.name.endswith('.yaml')
+                                                or child.name.endswith('.yml') %}
+                                                ⚙️
+
+                                            {% elif child.name.endswith('.xml') %}
+                                                📰
+
+                                            {% elif child.name.endswith('.toml') %}
+                                                ⚙️
+
+                                            {% else %}
+                                                📄
+                                            {% endif %}
+
+                                        </span>
+
+
+                                        <!-- FILE NAME -->
+
+                                        <span class="file-tree-name">
+                                            {{ child.name }}
+                                        </span>
+
+                                    </button>
+
+                                {% endif %}
+
+                            {% endfor %}
+
+
+                        {% else %}
+
+                            <div
+                                class="folder-empty"
+                                data-folder-empty
+                            >
+                                Empty folder
+                            </div>
+
+                        {% endif %}
 
                     </div>
 
                 </div>
 
-            </section>
 
-        </aside>
+            <!-- =================================================
+                 FILE
+            ================================================== -->
 
+            {% else %}
 
-        <!-- =================================================
-             MAIN DEVELOPMENT AREA
-        ================================================== -->
-
-        <main
-            class="workspace-main"
-            id="workspaceMain"
-        >
-
-
-            <!-- =============================================
-                 CODE EDITOR
-            ============================================== -->
-
-            <section
-                class="workspace-code-section"
-                id="codeSection"
-                aria-label="Code editor"
-            >
-
-                {% include "workspace/code_editor.html" %}
-
-            </section>
+                <button
+                    type="button"
+                    class="file-tree-item file-tree-file
+                    {% if current_file and current_file.id == file.id %}
+                        active
+                    {% endif %}"
+                    data-file
+                    data-file-id="{{ file.id }}"
+                    data-file-name="{{ file.name }}"
+                    title="{{ file.name }}"
+                >
 
 
-            <!-- =============================================
-                 AI VISUALIZER
-            ============================================== -->
+                    <!-- =========================================
+                         FILE ICON
+                    ========================================== -->
 
-            <section
-                class="workspace-visualizer-section"
-                id="visualizerSection"
-                aria-label="AI visualizer"
-            >
+                    <span
+                        class="file-tree-icon"
+                        aria-hidden="true"
+                    >
 
-                {% include "workspace/visualizer.html" %}
+                        {% if file.name.endswith('.py') %}
 
-            </section>
+                            🐍
 
-        </main>
+                        {% elif file.name.endswith('.js') %}
+
+                            🟨
+
+                        {% elif file.name.endswith('.ts') %}
+
+                            🔷
+
+                        {% elif file.name.endswith('.html') %}
+
+                            🌐
+
+                        {% elif file.name.endswith('.css') %}
+
+                            🎨
+
+                        {% elif file.name.endswith('.json') %}
+
+                            🧾
+
+                        {% elif file.name.endswith('.sql') %}
+
+                            🗄️
+
+                        {% elif file.name.endswith('.md') %}
+
+                            📘
+
+                        {% elif file.name.endswith('.txt') %}
+
+                            📄
+
+                        {% elif file.name.endswith('.java') %}
+
+                            ☕
+
+                        {% elif file.name.endswith('.cpp') %}
+
+                            ⚙️
+
+                        {% elif file.name.endswith('.c') %}
+
+                            ⚙️
+
+                        {% elif file.name.endswith('.h') %}
+
+                            ⚙️
+
+                        {% elif file.name.endswith('.hpp') %}
+
+                            ⚙️
+
+                        {% elif file.name.endswith('.go') %}
+
+                            🔵
+
+                        {% elif file.name.endswith('.rs') %}
+
+                            🦀
+
+                        {% elif file.name.endswith('.php') %}
+
+                            🐘
+
+                        {% elif file.name.endswith('.rb') %}
+
+                            💎
+
+                        {% elif file.name.endswith('.sh') %}
+
+                            🖥️
+
+                        {% elif file.name.endswith('.yaml')
+                            or file.name.endswith('.yml') %}
+
+                            ⚙️
+
+                        {% elif file.name.endswith('.xml') %}
+
+                            📰
+
+                        {% elif file.name.endswith('.toml') %}
+
+                            ⚙️
+
+                        {% elif file.name.endswith('.ini') %}
+
+                            ⚙️
+
+                        {% else %}
+
+                            📄
+
+                        {% endif %}
+
+                    </span>
 
 
-        <!-- =================================================
-             AI CHAT PANEL
-        ================================================== -->
+                    <!-- =========================================
+                         FILE NAME
+                    ========================================== -->
 
-        <aside
-            class="workspace-chat-panel"
-            id="workspaceChatPanel"
-            aria-label="AI teammate chat"
-        >
+                    <span class="file-tree-name">
+                        {{ file.name }}
+                    </span>
 
-            {% include "workspace/chat.html" %}
+                </button>
 
-        </aside>
+            {% endif %}
+
+
+        {% endfor %}
 
     </div>
 
 
+{% else %}
+
+
     <!-- =====================================================
-         MEDIA / VISUAL COMMUNICATION TOOLBAR
+         EMPTY PROJECT
+
+         Do NOT create fake files such as:
+         main.py
+         app.py
+         README.md
+         requirements.txt
+
+         If the project is empty, show the real empty state.
     ====================================================== -->
 
     <div
-        class="workspace-media-toolbar"
-        id="workspaceMediaToolbar"
-        role="toolbar"
-        aria-label="AI visual communication tools"
+        class="file-tree-empty"
+        data-file-tree-empty
     >
-
-
-        <!-- =================================================
-             SCREEN SHARE
-        ================================================== -->
-
-        <button
-            type="button"
-            id="shareScreenButton"
-            class="media-tool-button"
-            title="Share your screen with the AI teammate"
-        >
-
-            <span aria-hidden="true">
-                🖥️
-            </span>
-
-            <span>
-                Share Screen
-            </span>
-
-        </button>
-
-
-        <!-- =================================================
-             CAMERA
-        ================================================== -->
-
-        <button
-            type="button"
-            id="cameraButton"
-            class="media-tool-button"
-            title="Show something to the AI using your camera"
-        >
-
-            <span aria-hidden="true">
-                📷
-            </span>
-
-            <span>
-                Camera
-            </span>
-
-        </button>
-
-
-        <!-- =================================================
-             IMAGE / VIDEO UPLOAD
-        ================================================== -->
-
-        <button
-            type="button"
-            id="uploadMediaButton"
-            class="media-tool-button"
-            title="Upload an image or video for AI analysis"
-        >
-
-            <span aria-hidden="true">
-                🖼️
-            </span>
-
-            <span>
-                Image / Video
-            </span>
-
-        </button>
-
-
-        <!-- =================================================
-             VOICE
-        ================================================== -->
-
-        <button
-            type="button"
-            id="voiceButton"
-            class="media-tool-button"
-            title="Talk to your AI teammate"
-        >
-
-            <span aria-hidden="true">
-                🎤
-            </span>
-
-            <span>
-                Voice
-            </span>
-
-        </button>
-
-
-        <!-- =================================================
-             CONNECTION STATUS
-        ================================================== -->
 
         <div
-            class="media-status"
-            id="mediaConnectionStatus"
-            aria-live="polite"
+            class="file-tree-empty-icon"
+            aria-hidden="true"
         >
-
-            <span
-                id="connectionIndicator"
-                class="connection-dot"
-                aria-hidden="true"
-            ></span>
-
-            <span id="connectionStatus">
-                Connecting...
-            </span>
-
+            📂
         </div>
+
+
+        <strong>
+            No project files yet
+        </strong>
+
+
+        <p>
+            Create a new file, create a folder,
+            or upload existing source code.
+        </p>
 
     </div>
 
 
-    <!-- =====================================================
-         HIDDEN MEDIA UPLOAD INPUT
-    ====================================================== -->
-
-    <input
-        type="file"
-        id="mediaUploadInput"
-        accept="image/*,video/*"
-        hidden
-    >
-
-
-    <!-- =====================================================
-         CAMERA / SCREEN SHARE PREVIEW
-    ====================================================== -->
-
-    <div
-        id="mediaPreviewContainer"
-        class="media-preview-container"
-        hidden
-    >
-
-
-        <!-- =================================================
-             PREVIEW HEADER
-        ================================================== -->
-
-        <div class="media-preview-header">
-
-            <strong id="mediaPreviewTitle">
-                Live Preview
-            </strong>
-
-
-            <button
-                type="button"
-                id="closeMediaPreview"
-                aria-label="Close media preview"
-                title="Close preview"
-            >
-                ✕
-            </button>
-
-        </div>
-
-
-        <!-- =================================================
-             LIVE VIDEO / SCREEN STREAM
-        ================================================== -->
-
-        <video
-            id="workspaceVideoPreview"
-            autoplay
-            muted
-            playsinline
-        ></video>
-
-
-        <!-- =================================================
-             CAPTURE CANVAS
-        ================================================== -->
-
-        <canvas
-            id="workspaceCaptureCanvas"
-            hidden
-        ></canvas>
-
-    </div>
-
-
-    <!-- =====================================================
-         AI ANALYSIS OVERLAY
-    ====================================================== -->
-
-    <div
-        id="analysisOverlay"
-        class="analysis-overlay"
-        hidden
-        aria-live="polite"
-        aria-busy="true"
-    >
-
-        <div class="analysis-overlay-content">
-
-
-            <!-- Spinner -->
-
-            <div
-                class="analysis-spinner"
-                aria-hidden="true"
-            ></div>
-
-
-            <!-- Analysis Message -->
-
-            <h3>
-                AI Teammate is analyzing...
-            </h3>
-
-
-            <!-- Analysis Progress -->
-
-            <p id="analysisProgress">
-                Examining your code.
-            </p>
-
-        </div>
-
-    </div>
-
-
-    <!-- =====================================================
-         CONNECTION / STARTUP OVERLAY
-    ====================================================== -->
-
-    <div
-        id="connectingOverlay"
-        class="workspace-connecting-overlay"
-        data-connecting-overlay
-        aria-live="polite"
-    >
-
-        <div class="workspace-connecting-content">
-
-            <div
-                class="analysis-spinner"
-                aria-hidden="true"
-            ></div>
-
-            <h3>
-                Connecting to AI Teammate...
-            </h3>
-
-            <p>
-                Preparing your collaborative coding workspace.
-            </p>
-
-        </div>
-
-    </div>
-
-</div>
-
-{% endblock %}
-
-
-{% block extra_js %}
-
-
-<!-- =========================================================
-     SOCKET.IO CLIENT
-
-     If Socket.IO is already loaded globally by base.html,
-     remove this script to avoid loading it twice.
-========================================================== -->
-
-<script
-    src="https://cdn.socket.io/4.7.5/socket.io.min.js"
-    integrity="sha384-2oGqjZbP6pHK3XfJdZzqvJ2jR6GJxkVY6sX8p8V3mV1vN4k2Kf9Q6mYx3L2Q1P0"
-    crossorigin="anonymous"
-></script>
-
-
-<!-- =========================================================
-     CHAT
-
-     Load chat.js BEFORE websocket.js so Chat.onReady()
-     exists when the WebSocket connection succeeds.
-========================================================== -->
-
-<script
-    src="{{ url_for('static', filename='js/chat.js') }}"
-></script>
-
-
-<!-- =========================================================
-     REAL-TIME WEBSOCKET CONNECTION
-========================================================== -->
-
-<script
-    src="{{ url_for('static', filename='js/websocket.js') }}"
-></script>
-
-
-<!-- =========================================================
-     CODE EDITOR
-========================================================== -->
-
-<script
-    src="{{ url_for('static', filename='js/code-editor.js') }}"
-></script>
-
-
-<!-- =========================================================
-     CODE ANALYSIS
-========================================================== -->
-
-<script
-    src="{{ url_for('static', filename='js/code-analysis.js') }}"
-></script>
-
-
-<!-- =========================================================
-     AI VISUALIZER
-========================================================== -->
-
-<script
-    src="{{ url_for('static', filename='js/visualizer.js') }}"
-></script>
-
-
-<!-- =========================================================
-     SCREEN SHARING
-========================================================== -->
-
-<script
-    src="{{ url_for('static', filename='js/screen-share.js') }}"
-></script>
-
-
-<!-- =========================================================
-     CAMERA
-========================================================== -->
-
-<script
-    src="{{ url_for('static', filename='js/camera.js') }}"
-></script>
-
-
-<!-- =========================================================
-     IMAGE / VIDEO
-========================================================== -->
-
-<script
-    src="{{ url_for('static', filename='js/image-video.js') }}"
-></script>
-
-
-<!-- =========================================================
-     VOICE COMMUNICATION
-========================================================== -->
-
-<script
-    src="{{ url_for('static', filename='js/voice.js') }}"
-></script>
-
-
-<!-- =========================================================
-     PROJECT + FILE MANAGEMENT
-
-     Handles:
-
-     - Project creation
-     - Project deletion
-     - Project loading
-     - Folder creation
-     - File upload
-     - File tree refresh
-========================================================== -->
-
-<script
-    src="{{ url_for('static', filename='js/project.js') }}"
-></script>
-
-
-{% endblock %}
+{% endif %}

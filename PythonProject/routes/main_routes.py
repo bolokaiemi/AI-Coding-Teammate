@@ -1,5 +1,11 @@
+# routes/main_routes.py
+
 from flask import Blueprint, render_template
 
+
+# ============================================================
+# MAIN BLUEPRINT
+# ============================================================
 
 main_bp = Blueprint(
     "main",
@@ -7,21 +13,29 @@ main_bp = Blueprint(
 )
 
 
+# ============================================================
+# PUBLIC HOMEPAGE
+# ============================================================
+
 @main_bp.route("/")
 def index():
     """
-    Public homepage.
+    Render the public AI Coding Teammate landing page.
     """
 
     return render_template(
         "index.html"
     )
 
+
+# ============================================================
+# DATENSCHUTZ
+# ============================================================
+
 @main_bp.route("/datenschutz")
 def datenschutz():
-    return render_template("datenschutz.html")
+    """
+    Render the Datenschutz page.
+    """
 
-
-@main_bp.route("/impressum")
-def impressum():
-    return render_template("impressum.html")
+    return render

@@ -1,4 +1,22 @@
-<div class="project-panel-container">
+<!-- =========================================================
+     PROJECT PANEL
+
+     IMPORTANT:
+     workspace.html already provides:
+
+     <aside
+         class="workspace-project-panel"
+         id="workspaceProjectPanel"
+     >
+
+     Therefore this partial must NOT create another <aside>.
+========================================================== -->
+
+<div
+    class="project-panel-container"
+    data-project-panel
+>
+
 
     <!-- =====================================================
          PROJECT PANEL HEADER
@@ -6,13 +24,13 @@
 
     <div class="project-panel-header">
 
-        <div>
+        <div class="project-panel-heading">
 
             <span class="project-panel-label">
                 PROJECT
             </span>
 
-            <h2>
+            <h2 id="projectPanelTitle">
                 {{ project.name if project else 'My Project' }}
             </h2>
 
@@ -24,6 +42,7 @@
             id="projectPanelOptions"
             class="panel-options-button"
             aria-label="Project options"
+            title="Project options"
         >
             ⋮
         </button>
@@ -35,249 +54,159 @@
          PROJECT ACTIONS
     ====================================================== -->
 
-    <div class="project-panel-actions">
+    <div
+        class="project-panel-actions"
+        role="toolbar"
+        aria-label="Project file actions"
+    >
+
+
+        <!-- NEW FILE -->
 
         <button
             type="button"
             id="newFileButton"
             class="panel-action"
+            data-create-file
+            title="Create a new file"
         >
-            📄
-            <span>New File</span>
+
+            <span aria-hidden="true">
+                📄
+            </span>
+
+            <span>
+                New File
+            </span>
+
         </button>
 
+
+        <!-- NEW FOLDER -->
 
         <button
             type="button"
             id="newFolderButton"
             class="panel-action"
+            data-create-folder
+            title="Create a new folder"
         >
-            📁
-            <span>New Folder</span>
+
+            <span aria-hidden="true">
+                📁
+            </span>
+
+            <span>
+                New Folder
+            </span>
+
         </button>
 
+
+        <!-- UPLOAD PROJECT FILE -->
 
         <button
             type="button"
             id="uploadProjectButton"
             class="panel-action"
+            data-project-upload
+            title="Upload project files"
         >
-            ⬆️
-            <span>Upload</span>
+
+            <span aria-hidden="true">
+                ⬆️
+            </span>
+
+            <span>
+                Upload
+            </span>
+
         </button>
 
     </div>
 
 
     <!-- =====================================================
-         PROJECT SEARCH
+         PROJECT FILE SEARCH
     ====================================================== -->
 
     <div class="project-file-search">
 
-        <span>
+        <span
+            class="project-file-search-icon"
+            aria-hidden="true"
+        >
             🔍
         </span>
+
+
+        <label
+            for="projectFileSearch"
+            class="sr-only"
+        >
+            Search project files
+        </label>
+
 
         <input
             type="search"
             id="projectFileSearch"
             placeholder="Search files..."
             autocomplete="off"
+            aria-label="Search project files"
+            data-file-search
         >
 
     </div>
 
 
     <!-- =====================================================
+         FILE TREE HEADER
+    ====================================================== -->
+
+    <div class="project-file-tree-header">
+
+        <span>
+            Files
+        </span>
+
+
+        <button
+            type="button"
+            class="project-file-refresh-button"
+            data-file-tree-refresh
+            aria-label="Refresh project files"
+            title="Refresh project files"
+        >
+            ↻
+        </button>
+
+    </div>
+
+
+    <!-- =====================================================
          FILE TREE
+
+         IMPORTANT:
+
+         Do NOT manually create the individual file rows here.
+
+         _file_tree.html owns the actual file/folder tree.
+
+         project.js can later replace this container using:
+
+         /workspace/file_tree
     ====================================================== -->
 
     <div
         id="projectFileTree"
         class="project-file-tree"
+        data-file-tree
+        aria-live="polite"
+        aria-label="Project file tree"
     >
 
-        {% if files %}
-
-            {% for file in files %}
-
-            <div
-                class="file-tree-item
-                {% if current_file and current_file.id == file.id %}
-                    active
-                {% endif %}"
-                data-file-id="{{ file.id }}"
-                data-file-name="{{ file.name }}"
-            >
-
-                <span class="file-tree-icon">
-
-                    {% if file.is_folder %}
-                        📁
-                    {% elif file.name.endswith('.py') %}
-                        🐍
-                    {% elif file.name.endswith('.js') %}
-                        🟨
-                    {% elif file.name.endswith('.html') %}
-                        🌐
-                    {% elif file.name.endswith('.css') %}
-                        🎨
-                    {% elif file.name.endswith('.json') %}
-                        🧾
-                    {% elif file.name.endswith('.sql') %}
-                        🗄️
-                    {% else %}
-                        📄
-                    {% endif %}
-
-                </span>
-
-
-                <span class="file-tree-name">
-                    {{ file.name }}
-                </span>
-
-            </div>
-
-            {% endfor %}
-
-        {% else %}
-
-            <!-- Default project structure -->
-
-            <div class="file-tree-group">
-
-                <div
-                    class="file-tree-item folder expanded"
-                    data-folder="root"
-                >
-
-                    <span class="folder-arrow">
-                        ▼
-                    </span>
-
-                    <span class="file-tree-icon">
-                        📁
-                    </span>
-
-                    <span class="file-tree-name">
-                        {{ project.name if project else 'project' }}
-                    </span>
-
-                </div>
-
-
-                <div class="folder-children">
-
-                    <div
-                        class="file-tree-item active"
-                        data-file-name="main.py"
-                    >
-
-                        <span class="file-tree-icon">
-                            🐍
-                        </span>
-
-                        <span class="file-tree-name">
-                            main.py
-                        </span>
-
-                    </div>
-
-
-                    <div
-                        class="file-tree-item"
-                        data-file-name="app.py"
-                    >
-
-                        <span class="file-tree-icon">
-                            🐍
-                        </span>
-
-                        <span class="file-tree-name">
-                            app.py
-                        </span>
-
-                    </div>
-
-
-                    <div
-                        class="file-tree-item"
-                        data-file-name="requirements.txt"
-                    >
-
-                        <span class="file-tree-icon">
-                            📦
-                        </span>
-
-                        <span class="file-tree-name">
-                            requirements.txt
-                        </span>
-
-                    </div>
-
-
-                    <div
-                        class="file-tree-item"
-                        data-file-name="README.md"
-                    >
-
-                        <span class="file-tree-icon">
-                            📘
-                        </span>
-
-                        <span class="file-tree-name">
-                            README.md
-                        </span>
-
-                    </div>
-
-
-                    <div
-                        class="file-tree-item folder"
-                        data-folder="templates"
-                    >
-
-                        <span class="folder-arrow">
-                            ▶
-                        </span>
-
-                        <span class="file-tree-icon">
-                            📁
-                        </span>
-
-                        <span class="file-tree-name">
-                            templates
-                        </span>
-
-                    </div>
-
-
-                    <div
-                        class="file-tree-item folder"
-                        data-folder="static"
-                    >
-
-                        <span class="folder-arrow">
-                            ▶
-                        </span>
-
-                        <span class="file-tree-icon">
-                            📁
-                        </span>
-
-                        <span class="file-tree-name">
-                            static
-                        </span>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-        {% endif %}
+        {% include "workspace/_file_tree.html" %}
 
     </div>
 
@@ -288,18 +217,26 @@
 
     <div class="project-panel-footer">
 
+
+        <!-- FILE COUNT -->
+
         <div class="project-info-row">
 
             <span>
                 Files
             </span>
 
-            <strong>
-                {{ files|length if files else 4 }}
+            <strong
+                id="projectFileCount"
+                data-project-file-count
+            >
+                {{ files|length if files else 0 }}
             </strong>
 
         </div>
 
+
+        <!-- PROJECT LANGUAGE -->
 
         <div class="project-info-row">
 
@@ -308,11 +245,17 @@
             </span>
 
             <strong>
-                {{ project.language if project and project.language else 'Python' }}
+                {{
+                    project.language
+                    if project and project.language
+                    else 'Python'
+                }}
             </strong>
 
         </div>
 
+
+        <!-- AI MEMORY -->
 
         <div class="project-info-row">
 
@@ -321,98 +264,244 @@
             </span>
 
             <span class="memory-status">
-                ● Active
+
+                <span
+                    class="memory-status-dot"
+                    aria-hidden="true"
+                >
+                    ●
+                </span>
+
+                Active
+
             </span>
 
         </div>
 
     </div>
 
-</div>
+
+    <!-- =====================================================
+         NEW FILE MODAL
+    ====================================================== -->
+
+    <div
+        id="newFileModal"
+        class="workspace-modal"
+        hidden
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="newFileModalTitle"
+    >
+
+        <div class="workspace-modal-content">
 
 
-<!-- =========================================================
-     NEW FILE MODAL
-========================================================== -->
+            <!-- MODAL HEADER -->
 
-<div
-    id="newFileModal"
-    class="workspace-modal"
-    hidden
->
+            <div class="workspace-modal-header">
 
-    <div class="workspace-modal-content">
+                <h3 id="newFileModalTitle">
+                    Create New File
+                </h3>
 
-        <div class="workspace-modal-header">
-
-            <h3>
-                Create New File
-            </h3>
-
-            <button
-                type="button"
-                class="modal-close"
-                data-close-modal="newFileModal"
-            >
-                ✕
-            </button>
-
-        </div>
-
-
-        <form id="newFileForm">
-
-            <div class="form-group">
-
-                <label for="newFileName">
-                    File Name
-                </label>
-
-                <input
-                    type="text"
-                    id="newFileName"
-                    name="file_name"
-                    placeholder="example.py"
-                    required
-                >
-
-            </div>
-
-
-            <div class="modal-actions">
 
                 <button
                     type="button"
-                    class="modal-secondary-button"
+                    class="modal-close"
                     data-close-modal="newFileModal"
+                    aria-label="Close new file dialog"
                 >
-                    Cancel
-                </button>
-
-                <button
-                    type="submit"
-                    class="modal-primary-button"
-                >
-                    Create File
+                    ✕
                 </button>
 
             </div>
 
-        </form>
+
+            <!-- NEW FILE FORM -->
+
+            <form
+                id="newFileForm"
+                data-new-file-form
+            >
+
+                <div class="form-group">
+
+                    <label for="newFileName">
+                        File Name
+                    </label>
+
+
+                    <input
+                        type="text"
+                        id="newFileName"
+                        name="file_name"
+                        placeholder="example.py"
+                        autocomplete="off"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="modal-actions">
+
+                    <button
+                        type="button"
+                        class="modal-secondary-button"
+                        data-close-modal="newFileModal"
+                    >
+                        Cancel
+                    </button>
+
+
+                    <button
+                        type="submit"
+                        class="modal-primary-button"
+                    >
+                        Create File
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
 
     </div>
 
+
+    <!-- =====================================================
+         NEW FOLDER MODAL
+    ====================================================== -->
+
+    <div
+        id="newFolderModal"
+        class="workspace-modal"
+        hidden
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="newFolderModalTitle"
+    >
+
+        <div class="workspace-modal-content">
+
+
+            <!-- MODAL HEADER -->
+
+            <div class="workspace-modal-header">
+
+                <h3 id="newFolderModalTitle">
+                    Create New Folder
+                </h3>
+
+
+                <button
+                    type="button"
+                    class="modal-close"
+                    data-close-modal="newFolderModal"
+                    aria-label="Close new folder dialog"
+                >
+                    ✕
+                </button>
+
+            </div>
+
+
+            <!-- NEW FOLDER FORM -->
+
+            <form
+                id="newFolderForm"
+                data-new-folder-form
+            >
+
+                <div class="form-group">
+
+                    <label for="newFolderName">
+                        Folder Name
+                    </label>
+
+
+                    <input
+                        type="text"
+                        id="newFolderName"
+                        name="folder_name"
+                        placeholder="templates"
+                        autocomplete="off"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="modal-actions">
+
+                    <button
+                        type="button"
+                        class="modal-secondary-button"
+                        data-close-modal="newFolderModal"
+                    >
+                        Cancel
+                    </button>
+
+
+                    <button
+                        type="submit"
+                        class="modal-primary-button"
+                    >
+                        Create Folder
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         PROJECT FILE UPLOAD INPUT
+
+         This input is specifically for source/project files.
+
+         It is different from mediaUploadInput in workspace.html,
+         which handles screenshots, images and videos for the AI.
+    ====================================================== -->
+
+    <input
+        type="file"
+        id="projectUploadInput"
+        data-project-upload-input
+        hidden
+        multiple
+        accept="
+            .py,
+            .js,
+            .ts,
+            .html,
+            .css,
+            .json,
+            .sql,
+            .md,
+            .txt,
+            .java,
+            .cpp,
+            .c,
+            .h,
+            .hpp,
+            .go,
+            .rs,
+            .php,
+            .rb,
+            .sh,
+            .yaml,
+            .yml,
+            .xml,
+            .toml,
+            .ini
+        "
+    >
+
 </div>
-
-
-<!-- =========================================================
-     UPLOAD PROJECT INPUT
-========================================================== -->
-
-<input
-    type="file"
-    id="projectUploadInput"
-    hidden
-    multiple
-    accept=".py,.js,.ts,.html,.css,.json,.sql,.md,.txt,.java,.cpp,.c,.go,.rs"
->
