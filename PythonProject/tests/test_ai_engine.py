@@ -1,16 +1,21 @@
+"""
+AIEngine tests.
+"""
+
 from ai.ai_engine import AIEngine
 
 
-def test_ai_engine_creation():
-    engine = AIEngine()
+def test_engine_initializes(fake_ai_client):
+    """
+    AIEngine should initialize its components.
+    """
 
-    assert engine is not None
+    engine = AIEngine(
+        client=fake_ai_client
+    )
 
+    assert engine.client is fake_ai_client
 
-def test_ai_engine_has_components():
-    engine = AIEngine()
-
-    assert engine.client is not None
     assert engine.error_detector is not None
     assert engine.code_analyzer is not None
     assert engine.code_corrector is not None
@@ -20,59 +25,125 @@ def test_ai_engine_has_components():
     assert engine.conversation is not None
 
 
-def test_ai_engine_status():
-    engine = AIEngine()
+def test_engine_attaches_to_client(
+    fake_ai_client,
+):
+    """
+    AIEngine should attach itself to compatible clients.
+    """
+
+    engine = AIEngine(
+        client=fake_ai_client
+    )
+
+    assert fake_ai_client.engine is engine
+
+
+def test_engine_status(fake_ai_client):
+    """
+    Engine status should contain provider information.
+    """
+
+    engine = AIEngine(
+        client=fake_ai_client
+    )
 
     status = engine.status()
 
-    assert isinstance(status, dict)
-    assert "configured" in status
+    assert status["engine"] == (
+        "AI Coding Teammate"
+    )
+
+    assert status["provider_configured"] is True
+
+    assert status["model"] == "test-model"
+
     assert "capabilities" in status
 
 
-def test_ai_chat_without_api_key(monkeypatch):
-    monkeypatch.setenv(
-        "OPENAI_API_KEY",
-        ""
+def test_engine_capabilities(fake_ai_client):
+    """
+    Required AI capabilities should be registered.
+    """
+
+    engine = AIEngine(
+        client=fake_ai_client
     )
 
-    engine = AIEngine()
-
-    result = engine.chat(
-        "Explain Python functions."
+    capabilities = (
+        engine.status()["capabilities"]
     )
 
-    assert isinstance(result, dict)
-    assert "success" in result
+    assert capabilities["chat"] is True
+    assert capabilities["code_analysis"] is True
+    assert capabilities["error_detection"] is True
+    assert capabilities["code_correction"] is True
+    assert capabilities["code_explanation"] is True
 
 
-def test_code_analysis_without_api_key(monkeypatch):
-    monkeypatch.setenv(
-        "OPENAI_API_KEY",
-        ""
+def test_engine_chat(
+    fake_ai_client,
+    conversation_history,
+    sample_project_context,
+    sample_code,
+):
+    """
+    AIEngine should delegate conversations correctly.
+    """
+
+    engine = AIEngine(
+        client=fake_ai_client
     )
 
-    engine = AIEngine()
-
-    result = engine.analyze_code(
-        code="print('Hello')",
-        language="python",
+    response = engine.chat(
+        message="Explain my current code.",
+        conversation_history=(
+            conversation_history
+        ),
+        project_context=(
+            sample_project_context
+        ),
+        code_context=sample_code,
     )
 
-    assert isinstance(result, dict)
+    assert response is not None
 
+    assert response["type"] == "chat"
 
-def test_code_explanation_without_api_key(monkeypatch):
-    monkeypatch.setenv(
-        "OPENAI_API_KEY",
-        ""
+    assert (
+        response["message"]
+        == "Test AI teammate response."
     )
 
-    engine = AIEngine()
 
-    result = engine.explain_code(
-        code="x = 10",
-        language="python",
+def test_engine_rejects_empty_chat(
+    fake_ai_client,
+):
+    """
+    Empty chat messages should be rejected.
+    """
+
+    engine = AIEngine(
+        client=fake_ai_client
     )
 
-    assert isinstance(result, dict)
+    response = engine.chat("")
+
+    assert response["success"] is False
+
+
+def test_engine_health(fake_ai_client):
+    """
+    Health information should be available.
+    """
+
+    engine = AIEngine(
+        client=fake_ai_client
+    )
+
+    health = engine.health()
+
+    assert health["success"] is True
+    assert health["engine"] == (
+        "AI Coding Teammate"
+    )

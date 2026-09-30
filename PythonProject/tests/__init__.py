@@ -1,3 +1,3 @@
 """
-AI Coding Teammate Test Suite
+Test package for AI Coding Teammate.
 """

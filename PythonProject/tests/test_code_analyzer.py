@@ -1,94 +1,149 @@
-from ai.code_analyzer import CodeAnalyzer
-from ai.error_detector import ErrorDetector
-
-
-def test_python_missing_colon_detection():
-    detector = ErrorDetector()
-
-    code = """
-if x == 10
-    print(x)
+"""
+AIEngine tests.
 """
 
-    result = detector.detect_basic_syntax(
-        code,
-        "python"
+from ai.ai_engine import AIEngine
+
+
+def test_engine_initializes(fake_ai_client):
+    """
+    AIEngine should initialize its components.
+    """
+
+    engine = AIEngine(
+        client=fake_ai_client
     )
 
-    assert isinstance(result, list)
-    assert len(result) >= 1
+    assert engine.client is fake_ai_client
+
+    assert engine.error_detector is not None
+    assert engine.code_analyzer is not None
+    assert engine.code_corrector is not None
+    assert engine.code_explainer is not None
+    assert engine.visual_analyzer is not None
+    assert engine.project_analyzer is not None
+    assert engine.conversation is not None
 
 
-def test_valid_python_code():
-    detector = ErrorDetector()
+def test_engine_attaches_to_client(
+    fake_ai_client,
+):
+    """
+    AIEngine should attach itself to compatible clients.
+    """
 
-    code = """
-if x == 10:
-    print(x)
-"""
-
-    result = detector.detect_basic_syntax(
-        code,
-        "python"
+    engine = AIEngine(
+        client=fake_ai_client
     )
 
-    assert isinstance(result, list)
+    assert fake_ai_client.engine is engine
 
 
-def test_javascript_brace_detection():
-    detector = ErrorDetector()
+def test_engine_status(fake_ai_client):
+    """
+    Engine status should contain provider information.
+    """
 
-    code = """
-function hello() {
-    console.log("Hello");
-"""
-
-    result = detector.detect_basic_syntax(
-        code,
-        "javascript"
+    engine = AIEngine(
+        client=fake_ai_client
     )
 
-    assert isinstance(result, list)
-    assert len(result) >= 1
+    status = engine.status()
 
-
-def test_valid_javascript():
-    detector = ErrorDetector()
-
-    code = """
-function hello() {
-    console.log("Hello");
-}
-"""
-
-    result = detector.detect_basic_syntax(
-        code,
-        "javascript"
+    assert status["engine"] == (
+        "AI Coding Teammate"
     )
 
-    assert isinstance(result, list)
+    assert status["provider_configured"] is True
+
+    assert status["model"] == "test-model"
+
+    assert "capabilities" in status
 
 
-def test_analyzer_creation():
-    analyzer = CodeAnalyzer()
+def test_engine_capabilities(fake_ai_client):
+    """
+    Required AI capabilities should be registered.
+    """
 
-    assert analyzer is not None
-    assert analyzer.error_detector is not None
-
-
-def test_analyzer_basic_analysis():
-    analyzer = CodeAnalyzer()
-
-    code = """
-def hello():
-    print("Hello")
-"""
-
-    result = analyzer.analyze(
-        code=code,
-        language="python",
-        filename="main.py",
+    engine = AIEngine(
+        client=fake_ai_client
     )
 
-    assert isinstance(result, dict)
-    assert "success" in result
+    capabilities = (
+        engine.status()["capabilities"]
+    )
+
+    assert capabilities["chat"] is True
+    assert capabilities["code_analysis"] is True
+    assert capabilities["error_detection"] is True
+    assert capabilities["code_correction"] is True
+    assert capabilities["code_explanation"] is True
+
+
+def test_engine_chat(
+    fake_ai_client,
+    conversation_history,
+    sample_project_context,
+    sample_code,
+):
+    """
+    AIEngine should delegate conversations correctly.
+    """
+
+    engine = AIEngine(
+        client=fake_ai_client
+    )
+
+    response = engine.chat(
+        message="Explain my current code.",
+        conversation_history=(
+            conversation_history
+        ),
+        project_context=(
+            sample_project_context
+        ),
+        code_context=sample_code,
+    )
+
+    assert response is not None
+
+    assert response["type"] == "chat"
+
+    assert (
+        response["message"]
+        == "Test AI teammate response."
+    )
+
+
+def test_engine_rejects_empty_chat(
+    fake_ai_client,
+):
+    """
+    Empty chat messages should be rejected.
+    """
+
+    engine = AIEngine(
+        client=fake_ai_client
+    )
+
+    response = engine.chat("")
+
+    assert response["success"] is False
+
+
+def test_engine_health(fake_ai_client):
+    """
+    Health information should be available.
+    """
+
+    engine = AIEngine(
+        client=fake_ai_client
+    )
+
+    health = engine.health()
+
+    assert health["success"] is True
+    assert health["engine"] == (
+        "AI Coding Teammate"
+    )

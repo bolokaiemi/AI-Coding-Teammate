@@ -1,97 +1,446 @@
 """
-AI Coding Teammate - AI Layer
+AI Client
+=========
 
-This package contains the intelligence layer of the application.
+Provider client for the AI Coding Teammate.
 
-The AI layer is responsible for:
+Responsibilities:
+- Read AI provider configuration
+- Connect to the OpenAI API
+- Send single prompts
+- Send conversation history
+- Return normalized response dictionaries
+- Provide safe fallback behavior when no API key is configured
 
-    - communicating with the configured AI provider
-    - analyzing source code
-    - detecting programming errors
-    - correcting code
-    - explaining code
-    - analyzing screenshots and screen frames
-    - understanding project context
-    - maintaining AI conversation context
-    - formatting AI responses for the frontend
+This module deliberately does not import AIEngine at module level.
+That helps prevent circular imports.
 """
 
-# AIEngine will be imported lazily inside AIClient.__init__
+import os
+import time
+
+from openai import OpenAI
+
 
 class AIClient:
-    """Client wrapper for AIEngine interactions.
+    """OpenAI provider client for the AI Coding Teammate."""
 
-    Provides provider status and dummy request methods. Holds a reference to
-    the engine (if supplied) to avoid circular imports.
-    """
+    def __init__(
+        self,
+        engine=None,
+        api_key=None,
+        model=None,
+    ):
+        """
+        Initialize the AI client.
 
-    def __init__(self, engine=None):
-        # The engine may be passed in by AIEngine to avoid recursion.
+        Args:
+            engine:
+                Optional AIEngine instance.
+
+            api_key:
+                Optional OpenAI API key.
+                Defaults to OPENAI_API_KEY.
+
+            model:
+                Optional model name.
+                Defaults to OPENAI_MODEL.
+        """
+
         self.engine = engine
 
-    def _provider_status(self):
-        """Return basic provider configuration status.
+        self.api_key = (
+            api_key
+            or os.getenv("OPENAI_API_KEY")
+        )
 
-        Checks for an OpenAI API key and reports the configured model.
+        self.model = (
+            model
+            or os.getenv(
+                "OPENAI_MODEL",
+                "gpt-5.6",
+            )
+        )
+
+        self.client = None
+
+        if self.api_key:
+            self.client = OpenAI(
+                api_key=self.api_key
+            )
+
+    # =========================================================
+    # PROVIDER STATUS
+    # =========================================================
+
+    def _provider_status(self):
         """
-        import os
-        configured = bool(os.getenv("OPENAI_API_KEY"))
+        Return provider configuration status.
+        """
+
         return {
-            "configured": configured,
-            "model": os.getenv("OPENAI_MODEL", "gpt-3.5-turbo"),
+            "configured": bool(self.api_key),
+            "provider": "openai",
+            "model": self.model,
         }
 
     def status(self):
-        """Return provider status without delegating to the engine.
-
-        This prevents infinite recursion when AIEngine.status calls
-        self.client.status.
         """
+        Return AI provider status.
+
+        This method does not delegate to AIEngine because doing
+        so could create an:
+
+            AIEngine -> AIClient -> AIEngine
+
+        recursion loop.
+        """
+
         return self._provider_status()
 
-    def ask(self, prompt: str):
-        """Send a prompt to the AI provider.
+    # =========================================================
+    # SINGLE PROMPT
+    # =========================================================
 
-        When no API key is configured, returns a dummy successful response.
+    def ask(self, prompt: str):
         """
-        if not self._provider_status()["configured"]:
-            return {"content": f"[Dummy response] {prompt[:50]}...", "success": True}
-        raise NotImplementedError("AI provider integration not available in this environment.")
+        Send a single prompt to the AI provider.
+
+        Returns:
+            {
+                "success": bool,
+                "content": str,
+                "model": str,
+                "model_name": str,
+                "processing_time": float,
+                "error": str | None
+            }
+        """
+
+        if not isinstance(prompt, str):
+            raise TypeError(
+                "Prompt must be supplied as a string."
+            )
+
+        prompt = prompt.strip()
+
+        if not prompt:
+            return {
+                "success": False,
+                "content": "",
+                "model": self.model,
+                "model_name": self.model,
+                "processing_time": 0,
+                "error": "Prompt cannot be empty.",
+            }
+
+        # -----------------------------------------------------
+        # DEVELOPMENT FALLBACK
+        # -----------------------------------------------------
+
+        if not self.client:
+            return {
+                "success": True,
+                "content": (
+                    "[Development mode] "
+                    "No OpenAI API key is configured."
+                ),
+                "model": self.model,
+                "model_name": self.model,
+                "processing_time": 0,
+                "development_mode": True,
+                "error": None,
+            }
+
+        # -----------------------------------------------------
+        # OPENAI REQUEST
+        # -----------------------------------------------------
+
+        started_at = time.perf_counter()
+
+        try:
+            response = self.client.responses.create(
+                model=self.model,
+                input=prompt,
+            )
+
+            processing_time = (
+                time.perf_counter()
+                - started_at
+            )
+
+            content = (
+                response.output_text
+                or ""
+            )
+
+            return {
+                "success": True,
+                "content": content,
+                "model": self.model,
+                "model_name": self.model,
+                "processing_time": processing_time,
+                "error": None,
+            }
+
+        except Exception as error:
+            processing_time = (
+                time.perf_counter()
+                - started_at
+            )
+
+            return {
+                "success": False,
+                "content": "",
+                "model": self.model,
+                "model_name": self.model,
+                "processing_time": processing_time,
+                "error": str(error),
+            }
+
+    # =========================================================
+    # CHAT / CONVERSATION
+    # =========================================================
 
     def chat(self, messages):
-        """Perform a chat interaction.
-
-        Returns a placeholder response when the provider is not configured.
         """
-        if not self._provider_status()["configured"]:
-            return {"content": "[Dummy chat response]", "success": True}
-        raise NotImplementedError("Chat integration not implemented.")
+        Send conversation history to the AI provider.
 
-    def analyze(self, code):
-        """Analyze code for issues."""
-        return self.engine.analyze(code)
+        Expected input:
 
-    def correct(self, code, error):
-        """Correct code based on error."""
-        return self.engine.correct(code, error)
+        [
+            {
+                "role": "system",
+                "content": "You are an AI coding teammate."
+            },
+            {
+                "role": "user",
+                "content": "Explain this code."
+            },
+            {
+                "role": "assistant",
+                "content": "..."
+            }
+        ]
+        """
 
-    def explain(self, code):
-        """Explain the provided code."""
-        return self.engine.explain(code)
+        if not isinstance(messages, list):
+            raise TypeError(
+                "Messages must be supplied as a list."
+            )
 
-if __name__ != "__main__":
-    # Demo block removed to avoid circular imports.
-    pass
+        if not messages:
+            return {
+                "success": False,
+                "content": "",
+                "model": self.model,
+                "model_name": self.model,
+                "processing_time": 0,
+                "error": (
+                    "Conversation history is empty."
+                ),
+            }
 
+        # -----------------------------------------------------
+        # VALIDATE / NORMALIZE MESSAGES
+        # -----------------------------------------------------
 
-__all__ = [
-    "AIEngine",
-    "AIClient",
-    "CodeAnalyzer",
-    "CodeCorrector",
-    "CodeExplainer",
-    "ErrorDetector",
-    "VisualAnalyzer",
-    "ProjectAnalyzer",
-    "ConversationManager",
-]
+        normalized_messages = []
+
+        allowed_roles = {
+            "system",
+            "user",
+            "assistant",
+            "developer",
+        }
+
+        for message in messages:
+
+            if not isinstance(message, dict):
+                continue
+
+            role = message.get(
+                "role",
+                "user",
+            )
+
+            content = message.get(
+                "content",
+                "",
+            )
+
+            if role not in allowed_roles:
+                role = "user"
+
+            if content is None:
+                continue
+
+            content = str(content).strip()
+
+            if not content:
+                continue
+
+            normalized_messages.append({
+                "role": role,
+                "content": content,
+            })
+
+        if not normalized_messages:
+            return {
+                "success": False,
+                "content": "",
+                "model": self.model,
+                "model_name": self.model,
+                "processing_time": 0,
+                "error": (
+                    "No valid conversation messages "
+                    "were supplied."
+                ),
+            }
+
+        # -----------------------------------------------------
+        # DEVELOPMENT FALLBACK
+        # -----------------------------------------------------
+
+        if not self.client:
+            return {
+                "success": True,
+                "content": (
+                    "[Development mode] "
+                    "No OpenAI API key is configured."
+                ),
+                "model": self.model,
+                "model_name": self.model,
+                "processing_time": 0,
+                "development_mode": True,
+                "error": None,
+            }
+
+        # -----------------------------------------------------
+        # OPENAI REQUEST
+        # -----------------------------------------------------
+
+        started_at = time.perf_counter()
+
+        try:
+            response = self.client.responses.create(
+                model=self.model,
+                input=normalized_messages,
+            )
+
+            processing_time = (
+                time.perf_counter()
+                - started_at
+            )
+
+            content = (
+                response.output_text
+                or ""
+            )
+
+            return {
+                "success": True,
+                "content": content,
+                "model": self.model,
+                "model_name": self.model,
+                "processing_time": processing_time,
+                "error": None,
+            }
+
+        except Exception as error:
+            processing_time = (
+                time.perf_counter()
+                - started_at
+            )
+
+            return {
+                "success": False,
+                "content": "",
+                "model": self.model,
+                "model_name": self.model,
+                "processing_time": processing_time,
+                "error": str(error),
+            }
+
+    # =========================================================
+    # AI ENGINE CONVENIENCE METHODS
+    # =========================================================
+
+    def analyze(
+        self,
+        code,
+        language="text",
+        filename="untitled",
+    ):
+        """
+        Delegate code analysis to AIEngine.
+        """
+
+        self._require_engine()
+
+        return self.engine.analyze_code(
+            code=code,
+            language=language,
+            filename=filename,
+        )
+
+    def correct(
+        self,
+        code,
+        error=None,
+        language="text",
+        filename="untitled",
+    ):
+        """
+        Delegate code correction to AIEngine.
+        """
+
+        self._require_engine()
+
+        problems = None
+
+        if error:
+            problems = [error]
+
+        return self.engine.correct_code(
+            code=code,
+            language=language,
+            filename=filename,
+            problems=problems,
+        )
+
+    def explain(
+        self,
+        code,
+        language="text",
+        filename="untitled",
+    ):
+        """
+        Delegate code explanation to AIEngine.
+        """
+
+        self._require_engine()
+
+        return self.engine.explain_code(
+            code=code,
+            language=language,
+            filename=filename,
+        )
+
+    # =========================================================
+    # INTERNAL HELPERS
+    # =========================================================
+
+    def _require_engine(self):
+        """
+        Ensure an AIEngine instance is available before using
+        engine convenience methods.
+        """
+
+        if self.engine is None:
+            raise RuntimeError(
+                "AIEngine is not attached to AIClient. "
+                "Use CodeAnalyzer, CodeCorrector, or "
+                "CodeExplainer directly, or initialize "
+                "AIClient with an engine."
+            )

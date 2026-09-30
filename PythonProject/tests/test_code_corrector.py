@@ -1,36 +1,89 @@
+"""
+CodeCorrector tests.
+"""
+
 from ai.code_corrector import CodeCorrector
 
 
-def test_corrector_creation():
-    corrector = CodeCorrector()
+def test_corrector_initializes(
+    fake_ai_client,
+):
+    """
+    CodeCorrector should accept a shared client.
+    """
 
-    assert corrector is not None
-
-
-def test_problem_formatting():
-    corrector = CodeCorrector()
-
-    problems = [
-        {
-            "line": 2,
-            "message": "Missing colon",
-            "severity": "error",
-        }
-    ]
-
-    formatted = corrector._format_problem(
-        problems
+    corrector = CodeCorrector(
+        client=fake_ai_client
     )
 
-    assert isinstance(formatted, str)
-    assert "Missing colon" in formatted
+    assert corrector.client is fake_ai_client
 
 
-def test_extract_code_from_code_block():
-    corrector = CodeCorrector()
+def test_empty_code(
+    fake_ai_client,
+):
+    """
+    Empty code should return a safe response.
+    """
 
-    response = """
-Here is the corrected code:
+    corrector = CodeCorrector(
+        client=fake_ai_client
+    )
+
+    result = corrector.correct(
+        code="",
+        language="python",
+    )
+
+    assert isinstance(result, dict)
+
+    assert result["original_code"] == ""
+    assert result["corrected_code"] == ""
+
+
+def test_problem_formatter():
+    """
+    Problem dictionaries should be converted
+    into readable text.
+    """
+
+    problem = {
+        "line": 10,
+        "message": "Missing colon.",
+    }
+
+    result = CodeCorrector._format_problem(
+        problem
+    )
+
+    assert result == (
+        "Line 10: Missing colon."
+    )
+
+
+def test_problem_formatter_without_line():
+    """
+    Problems without line numbers should still work.
+    """
+
+    problem = {
+        "message": "Unexpected token."
+    }
+
+    result = CodeCorrector._format_problem(
+        problem
+    )
+
+    assert result == "Unexpected token."
+
+
+def test_extract_python_code():
+    """
+    Code should be extracted from Markdown fences.
+    """
+
+    content = """Here is the corrected code:
 
 ```python
-print("Hello")
+print(\"Hello\")
+```"""
