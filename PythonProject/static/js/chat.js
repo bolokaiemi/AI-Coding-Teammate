@@ -16,7 +16,34 @@ const Chat = {
     state: {
         sending: false
     },
+onReady() {
+    const overlay = document.querySelector(
+        "[data-connecting-overlay]"
+    );
 
+    const input = document.querySelector(
+        "[data-chat-input]"
+    );
+
+    const sendButton = document.querySelector(
+        "[data-chat-send]"
+    );
+
+    if (overlay) {
+        overlay.hidden = true;
+    }
+
+    if (input) {
+        input.disabled = false;
+        input.focus();
+    }
+
+    if (sendButton) {
+        sendButton.disabled = false;
+    }
+
+    console.log("AI Coding Teammate chat is ready.");
+},
     init() {
         this.elements.messages =
             document.querySelector("#chat-messages") ||
@@ -155,3 +182,4 @@ const Chat = {
 document.addEventListener("DOMContentLoaded", () => {
     Chat.init();
 });
+

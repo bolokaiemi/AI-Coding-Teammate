@@ -16,7 +16,16 @@ const SocketManager = {
     },
 
     handlers: {},
+    SocketManager.socket.on("connect", () => {
+    console.log("Connected to AI Coding Teammate.");
 
+    if (
+        typeof Chat !== "undefined" &&
+        typeof Chat.onReady === "function"
+    ) {
+        Chat.onReady();
+    }
+}),
     init() {
         if (typeof io === "undefined") {
             console.warn(
@@ -44,28 +53,49 @@ const SocketManager = {
         this.socket.on("connect", () => {
             this.state.connected = true;
             this.state.reconnectAttempts = 0;
-
             console.log("Connected to AI Coding Teammate.");
-
-            this.emit("client_ready", {
-                timestamp: Date.now()
-            });
+            // UI update
+            const indicator = document.getElementById("connectionIndicator");
+            if (indicator) {
+                indicator.classList.remove("offline");
+                indicator.classList.add("online");
+            }
+            const status = document.getElementById("connectionStatus");
+            if (status) {
+                status.textContent = "Connected";
+            }
+            this.emit("client_ready", { timestamp: Date.now() });
         });
 
         this.socket.on("disconnect", (reason) => {
             this.state.connected = false;
             this.state.workspaceJoined = false;
-
             console.warn("Socket disconnected:", reason);
+            // UI update
+            const indicator = document.getElementById("connectionIndicator");
+            if (indicator) {
+                indicator.classList.remove("online");
+                indicator.classList.add("offline");
+            }
+            const status = document.getElementById("connectionStatus");
+            if (status) {
+                status.textContent = "Disconnected";
+            }
         });
 
         this.socket.on("connect_error", (error) => {
             this.state.reconnectAttempts++;
-
-            console.warn(
-                "Socket connection error:",
-                error.message
-            );
+            console.warn("Socket connection error:", error.message);
+            // UI update
+            const indicator = document.getElementById("connectionIndicator");
+            if (indicator) {
+                indicator.classList.remove("online");
+                indicator.classList.add("offline");
+            }
+            const status = document.getElementById("connectionStatus");
+            if (status) {
+                status.textContent = "Error";
+            }
         });
 
         this.socket.on("error", (data) => {

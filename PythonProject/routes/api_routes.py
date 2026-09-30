@@ -15,7 +15,66 @@ api_bp = Blueprint(
     __name__,
     url_prefix="/api"
 )
+import os
 
+from flask import current_app, jsonify, request
+from flask_login import login_required
+
+
+@api_bp.route("/folder/create", methods=["POST"])
+@login_required
+def create_folder():
+    data = request.get_json(silent=True) or {}
+
+    folder_name = data.get("name", "").strip()
+
+    if not folder_name:
+        return jsonify({
+            "success": False,
+            "error": "Folder name is required.",
+        }), 400
+
+    # Prevent path traversal.
+    safe_name = os.path.basename(folder_name)
+
+    if safe_name != folder_name:
+        return jsonify({
+            "success": False,
+            "error": "Invalid folder name.",
+        }), 400
+
+    projects_root = os.path.join(
+        current_app.root_path,
+        "projects",
+    )
+
+    folder_path = os.path.join(
+        projects_root,
+        safe_name,
+    )
+
+    try:
+        os.makedirs(
+            folder_path,
+            exist_ok=False,
+        )
+
+    except FileExistsError:
+        return jsonify({
+            "success": False,
+            "error": "Folder already exists.",
+        }), 409
+
+    except OSError:
+        return jsonify({
+            "success": False,
+            "error": "Unable to create folder.",
+        }), 500
+
+    return jsonify({
+        "success": True,
+        "name": safe_name,
+    }), 201
 
 # ----------------------------------------------------------------------
 # API Health

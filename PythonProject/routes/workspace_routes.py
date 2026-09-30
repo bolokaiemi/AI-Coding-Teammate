@@ -7,6 +7,11 @@ from flask import (
     flash,
     jsonify,
 )
+import os
+
+from flask import current_app, render_template
+from flask_login import login_required
+
 
 from flask_login import (
     login_required,
@@ -25,6 +30,21 @@ workspace_bp = Blueprint(
     __name__,
     url_prefix="/workspace"
 )
+
+@workspace_bp.route("/file_tree")
+@login_required
+def file_tree():
+    """Return the rendered file‑tree HTML fragment for the current project."""
+    projects_root = os.path.join(
+        current_app.root_path,
+        "projects",
+    )
+    items = []
+    if os.path.isdir(projects_root):
+        for name in sorted(os.listdir(projects_root)):
+            path = os.path.join(projects_root, name)
+            items.append({"name": name, "is_directory": os.path.isdir(path)})
+    return render_template("workspace/_file_tree.html", items=items)
 
 
 # ----------------------------------------------------------------------

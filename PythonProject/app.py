@@ -1,57 +1,140 @@
+"""
+AI Coding Teammate
+==================
+
+Main Flask application.
+
+Combines:
+
+- Flask
+- Flask-Login
+- Flask-SocketIO
+- Database initialization
+- Jinja2 templates
+- AI coding services
+- Real-time AI teammate communication
+- Upload handling
+- Logging
+- Health monitoring
+"""
+
+import logging
 import os
 import uuid
-import logging
+from routes.workspace_routes import workspace_bp
+
+from dotenv import load_dotenv
 
 from flask import (
     Flask,
-    render_template,
-    redirect,
-    url_for,
     flash,
-    request,
     jsonify,
+    redirect,
+    render_template,
+    request,
+    url_for,
 )
 
 from flask_login import LoginManager
 from flask_socketio import SocketIO
-from dotenv import load_dotenv
+
 from config import config
 from database.database import init_db
 
-# Initialize Flask extensions
-login_manager = LoginManager()
 
-socketio = SocketIO(async_mode='threading')
-
-
-# ----------------------------------------------------------------------
-# Load environment variables
-# ----------------------------------------------------------------------
+# ============================================================
+# LOAD ENVIRONMENT VARIABLES
+# ============================================================
 
 load_dotenv()
 
 
+# ============================================================
+# EXTENSIONS
+# ============================================================
 
-# --------------------------------------------------------------
-# Initialize Extensions
-# --------------------------------------------------------------
+login_manager = LoginManager()
 
-# Extension initialization moved to create_app
+socketio = SocketIO(
+    async_mode="threading",
+)
 
-# ----------------------------------------------------------------------
-# Application Factory
-# ----------------------------------------------------------------------
+# ============================================================
+# FLASK-LOGIN CONFIGURATION
+# ============================================================
+
+login_manager.login_view = "auth.login"
+
+login_manager.login_message = (
+    "Please log in to access your workspace."
+)
+
+login_manager.login_message_category = "info"
+
+
+# ============================================================
+# FLASK-LOGIN USER LOADER
+# ============================================================
+
+@login_manager.user_loader
+def load_user(user_id):
+    """
+    Reload an authenticated user from the database.
+
+    Flask-Login stores the user's ID in the session.
+    This callback converts that ID back into a User object.
+    """
+
+    if not user_id:
+        return None
+
+    try:
+        user_id = int(user_id)
+
+    except (TypeError, ValueError):
+        return None
+
+    try:
+        # Import locally to help avoid circular imports.
+        from database.models import User
+
+        # SQLAlchemy 2.x compatible query.
+        return User.query.filter_by(
+            id=user_id
+        ).first()
+
+    except Exception as error:
+        logging.warning(
+            "Unable to load user %s: %s",
+            user_id,
+            error,
+        )
+
+        return None
+
+
+# ============================================================
+# APPLICATION FACTORY
+# ============================================================
 
 def create_app(config_name=None):
     """
     Create and configure the Flask application.
     """
 
+    # --------------------------------------------------------
+    # Determine environment
+    # --------------------------------------------------------
+
     if config_name is None:
         config_name = os.getenv(
             "FLASK_ENV",
-            "development"
+            "development",
         )
+
+    # --------------------------------------------------------
+    # Create Flask application
+    # --------------------------------------------------------
 
     app = Flask(
         __name__,
@@ -59,231 +142,303 @@ def create_app(config_name=None):
         static_folder="static",
     )
 
-    # --------------------------------------------------------------
-    # Configuration
-    # --------------------------------------------------------------
+    # --------------------------------------------------------
     # Load configuration
-    app.config.from_object(
-        config.get(
-            config_name,
-            config["default"]
-        )
+    # --------------------------------------------------------
+
+    selected_config = config.get(
+        config_name,
+        config["default"],
     )
 
+    app.config.from_object(
+        selected_config
+    )
+
+    # --------------------------------------------------------
+    # Testing configuration
+    # --------------------------------------------------------
+
+    if config_name == "testing":
+        app.config.update(
+            TESTING=True,
+            WTF_CSRF_ENABLED=False,
+        )
+
+    # --------------------------------------------------------
+    # Configure logging early
+    # --------------------------------------------------------
+
+    configure_logging(app)
+
+    # --------------------------------------------------------
     # Initialize database
+    # --------------------------------------------------------
+
     init_db(app)
 
-
-    # --------------------------------------------------------------
-    # Initialize Extensions
-    # --------------------------------------------------------------
+    # --------------------------------------------------------
+    # Initialize Flask-Login
+    # --------------------------------------------------------
 
     login_manager.init_app(app)
+
+    # --------------------------------------------------------
+    # Initialize Socket.IO
+    # --------------------------------------------------------
 
     socketio.init_app(
         app,
         cors_allowed_origins=app.config.get(
             "SOCKETIO_CORS_ALLOWED_ORIGINS",
-            "*"
+            "*",
+        ),
+        logger=app.config.get(
+            "SOCKETIO_LOGGER",
+            False,
+        ),
+        engineio_logger=app.config.get(
+            "ENGINEIO_LOGGER",
+            False,
         ),
     )
-
-    # --------------------------------------------------------------
-    # Login Manager
-    # --------------------------------------------------------------
-
-    login_manager.login_view = "auth.login"
-
-    login_manager.login_message = (
-        "Please log in to access your workspace."
-    )
-
-    login_manager.login_message_category = "info"
-
-    # --------------------------------------------------------------
-    # Create Required Directories
-    # --------------------------------------------------------------
+    # --------------------------------------------------------
+    # Create required directories
+    # --------------------------------------------------------
 
     create_directories(app)
 
-    # --------------------------------------------------------------
-    # Register Blueprints
-    # --------------------------------------------------------------
+    # --------------------------------------------------------
+    # Register blueprints
+    # --------------------------------------------------------
+
+
 
     register_blueprints(app)
 
-    # --------------------------------------------------------------
-    # Register WebSocket Handlers
-    # --------------------------------------------------------------
+    # --------------------------------------------------------
+    # Register WebSocket handlers
+    # --------------------------------------------------------
 
     register_socket_handlers()
 
-    # --------------------------------------------------------------
-    # Error Handlers
-    # --------------------------------------------------------------
+    # --------------------------------------------------------
+    # Register error handlers
+    # --------------------------------------------------------
 
     register_error_handlers(app)
 
-    # --------------------------------------------------------------
-    # Template Context
-    # --------------------------------------------------------------
+    # --------------------------------------------------------
+    # Register template context
+    # --------------------------------------------------------
 
     register_template_context(app)
 
-    # --------------------------------------------------------------
-    # Application Routes
-    # --------------------------------------------------------------
+    # --------------------------------------------------------
+    # Register core routes
+    # --------------------------------------------------------
 
     register_core_routes(app)
 
-    # --------------------------------------------------------------
-    # Logging
-    # --------------------------------------------------------------
-
-    configure_logging(app)
+    app.logger.info(
+        "AI Coding Teammate application initialized."
+    )
 
     return app
 
 
-# ----------------------------------------------------------------------
-# Directory Setup
-# ----------------------------------------------------------------------
+# ============================================================
+# DIRECTORY SETUP
+# ============================================================
 
 def create_directories(app):
     """
-    Create application directories if they do not already exist.
+    Create application directories if they do not
+    already exist.
     """
 
+    upload_folder = app.config.get(
+        "UPLOAD_FOLDER",
+        os.path.join(
+            app.root_path,
+            "uploads",
+        ),
+    )
+
     directories = [
-        app.config["UPLOAD_FOLDER"],
+        upload_folder,
 
         os.path.join(
-            app.config["UPLOAD_FOLDER"],
-            "code"
+            upload_folder,
+            "code",
         ),
 
         os.path.join(
-            app.config["UPLOAD_FOLDER"],
-            "images"
+            upload_folder,
+            "images",
         ),
 
         os.path.join(
-            app.config["UPLOAD_FOLDER"],
-            "videos"
+            upload_folder,
+            "videos",
         ),
 
         os.path.join(
-            app.config["UPLOAD_FOLDER"],
-            "screenshots"
-        ),
-
-        os.path.join(
-            app.root_path,
-            "projects"
+            upload_folder,
+            "screenshots",
         ),
 
         os.path.join(
             app.root_path,
-            "logs"
+            "projects",
+        ),
+
+        os.path.join(
+            app.root_path,
+            "logs",
         ),
     ]
 
     for directory in directories:
         os.makedirs(
             directory,
-            exist_ok=True
+            exist_ok=True,
         )
 
 
-# ----------------------------------------------------------------------
-# Blueprint Registration
-# ----------------------------------------------------------------------
+# ============================================================
+# BLUEPRINT REGISTRATION
+# ============================================================
 
 def register_blueprints(app):
     """
     Register all application blueprints.
 
-    Blueprints are imported inside this function to avoid circular
-    imports during application startup.
+    Imports remain inside this function to reduce
+    circular-import problems.
     """
+
+    # --------------------------------------------------------
+    # Main routes
+    # --------------------------------------------------------
 
     try:
         from routes.main_routes import main_bp
-        app.register_blueprint(main_bp)
+
+        app.register_blueprint(
+            main_bp
+        )
 
     except ImportError as error:
         app.logger.warning(
             "Main blueprint could not be loaded: %s",
-            error
+            error,
         )
+
+    # --------------------------------------------------------
+    # Authentication routes
+    # --------------------------------------------------------
 
     try:
         from routes.auth_routes import auth_bp
-        app.register_blueprint(auth_bp)
+
+        app.register_blueprint(
+            auth_bp
+        )
 
     except ImportError as error:
         app.logger.warning(
             "Auth blueprint could not be loaded: %s",
-            error
+            error,
         )
+
+    # --------------------------------------------------------
+    # Dashboard routes
+    # --------------------------------------------------------
 
     try:
         from routes.dashboard_routes import dashboard_bp
-        app.register_blueprint(dashboard_bp)
+
+        app.register_blueprint(
+            dashboard_bp
+        )
 
     except ImportError as error:
         app.logger.warning(
             "Dashboard blueprint could not be loaded: %s",
-            error
+            error,
         )
+
+    # --------------------------------------------------------
+    # Workspace routes
+    # --------------------------------------------------------
 
     try:
         from routes.workspace_routes import workspace_bp
-        app.register_blueprint(workspace_bp)
+
+        app.register_blueprint(
+            workspace_bp
+        )
 
     except ImportError as error:
         app.logger.warning(
             "Workspace blueprint could not be loaded: %s",
-            error
+            error,
         )
+
+    # --------------------------------------------------------
+    # Project routes
+    # --------------------------------------------------------
 
     try:
         from routes.project_routes import project_bp
-        app.register_blueprint(project_bp)
+
+        app.register_blueprint(
+            project_bp
+        )
 
     except ImportError as error:
         app.logger.warning(
             "Project blueprint could not be loaded: %s",
-            error
+            error,
         )
+
+    # --------------------------------------------------------
+    # API routes
+    # --------------------------------------------------------
 
     try:
         from routes.api_routes import api_bp
-        app.register_blueprint(api_bp)
+
+        app.register_blueprint(
+            api_bp
+        )
 
     except ImportError as error:
         app.logger.warning(
             "API blueprint could not be loaded: %s",
-            error
+            error,
         )
 
 
-# ----------------------------------------------------------------------
-# WebSocket Registration
-# ----------------------------------------------------------------------
+# ============================================================
+# WEBSOCKET REGISTRATION
+# ============================================================
 
 def register_socket_handlers():
     """
     Register real-time WebSocket handlers.
 
-    The actual handlers live inside websocket/handlers.py and related
-    modules.
+    The application's actual Socket.IO handlers live in
+    websocket/handlers.py.
     """
 
     try:
         from websocket.handlers import register_handlers
 
-        register_handlers(socketio)
+        register_handlers(
+            socketio
+        )
 
         logging.info(
             "WebSocket handlers registered successfully."
@@ -292,26 +447,46 @@ def register_socket_handlers():
     except ImportError as error:
         logging.warning(
             "WebSocket handlers could not be loaded: %s",
-            error
+            error,
+        )
+
+    except Exception as error:
+        logging.exception(
+            "Unable to register WebSocket handlers: %s",
+            error,
         )
 
 
-# ----------------------------------------------------------------------
-# Error Handlers
-# ----------------------------------------------------------------------
+# ============================================================
+# ERROR HANDLERS
+# ============================================================
 
 def register_error_handlers(app):
+    """
+    Register application error handlers.
+    """
+
+    # --------------------------------------------------------
+    # 404 - Page Not Found
+    # --------------------------------------------------------
 
     @app.errorhandler(404)
     def page_not_found(error):
+
         return render_template(
             "errors/404.html"
         ), 404
 
+    # --------------------------------------------------------
+    # 500 - Internal Server Error
+    # --------------------------------------------------------
+
     @app.errorhandler(500)
     def internal_server_error(error):
 
-        error_id = str(uuid.uuid4())[:8]
+        error_id = str(
+            uuid.uuid4()
+        )[:8]
 
         app.logger.error(
             "Internal server error [%s]: %s",
@@ -319,98 +494,191 @@ def register_error_handlers(app):
             error,
         )
 
+        # Roll back an unfinished database transaction
+        # when possible.
+        try:
+            from database.database import db
+
+            db.session.rollback()
+
+        except Exception:
+            pass
+
         return render_template(
             "errors/500.html",
             error_id=error_id,
         ), 500
 
+    # --------------------------------------------------------
+    # 413 - Upload Too Large
+    # --------------------------------------------------------
+
     @app.errorhandler(413)
     def request_entity_too_large(error):
 
-        if request.path.startswith("/api/"):
-            return jsonify({
-                "success": False,
-                "error": "Uploaded file is too large."
-            }), 413
+        if request.path.startswith(
+            "/api/"
+        ):
+            return jsonify(
+                {
+                    "success": False,
+                    "error": (
+                        "Uploaded file is too large."
+                    ),
+                }
+            ), 413
 
         flash(
             "The uploaded file is too large.",
-            "danger"
+            "danger",
         )
 
         return redirect(
-            request.referrer or url_for("main.index")
+            request.referrer
+            or url_for(
+                "main.index"
+            )
         )
 
 
-# ----------------------------------------------------------------------
-# Template Context
-# ----------------------------------------------------------------------
+# ============================================================
+# TEMPLATE CONTEXT
+# ============================================================
 
 def register_template_context(app):
+    """
+    Make common application values available
+    automatically inside Jinja2 templates.
+    """
 
     @app.context_processor
     def inject_app_config():
 
         return {
-            "app_name": app.config["APP_NAME"],
-            "app_version": app.config["APP_VERSION"],
-            "ai_name": app.config["AI_NAME"],
+            "app_name": app.config.get(
+                "APP_NAME",
+                "AI Coding Teammate",
+            ),
+
+            "app_version": app.config.get(
+                "APP_VERSION",
+                "1.0.0",
+            ),
+
+            "ai_name": app.config.get(
+                "AI_NAME",
+                "AI Teammate",
+            ),
         }
 
 
-# ----------------------------------------------------------------------
-# Core Routes
-# ----------------------------------------------------------------------
+# ============================================================
+# CORE ROUTES
+# ============================================================
 
 def register_core_routes(app):
+    """
+    Register application-level utility routes.
+    """
 
-    @app.route("/health")
+    # --------------------------------------------------------
+    # Health Check
+    # --------------------------------------------------------
+
+    @app.route(
+        "/health"
+    )
     def health_check():
         """
-        Health-check endpoint useful for development,
+        Health endpoint for local development,
         Docker, deployment platforms, and monitoring.
         """
 
-        return jsonify({
-            "status": "healthy",
-            "application": app.config["APP_NAME"],
-            "version": app.config["APP_VERSION"],
-        })
+        return jsonify(
+            {
+                "status": "healthy",
 
-    @app.route("/api/status")
+                "application": app.config.get(
+                    "APP_NAME",
+                    "AI Coding Teammate",
+                ),
+
+                "version": app.config.get(
+                    "APP_VERSION",
+                    "1.0.0",
+                ),
+            }
+        )
+
+    # --------------------------------------------------------
+    # API Health Alias
+    # --------------------------------------------------------
+
+    @app.route(
+        "/api/health"
+    )
+    def api_health():
+
+        return jsonify(
+            {
+                "success": True,
+                "status": "healthy",
+            }
+        )
+
+    # --------------------------------------------------------
+    # API Status
+    # --------------------------------------------------------
+
+    @app.route(
+        "/api/status"
+    )
     def api_status():
         """
-        Basic API status endpoint.
+        Basic AI/API status endpoint.
         """
 
-        return jsonify({
-            "success": True,
-            "status": "online",
-            "ai": {
-                "name": app.config["AI_NAME"],
+        return jsonify(
+            {
+                "success": True,
                 "status": "online",
-            },
-        })
+
+                "ai": {
+                    "name": app.config.get(
+                        "AI_NAME",
+                        "AI Teammate",
+                    ),
+
+                    "status": "online",
+                },
+            }
+        )
 
 
-# ----------------------------------------------------------------------
-# Logging
-# ----------------------------------------------------------------------
+# ============================================================
+# LOGGING
+# ============================================================
 
 def configure_logging(app):
+    """
+    Configure application logging.
+    """
 
-    log_level = app.config.get(
-        "LOG_LEVEL",
-        "INFO"
-    ).upper()
+    log_level = (
+        app.config.get(
+            "LOG_LEVEL",
+            "INFO",
+        )
+        .upper()
+    )
 
     logging.basicConfig(
         level=getattr(
             logging,
             log_level,
-            logging.INFO
+            logging.INFO,
         ),
+
         format=(
             "%(asctime)s | "
             "%(levelname)s | "
@@ -420,64 +688,40 @@ def configure_logging(app):
     )
 
 
-# ----------------------------------------------------------------------
-# Flask-Login User Loader
-# ----------------------------------------------------------------------
-
-@login_manager.user_loader
-def load_user(user_id):
-    """
-    Load a user from the database for Flask-Login.
-
-    The User model is imported here rather than at module level
-    to avoid circular imports during application initialization.
-    """
-
-    try:
-        from database.models import User
-
-        return User.query.get(int(user_id))
-
-    except (ImportError, ValueError, TypeError) as error:
-
-        logging.warning(
-            "Unable to load user %s: %s",
-            user_id,
-            error
-        )
-
-        return None
-
-
-# ----------------------------------------------------------------------
-# Create Application
-# ----------------------------------------------------------------------
+# ============================================================
+# CREATE APPLICATION
+# ============================================================
 
 app = create_app()
 
 
-# ----------------------------------------------------------------------
-# Development Server
-# ----------------------------------------------------------------------
+# ============================================================
+# DEVELOPMENT SERVER
+# ============================================================
 
 if __name__ == "__main__":
 
-    socketio.run(
+    host = os.getenv(
+        "HOST",
+        "127.0.0.1",
+    )
 
+    port = int(
+        os.getenv(
+            "PORT",
+            "5001",
+        )
+    )
+
+    debug_mode = app.config.get(
+        "DEBUG",
+        False,
+    )
+
+    socketio.run(
         app,
-        allow_unsafe_werkzeug=True,
-        host=os.getenv(
-            "HOST",
-            "127.0.0.1"
-        ),
-        port=int(
-            os.getenv(
-                "PORT",
-                "5001"
-            )
-        ),
-        debug=app.config.get(
-            "DEBUG",
-            False
-        ),
+        host=host,
+        port=port,
+        debug=debug_mode,
+        allow_unsafe_werkzeug=True
     )

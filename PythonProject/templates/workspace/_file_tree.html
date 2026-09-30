@@ -1,7 +1,8 @@
 {% extends "base.html" %}
 
+
 {% block title %}
-    Workspace | AI Coding Teammate
+Workspace | AI Coding Teammate
 {% endblock %}
 
 
@@ -34,18 +35,22 @@
 
 <div
     class="workspace-page"
+    id="workspacePage"
     data-workspace
     data-project-id="{{ project.id if project else '' }}"
 >
 
 
     <!-- =====================================================
-         WORKSPACE TOP BAR
+         WORKSPACE HEADER
     ====================================================== -->
 
     <header class="workspace-header">
 
-        <!-- Project Identity -->
+
+        <!-- =================================================
+             PROJECT BRAND / INFORMATION
+        ================================================== -->
 
         <div class="workspace-brand">
 
@@ -85,7 +90,7 @@
 
 
         <!-- =================================================
-             AI STATUS
+             AI TEAMMATE STATUS
         ================================================== -->
 
         <div
@@ -112,12 +117,16 @@
 
         <div class="workspace-actions">
 
+
+            <!-- SAVE -->
+
             <button
                 type="button"
                 id="saveProjectButton"
                 class="workspace-action-button"
                 title="Save project"
             >
+
                 <span aria-hidden="true">
                     💾
                 </span>
@@ -125,8 +134,11 @@
                 <span>
                     Save
                 </span>
+
             </button>
 
+
+            <!-- RUN -->
 
             <button
                 type="button"
@@ -134,6 +146,7 @@
                 class="workspace-action-button run-button"
                 title="Run code"
             >
+
                 <span aria-hidden="true">
                     ▶
                 </span>
@@ -141,8 +154,11 @@
                 <span>
                     Run
                 </span>
+
             </button>
 
+
+            <!-- SHARE -->
 
             <button
                 type="button"
@@ -150,6 +166,7 @@
                 class="workspace-action-button"
                 title="Share workspace"
             >
+
                 <span aria-hidden="true">
                     🔗
                 </span>
@@ -157,6 +174,7 @@
                 <span>
                     Share
                 </span>
+
             </button>
 
         </div>
@@ -175,13 +193,13 @@
 
 
         <!-- =================================================
-             PROJECT PANEL
+             LEFT PROJECT PANEL
         ================================================== -->
 
         <aside
             class="workspace-project-panel"
             id="workspaceProjectPanel"
-            aria-label="Project files"
+            aria-label="Project navigation and files"
         >
 
 
@@ -189,21 +207,31 @@
                  EXISTING PROJECT PANEL
             ============================================== -->
 
-            {% include "workspace/project_panel.html" %}
+            <div class="workspace-project-panel-content">
+
+                {% include "workspace/project_panel.html" %}
+
+            </div>
 
 
             <!-- =============================================
-                 PROJECT FILE ACTIONS
+                 PROJECT FILE MANAGER
             ============================================== -->
 
             <section
                 class="workspace-file-manager"
+                id="workspaceFileManager"
                 aria-label="Project file manager"
             >
 
+
+                <!-- =========================================
+                     FILE MANAGER HEADER
+                ========================================== -->
+
                 <div class="workspace-file-manager-header">
 
-                    <div>
+                    <div class="workspace-file-manager-heading">
 
                         <span class="workspace-label">
                             FILES
@@ -216,11 +244,11 @@
                     </div>
 
 
-                    <!-- Refresh File Tree -->
+                    <!-- REFRESH -->
 
                     <button
                         type="button"
-                        class="workspace-file-action workspace-file-refresh"
+                        class="workspace-file-refresh"
                         data-file-tree-refresh
                         title="Refresh project files"
                         aria-label="Refresh project files"
@@ -232,49 +260,62 @@
 
 
                 <!-- =========================================
-                     FILE ACTION BUTTONS
+                     FILE MANAGER ACTIONS
                 ========================================== -->
 
                 <div class="workspace-file-actions">
 
-                    <!-- New Folder -->
+
+                    <!-- NEW FOLDER -->
 
                     <button
                         type="button"
                         class="workspace-file-action-button"
                         data-create-folder
+                        title="Create a new folder"
                     >
-                        <span aria-hidden="true">
+
+                        <span
+                            class="workspace-file-action-icon"
+                            aria-hidden="true"
+                        >
                             📁
                         </span>
 
                         <span>
                             New Folder
                         </span>
+
                     </button>
 
 
-                    <!-- Upload File -->
+                    <!-- UPLOAD FILE -->
 
                     <button
                         type="button"
                         class="workspace-file-action-button"
                         data-project-upload
+                        title="Upload project files"
                     >
-                        <span aria-hidden="true">
+
+                        <span
+                            class="workspace-file-action-icon"
+                            aria-hidden="true"
+                        >
                             ⬆
                         </span>
 
                         <span>
                             Upload File
                         </span>
+
                     </button>
 
                 </div>
 
 
                 <!-- =========================================
-                     HIDDEN PROJECT FILE INPUT
+                     HIDDEN PROJECT FILE UPLOAD INPUT
                 ========================================== -->
 
                 <input
@@ -287,7 +328,7 @@
 
 
                 <!-- =========================================
-                     FILE TREE
+                     PROJECT FILE TREE
                 ========================================== -->
 
                 <div
@@ -298,15 +339,13 @@
                 >
 
                     <!--
-                        project.js loads:
+                        project.js requests:
 
-                        /workspace/file_tree
+                        GET /workspace/file_tree
 
-                        and inserts:
-
-                        templates/workspace/_file_tree.html
-
-                        into this container.
+                        The returned
+                        workspace/_file_tree.html
+                        content is inserted here.
                     -->
 
                     <div class="file-tree-loading">
@@ -391,23 +430,28 @@
 
 
     <!-- =====================================================
-         MEDIA / SCREEN SHARE TOOLBAR
+         MEDIA / VISUAL COMMUNICATION TOOLBAR
     ====================================================== -->
 
     <div
         class="workspace-media-toolbar"
+        id="workspaceMediaToolbar"
         role="toolbar"
         aria-label="AI visual communication tools"
     >
 
 
-        <!-- Screen Sharing -->
+        <!-- =================================================
+             SCREEN SHARE
+        ================================================== -->
 
         <button
             type="button"
             id="shareScreenButton"
             class="media-tool-button"
+            title="Share your screen with the AI teammate"
         >
+
             <span aria-hidden="true">
                 🖥️
             </span>
@@ -415,16 +459,21 @@
             <span>
                 Share Screen
             </span>
+
         </button>
 
 
-        <!-- Camera -->
+        <!-- =================================================
+             CAMERA
+        ================================================== -->
 
         <button
             type="button"
             id="cameraButton"
             class="media-tool-button"
+            title="Show something to the AI using your camera"
         >
+
             <span aria-hidden="true">
                 📷
             </span>
@@ -432,16 +481,21 @@
             <span>
                 Camera
             </span>
+
         </button>
 
 
-        <!-- Image / Video -->
+        <!-- =================================================
+             IMAGE / VIDEO UPLOAD
+        ================================================== -->
 
         <button
             type="button"
             id="uploadMediaButton"
             class="media-tool-button"
+            title="Upload an image or video for AI analysis"
         >
+
             <span aria-hidden="true">
                 🖼️
             </span>
@@ -449,16 +503,21 @@
             <span>
                 Image / Video
             </span>
+
         </button>
 
 
-        <!-- Voice -->
+        <!-- =================================================
+             VOICE
+        ================================================== -->
 
         <button
             type="button"
             id="voiceButton"
             class="media-tool-button"
+            title="Talk to your AI teammate"
         >
+
             <span aria-hidden="true">
                 🎤
             </span>
@@ -466,13 +525,17 @@
             <span>
                 Voice
             </span>
+
         </button>
 
 
-        <!-- Connection Status -->
+        <!-- =================================================
+             CONNECTION STATUS
+        ================================================== -->
 
         <div
             class="media-status"
+            id="mediaConnectionStatus"
             aria-live="polite"
         >
 
@@ -492,7 +555,7 @@
 
 
     <!-- =====================================================
-         HIDDEN MEDIA INPUT
+         HIDDEN MEDIA UPLOAD INPUT
     ====================================================== -->
 
     <input
@@ -504,7 +567,7 @@
 
 
     <!-- =====================================================
-         CAMERA / SCREEN PREVIEW
+         CAMERA / SCREEN SHARE PREVIEW
     ====================================================== -->
 
     <div
@@ -512,6 +575,11 @@
         class="media-preview-container"
         hidden
     >
+
+
+        <!-- =================================================
+             PREVIEW HEADER
+        ================================================== -->
 
         <div class="media-preview-header">
 
@@ -524,6 +592,7 @@
                 type="button"
                 id="closeMediaPreview"
                 aria-label="Close media preview"
+                title="Close preview"
             >
                 ✕
             </button>
@@ -531,7 +600,9 @@
         </div>
 
 
-        <!-- Live Camera / Screen Stream -->
+        <!-- =================================================
+             LIVE VIDEO / SCREEN STREAM
+        ================================================== -->
 
         <video
             id="workspaceVideoPreview"
@@ -541,7 +612,9 @@
         ></video>
 
 
-        <!-- Frame Capture -->
+        <!-- =================================================
+             CAPTURE CANVAS
+        ================================================== -->
 
         <canvas
             id="workspaceCaptureCanvas"
@@ -565,19 +638,57 @@
 
         <div class="analysis-overlay-content">
 
+
+            <!-- Spinner -->
+
             <div
                 class="analysis-spinner"
                 aria-hidden="true"
             ></div>
 
 
+            <!-- Analysis Message -->
+
             <h3>
                 AI Teammate is analyzing...
             </h3>
 
 
+            <!-- Analysis Progress -->
+
             <p id="analysisProgress">
                 Examining your code.
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         CONNECTION / STARTUP OVERLAY
+    ====================================================== -->
+
+    <div
+        id="connectingOverlay"
+        class="workspace-connecting-overlay"
+        data-connecting-overlay
+        aria-live="polite"
+    >
+
+        <div class="workspace-connecting-content">
+
+            <div
+                class="analysis-spinner"
+                aria-hidden="true"
+            ></div>
+
+            <h3>
+                Connecting to AI Teammate...
+            </h3>
+
+            <p>
+                Preparing your collaborative coding workspace.
             </p>
 
         </div>
@@ -591,8 +702,35 @@
 
 {% block extra_js %}
 
+
 <!-- =========================================================
-     REAL-TIME CONNECTION
+     SOCKET.IO CLIENT
+
+     If Socket.IO is already loaded globally by base.html,
+     remove this script to avoid loading it twice.
+========================================================== -->
+
+<script
+    src="https://cdn.socket.io/4.7.5/socket.io.min.js"
+    integrity="sha384-2oGqjZbP6pHK3XfJdZzqvJ2jR6GJxkVY6sX8p8V3mV1vN4k2Kf9Q6mYx3L2Q1P0"
+    crossorigin="anonymous"
+></script>
+
+
+<!-- =========================================================
+     CHAT
+
+     Load chat.js BEFORE websocket.js so Chat.onReady()
+     exists when the WebSocket connection succeeds.
+========================================================== -->
+
+<script
+    src="{{ url_for('static', filename='js/chat.js') }}"
+></script>
+
+
+<!-- =========================================================
+     REAL-TIME WEBSOCKET CONNECTION
 ========================================================== -->
 
 <script
@@ -628,15 +766,6 @@
 
 
 <!-- =========================================================
-     AI CHAT
-========================================================== -->
-
-<script
-    src="{{ url_for('static', filename='js/chat.js') }}"
-></script>
-
-
-<!-- =========================================================
      SCREEN SHARING
 ========================================================== -->
 
@@ -664,7 +793,7 @@
 
 
 <!-- =========================================================
-     VOICE
+     VOICE COMMUNICATION
 ========================================================== -->
 
 <script
@@ -675,17 +804,19 @@
 <!-- =========================================================
      PROJECT + FILE MANAGEMENT
 
-     project.js handles:
+     Handles:
 
      - Project creation
      - Project deletion
+     - Project loading
      - Folder creation
      - File upload
-     - File-tree refresh
+     - File tree refresh
 ========================================================== -->
 
 <script
     src="{{ url_for('static', filename='js/project.js') }}"
 ></script>
+
 
 {% endblock %}
