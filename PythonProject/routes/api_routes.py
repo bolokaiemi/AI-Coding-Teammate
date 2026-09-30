@@ -38,6 +38,9 @@ from werkzeug.utils import secure_filename
 
 from database.models import Project
 
+# AI Coding Teammate engine
+from ai.ai_engine import AIEngine
+
 
 # ============================================================
 # API BLUEPRINT
@@ -48,6 +51,14 @@ api_bp = Blueprint(
     __name__,
     url_prefix="/api",
 )
+
+
+# ============================================================
+# AI ENGINE
+# ============================================================
+
+# Create one AI engine instance for this application process.
+ai_engine = AIEngine()
 
 
 # ============================================================
@@ -93,6 +104,12 @@ def _get_user_project(project_id):
     """
 
     if not project_id:
+        return None
+
+    try:
+        project_id = int(project_id)
+
+    except (TypeError, ValueError):
         return None
 
     return Project.query.filter_by(
@@ -196,6 +213,38 @@ def _safe_child_path(root, relative_path=""):
         return None
 
     return candidate
+
+
+def _build_project_context(project):
+    """
+    Build lightweight project context for the AI conversation.
+
+    Do not expose unnecessary user information.
+    """
+
+    if project is None:
+        return None
+
+    context = {
+        "id": project.id,
+    }
+
+    for attribute in (
+        "name",
+        "description",
+        "language",
+        "framework",
+    ):
+        value = getattr(
+            project,
+            attribute,
+            None,
+        )
+
+        if value:
+            context[attribute] = value
+
+    return context
 
 
 # ============================================================
@@ -438,10 +487,6 @@ def upload_project_files():
         "",
     ).strip()
 
-    # --------------------------------------------------------
-    # VALIDATE PROJECT
-    # --------------------------------------------------------
-
     if not project_id:
 
         return jsonify(
@@ -468,15 +513,9 @@ def upload_project_files():
             }
         ), 404
 
-    # --------------------------------------------------------
-    # GET UPLOADED FILES
-    # --------------------------------------------------------
-
     uploaded_files = request.files.getlist(
         "files"
     )
-
-    # Support a single field named "file" as well.
 
     if not uploaded_files:
 
@@ -500,10 +539,6 @@ def upload_project_files():
                 ),
             }
         ), 400
-
-    # --------------------------------------------------------
-    # DESTINATION DIRECTORY
-    # --------------------------------------------------------
 
     project_root = _ensure_project_directory(
         project
@@ -538,10 +573,6 @@ def upload_project_files():
             }
         ), 404
 
-    # --------------------------------------------------------
-    # SAVE FILES
-    # --------------------------------------------------------
-
     saved_files = []
     rejected_files = []
 
@@ -552,7 +583,6 @@ def upload_project_files():
         ).strip()
 
         if not original_name:
-
             continue
 
         filename = secure_filename(
@@ -620,10 +650,6 @@ def upload_project_files():
                 }
             )
 
-    # --------------------------------------------------------
-    # NOTHING SAVED
-    # --------------------------------------------------------
-
     if not saved_files:
 
         return jsonify(
@@ -681,30 +707,32 @@ def health():
 )
 def ai_status():
     """
-    Return AI teammate status.
+    Return the real AI teammate/provider status.
     """
 
-    return jsonify(
-        {
-            "success": True,
-            "ai": {
-                "name": (
-                    "AI Coding Teammate"
-                ),
-                "status": "online",
-                "capabilities": [
-                    "code_analysis",
-                    "error_detection",
-                    "code_correction",
-                    "code_explanation",
-                    "visual_analysis",
-                    "screen_analysis",
-                    "camera_analysis",
-                    "conversation",
-                ],
-            },
-        }
-    )
+    try:
+
+        status = ai_engine.status()
+
+        return jsonify(
+            {
+                "success": True,
+                "ai": status,
+            }
+        )
+
+    except Exception as error:
+
+        current_app.logger.exception(
+            "Unable to retrieve AI status."
+        )
+
+        return jsonify(
+            {
+                "success": False,
+                "error": str(error),
+            }
+        ), 500
 
 
 # ============================================================
@@ -719,6 +747,17 @@ def ai_status():
 def ai_chat():
     """
     Send a message to the AI Coding Teammate.
+
+    Expected JSON:
+
+    {
+        "message": "Explain this code",
+        "project_id": 1,
+        "session_id": "...",
+        "code_context": "..."
+    }
+
+    For backward compatibility, "code" is also accepted.
     """
 
     data = request.get_json(
@@ -736,12 +775,38 @@ def ai_chat():
         "project_id"
     )
 
-    code = str(
-        data.get(
+    session_id = data.get(
+        "session_id"
+    )
+
+    code_context = data.get(
+        "code_context"
+    )
+
+    if code_context is None:
+        code_context = data.get(
             "code",
             "",
         )
+
+    code_context = str(
+        code_context or ""
     )
+
+    conversation_history = data.get(
+        "conversation_history",
+        [],
+    )
+
+    if not isinstance(
+        conversation_history,
+        list,
+    ):
+        conversation_history = []
+
+    # --------------------------------------------------------
+    # VALIDATE MESSAGE
+    # --------------------------------------------------------
 
     if not message:
 
@@ -757,6 +822,8 @@ def ai_chat():
     # --------------------------------------------------------
     # OPTIONAL PROJECT OWNERSHIP CHECK
     # --------------------------------------------------------
+
+    project = None
 
     if project_id:
 
@@ -776,34 +843,91 @@ def ai_chat():
             ), 404
 
     # --------------------------------------------------------
-    # TODO
-    #
-    # Connect services/chat_service.py here.
-    #
-    # Example:
-    #
-    # response = ChatService.send_message(
-    #     user_id=current_user.id,
-    #     project_id=project_id,
-    #     message=message,
-    #     code=code,
-    # )
+    # BUILD PROJECT CONTEXT
     # --------------------------------------------------------
 
-    return jsonify(
-        {
-            "success": True,
-            "response": (
-                "Your message has been received. "
-                "The AI conversation engine "
-                "will process it."
-            ),
-            "project_id": project_id,
-            "code_received": bool(
-                code.strip()
-            ),
-        }
+    project_context = _build_project_context(
+        project
     )
+
+    # --------------------------------------------------------
+    # REAL AI CONVERSATION
+    # --------------------------------------------------------
+
+    try:
+
+        result = ai_engine.chat(
+            message=message,
+            conversation_history=conversation_history,
+            project_context=project_context,
+            code_context=(
+                code_context
+                if code_context.strip()
+                else None
+            ),
+        )
+
+        if not isinstance(
+            result,
+            dict,
+        ):
+
+            raise TypeError(
+                "AI engine returned an invalid response."
+            )
+
+        response_message = (
+            result.get("message")
+            or result.get("content")
+            or result.get("response")
+        )
+
+        if not response_message:
+
+            response_message = (
+                "The AI Coding Teammate did not "
+                "return a message."
+            )
+
+        return jsonify(
+            {
+                "success": True,
+                "message": response_message,
+                "response": response_message,
+                "project_id": (
+                    project.id
+                    if project is not None
+                    else None
+                ),
+                "session_id": session_id,
+                "code_received": bool(
+                    code_context.strip()
+                ),
+                "model": result.get(
+                    "model"
+                ),
+                "processing_time": result.get(
+                    "processing_time"
+                ),
+            }
+        )
+
+    except Exception as error:
+
+        current_app.logger.exception(
+            "AI chat request failed."
+        )
+
+        return jsonify(
+            {
+                "success": False,
+                "error": (
+                    "The AI Coding Teammate could not "
+                    "process the request."
+                ),
+                "details": str(error),
+            }
+        ), 500
 
 
 # ============================================================
@@ -838,6 +962,13 @@ def code_analyze():
         )
     ).strip()
 
+    filename = str(
+        data.get(
+            "filename",
+            "untitled",
+        )
+    ).strip()
+
     if not code.strip():
 
         return jsonify(
@@ -849,25 +980,33 @@ def code_analyze():
             }
         ), 400
 
-    # --------------------------------------------------------
-    # TODO
-    #
-    # Connect services/analysis_service.py.
-    # --------------------------------------------------------
+    try:
 
-    return jsonify(
-        {
-            "success": True,
-            "language": language,
-            "errors": [],
-            "warnings": [],
-            "suggestions": [],
-            "message": (
-                "Code received successfully "
-                "for analysis."
-            ),
-        }
-    )
+        result = ai_engine.analyze_code(
+            code=code,
+            language=language,
+            filename=filename,
+        )
+
+        return jsonify(
+            result
+        )
+
+    except Exception as error:
+
+        current_app.logger.exception(
+            "AI code analysis failed."
+        )
+
+        return jsonify(
+            {
+                "success": False,
+                "error": (
+                    "Code analysis failed."
+                ),
+                "details": str(error),
+            }
+        ), 500
 
 
 # ============================================================
@@ -902,6 +1041,17 @@ def code_correct():
         )
     ).strip()
 
+    filename = str(
+        data.get(
+            "filename",
+            "untitled",
+        )
+    ).strip()
+
+    problems = data.get(
+        "problems"
+    )
+
     if not code.strip():
 
         return jsonify(
@@ -913,24 +1063,34 @@ def code_correct():
             }
         ), 400
 
-    # --------------------------------------------------------
-    # TODO
-    #
-    # Connect the AI correction service.
-    # --------------------------------------------------------
+    try:
 
-    return jsonify(
-        {
-            "success": True,
-            "language": language,
-            "original_code": code,
-            "corrected_code": code,
-            "explanation": (
-                "The code correction engine will "
-                "provide the corrected version here."
-            ),
-        }
-    )
+        result = ai_engine.correct_code(
+            code=code,
+            language=language,
+            filename=filename,
+            problems=problems,
+        )
+
+        return jsonify(
+            result
+        )
+
+    except Exception as error:
+
+        current_app.logger.exception(
+            "AI code correction failed."
+        )
+
+        return jsonify(
+            {
+                "success": False,
+                "error": (
+                    "Code correction failed."
+                ),
+                "details": str(error),
+            }
+        ), 500
 
 
 # ============================================================
@@ -965,6 +1125,13 @@ def code_explain():
         )
     ).strip()
 
+    filename = str(
+        data.get(
+            "filename",
+            "untitled",
+        )
+    ).strip()
+
     if not code.strip():
 
         return jsonify(
@@ -976,16 +1143,33 @@ def code_explain():
             }
         ), 400
 
-    return jsonify(
-        {
-            "success": True,
-            "language": language,
-            "explanation": (
-                "The AI code explanation engine "
-                "will provide the explanation here."
-            ),
-        }
-    )
+    try:
+
+        result = ai_engine.explain_code(
+            code=code,
+            language=language,
+            filename=filename,
+        )
+
+        return jsonify(
+            result
+        )
+
+    except Exception as error:
+
+        current_app.logger.exception(
+            "AI code explanation failed."
+        )
+
+        return jsonify(
+            {
+                "success": False,
+                "error": (
+                    "Code explanation failed."
+                ),
+                "details": str(error),
+            }
+        ), 500
 
 
 # ============================================================
@@ -1013,6 +1197,10 @@ def visual_analyze():
 
     project_id = data.get(
         "project_id"
+    )
+
+    context = data.get(
+        "context"
     )
 
     if not image_data:
@@ -1043,21 +1231,32 @@ def visual_analyze():
                 }
             ), 404
 
-    return jsonify(
-        {
-            "success": True,
-            "project_id": project_id,
-            "analysis": {
-                "errors": [],
-                "observations": [],
-                "suggestions": [],
-            },
-            "message": (
-                "Visual data received "
-                "for AI analysis."
-            ),
-        }
-    )
+    try:
+
+        result = ai_engine.analyze_visual(
+            image_data=image_data,
+            context=context,
+        )
+
+        return jsonify(
+            result
+        )
+
+    except Exception as error:
+
+        current_app.logger.exception(
+            "AI visual analysis failed."
+        )
+
+        return jsonify(
+            {
+                "success": False,
+                "error": (
+                    "Visual analysis failed."
+                ),
+                "details": str(error),
+            }
+        ), 500
 
 
 # ============================================================
@@ -1082,6 +1281,10 @@ def screen_analyze():
         "frame"
     )
 
+    code_context = data.get(
+        "code_context"
+    )
+
     if not frame:
 
         return jsonify(
@@ -1093,16 +1296,32 @@ def screen_analyze():
             }
         ), 400
 
-    return jsonify(
-        {
-            "success": True,
-            "analysis": {
-                "detected_code": False,
-                "errors": [],
-                "observations": [],
-            },
-        }
-    )
+    try:
+
+        result = ai_engine.analyze_screen(
+            frame_data=frame,
+            code_context=code_context,
+        )
+
+        return jsonify(
+            result
+        )
+
+    except Exception as error:
+
+        current_app.logger.exception(
+            "AI screen analysis failed."
+        )
+
+        return jsonify(
+            {
+                "success": False,
+                "error": (
+                    "Screen analysis failed."
+                ),
+                "details": str(error),
+            }
+        ), 500
 
 
 # ============================================================
@@ -1127,6 +1346,10 @@ def camera_analyze():
         "frame"
     )
 
+    code_context = data.get(
+        "code_context"
+    )
+
     if not frame:
 
         return jsonify(
@@ -1138,17 +1361,32 @@ def camera_analyze():
             }
         ), 400
 
-    return jsonify(
-        {
-            "success": True,
-            "analysis": {
-                "objects": [],
-                "text": [],
-                "code_detected": False,
-                "errors": [],
-            },
-        }
-    )
+    try:
+
+        result = ai_engine.analyze_camera(
+            frame_data=frame,
+            code_context=code_context,
+        )
+
+        return jsonify(
+            result
+        )
+
+    except Exception as error:
+
+        current_app.logger.exception(
+            "AI camera analysis failed."
+        )
+
+        return jsonify(
+            {
+                "success": False,
+                "error": (
+                    "Camera analysis failed."
+                ),
+                "details": str(error),
+            }
+        ), 500
 
 
 # ============================================================

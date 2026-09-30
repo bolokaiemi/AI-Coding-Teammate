@@ -1,5 +1,8 @@
+# ai/ai_engine.py
+
 """
 AI Engine
+=========
 
 Central orchestrator for the AI Coding Teammate.
 
@@ -19,8 +22,8 @@ The engine connects:
       ↓
     Project Analysis
 
-The engine provides one unified interface to the rest
-of the application.
+The rest of the application should normally communicate
+with the AI layer through this class.
 """
 
 from .ai_client import AIClient
@@ -35,95 +38,88 @@ from .conversation import ConversationManager
 
 class AIEngine:
     """
-    Main AI Coding Teammate engine.
+    Main orchestrator for the AI Coding Teammate.
 
-    Coordinates all AI components while sharing a single
-    AIClient instance between them.
+    A single AIClient instance is shared between the
+    different AI components.
     """
 
     def __init__(self, client=None):
         """
         Initialize the AI engine and its components.
-
-        A single AIClient instance is shared by all components
-        to avoid unnecessary client creation and circular
-        initialization.
         """
 
-        # -----------------------------------------------------
-        # AI PROVIDER CLIENT
-        # -----------------------------------------------------
+        # ----------------------------------------------------
+        # SHARED AI CLIENT
+        # ----------------------------------------------------
 
-        if client is None:
-            self.client = AIClient(engine=self)
-        else:
-            self.client = client
+        self.client = client or AIClient(
+            engine=self
+        )
+        # Attach engine reference to provided client for compatibility with tests
+        if hasattr(self.client, 'engine'):
+            self.client.engine = self
 
-            # Attach this engine to externally supplied clients
-            # when supported.
-            if hasattr(self.client, "engine"):
-                self.client.engine = self
-
-        # -----------------------------------------------------
+        # ----------------------------------------------------
         # ERROR DETECTOR
-        # -----------------------------------------------------
+        # ----------------------------------------------------
 
         self.error_detector = ErrorDetector(
             client=self.client
         )
 
-        # -----------------------------------------------------
+        # ----------------------------------------------------
         # CODE ANALYZER
-        # -----------------------------------------------------
+        # ----------------------------------------------------
 
         self.code_analyzer = CodeAnalyzer(
             client=self.client,
             error_detector=self.error_detector,
         )
 
-        # -----------------------------------------------------
+        # ----------------------------------------------------
         # CODE CORRECTOR
-        # -----------------------------------------------------
+        # ----------------------------------------------------
 
         self.code_corrector = CodeCorrector(
             client=self.client
         )
 
-        # -----------------------------------------------------
+        # ----------------------------------------------------
         # CODE EXPLAINER
-        # -----------------------------------------------------
+        # ----------------------------------------------------
 
         self.code_explainer = CodeExplainer(
             client=self.client
         )
 
-        # -----------------------------------------------------
+        # ----------------------------------------------------
         # VISUAL ANALYZER
-        # -----------------------------------------------------
+        # ----------------------------------------------------
 
         self.visual_analyzer = VisualAnalyzer(
             client=self.client
         )
 
-        # -----------------------------------------------------
+        # ----------------------------------------------------
         # PROJECT ANALYZER
-        # -----------------------------------------------------
+        # ----------------------------------------------------
 
         self.project_analyzer = ProjectAnalyzer(
             client=self.client
         )
 
-        # -----------------------------------------------------
+        # ----------------------------------------------------
         # CONVERSATION MANAGER
-        # -----------------------------------------------------
+        # ----------------------------------------------------
 
         self.conversation = ConversationManager(
             client=self.client
         )
 
-    # =========================================================
+    # ========================================================
     # CHAT
-    # =========================================================
+    # ========================================================
 
     def chat(
         self,
@@ -135,29 +131,32 @@ class AIEngine:
         """
         Talk to the AI Coding Teammate.
 
-        Args:
-            message:
-                Developer message.
+        Parameters
+        ----------
+        message:
+            Latest developer message.
 
-            conversation_history:
-                Previous conversation messages.
+        conversation_history:
+            Previous conversation messages.
 
-            project_context:
-                Information about the current project.
+        project_context:
+            Optional information about the active project.
 
-            code_context:
-                Current source code or editor context.
+        code_context:
+            Optional source code currently being viewed
+            or edited.
         """
 
-        if not message or not str(message).strip():
+        if not message:
             return {
                 "success": False,
-                "content": "",
-                "error": "Message cannot be empty.",
+                "type": "chat",
+                "message": "No message was provided.",
+                "content": "No message was provided.",
             }
 
         return self.conversation.respond(
-            message=str(message).strip(),
+            message=message,
             conversation_history=(
                 conversation_history or []
             ),
@@ -165,9 +164,9 @@ class AIEngine:
             code_context=code_context,
         )
 
-    # =========================================================
+    # ========================================================
     # CODE ANALYSIS
-    # =========================================================
+    # ========================================================
 
     def analyze_code(
         self,
@@ -176,7 +175,7 @@ class AIEngine:
         filename="untitled",
     ):
         """
-        Analyze source code.
+        Analyze source code for problems and improvements.
         """
 
         return self.code_analyzer.analyze(
@@ -185,9 +184,9 @@ class AIEngine:
             filename=filename,
         )
 
-    # =========================================================
+    # ========================================================
     # ERROR DETECTION
-    # =========================================================
+    # ========================================================
 
     def detect_error(
         self,
@@ -205,9 +204,9 @@ class AIEngine:
             error=error,
         )
 
-    # =========================================================
+    # ========================================================
     # CODE CORRECTION
-    # =========================================================
+    # ========================================================
 
     def correct_code(
         self,
@@ -217,7 +216,7 @@ class AIEngine:
         problems=None,
     ):
         """
-        Generate corrected source code.
+        Generate a corrected version of source code.
         """
 
         return self.code_corrector.correct(
@@ -227,9 +226,9 @@ class AIEngine:
             problems=problems,
         )
 
-    # =========================================================
+    # ========================================================
     # CODE EXPLANATION
-    # =========================================================
+    # ========================================================
 
     def explain_code(
         self,
@@ -238,7 +237,7 @@ class AIEngine:
         filename="untitled",
     ):
         """
-        Explain source code.
+        Explain source code in developer-friendly language.
         """
 
         return self.code_explainer.explain(
@@ -247,9 +246,9 @@ class AIEngine:
             filename=filename,
         )
 
-    # =========================================================
+    # ========================================================
     # VISUAL ANALYSIS
-    # =========================================================
+    # ========================================================
 
     def analyze_visual(
         self,
@@ -257,23 +256,17 @@ class AIEngine:
         context=None,
     ):
         """
-        Analyze a screenshot, image, or visual frame.
+        Analyze an uploaded screenshot or image.
         """
-
-        if not image_data:
-            return {
-                "success": False,
-                "message": "No image data was supplied.",
-            }
 
         return self.visual_analyzer.analyze_image(
             image_data=image_data,
             context=context,
         )
 
-    # =========================================================
+    # ========================================================
     # SCREEN ANALYSIS
-    # =========================================================
+    # ========================================================
 
     def analyze_screen(
         self,
@@ -281,23 +274,17 @@ class AIEngine:
         code_context=None,
     ):
         """
-        Analyze a shared screen frame.
+        Analyze a frame captured from screen sharing.
         """
-
-        if not frame_data:
-            return {
-                "success": False,
-                "message": "No screen frame was supplied.",
-            }
 
         return self.visual_analyzer.analyze_screen(
             frame_data=frame_data,
             code_context=code_context,
         )
 
-    # =========================================================
+    # ========================================================
     # CAMERA ANALYSIS
-    # =========================================================
+    # ========================================================
 
     def analyze_camera(
         self,
@@ -305,23 +292,17 @@ class AIEngine:
         code_context=None,
     ):
         """
-        Analyze a camera frame.
+        Analyze a frame captured from the camera.
         """
-
-        if not frame_data:
-            return {
-                "success": False,
-                "message": "No camera frame was supplied.",
-            }
 
         return self.visual_analyzer.analyze_camera(
             frame_data=frame_data,
             code_context=code_context,
         )
 
-    # =========================================================
+    # ========================================================
     # PROJECT ANALYSIS
-    # =========================================================
+    # ========================================================
 
     def analyze_project(
         self,
@@ -332,26 +313,20 @@ class AIEngine:
         files=None,
     ):
         """
-        Analyze the architecture and context of a project.
+        Analyze the structure and architecture of a project.
         """
-
-        if not project_name:
-            return {
-                "success": False,
-                "message": "Project name is required.",
-            }
 
         return self.project_analyzer.analyze(
             project_name=project_name,
             description=description,
             language=language,
             framework=framework,
-            files=files or [],
+            files=files,
         )
 
-    # =========================================================
-    # ENGINE STATUS
-    # =========================================================
+    # ========================================================
+    # PROVIDER STATUS
+    # ========================================================
 
     def status(self):
         """
@@ -360,23 +335,27 @@ class AIEngine:
 
         client_status = self.client.status()
 
-        configured = client_status.get(
-            "configured",
-            False,
+        configured = bool(
+            client_status.get(
+                "configured",
+                False,
+            )
         )
 
         return {
+            "name": "AI Coding Teammate",
             "engine": "AI Coding Teammate",
             "status": (
                 "ready"
                 if configured
-                else "development_mode"
+                else "not_configured"
             ),
             "provider": client_status.get(
                 "provider",
                 "openai",
             ),
             "provider_configured": configured,
+            "configured": configured,
             "model": client_status.get(
                 "model"
             ),
@@ -393,26 +372,20 @@ class AIEngine:
             },
         }
 
-    # =========================================================
-    # HEALTH CHECK
-    # =========================================================
 
     def health(self):
-        """
-        Lightweight AI subsystem health information.
+        """Return health information for the AI engine.
 
-        Useful for API health routes and debugging.
+        Mirrors :meth:`status` for backward compatibility.
         """
-
         status = self.status()
+        # Include a success flag for compatibility with tests
+        return {"success": True, **status}
 
-        return {
-            "success": True,
-            "engine": status["engine"],
-            "status": status["status"],
-            "provider": status["provider"],
-            "provider_configured": (
-                status["provider_configured"]
-            ),
-            "model": status["model"],
-        }
+    # ============================================================
+    # MODULE EXPORTS
+    # ============================================================
+
+__all__ = [
+    "AIEngine",
+]
