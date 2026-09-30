@@ -1,15 +1,15 @@
-# sockets/screen_events.py
+# sockets/camera_events.py
 
 """
-Screen Socket Events
+Camera Socket Events
 ====================
 
 Handles:
-- screen_frame
-- screen_analysis
+- camera_frame
+- camera_analysis
 
-The browser can capture screen frames and send them to
-the backend for AI visual/code analysis.
+Used when the developer shows the AI Coding Teammate
+something through their camera.
 """
 
 from flask_login import current_user
@@ -37,15 +37,15 @@ def _get_user_project(project_id):
     ).first()
 
 
-def register_screen_events(socketio):
+def register_camera_events(socketio):
     """
-    Register screen-sharing Socket.IO events.
+    Register camera Socket.IO events.
     """
 
-    @socketio.on("screen_frame")
-    def handle_screen_frame(data=None):
+    @socketio.on("camera_frame")
+    def handle_camera_frame(data=None):
         """
-        Receive a captured screen frame.
+        Receive a captured camera frame.
         """
 
         if not current_user.is_authenticated:
@@ -78,11 +78,11 @@ def register_screen_events(socketio):
         if not frame:
 
             emit(
-                "screen_analysis",
+                "camera_analysis",
                 {
                     "success": False,
                     "error": (
-                        "No screen frame was supplied."
+                        "No camera frame was supplied."
                     ),
                 },
             )
@@ -100,7 +100,7 @@ def register_screen_events(socketio):
             if project is None:
 
                 emit(
-                    "screen_analysis",
+                    "camera_analysis",
                     {
                         "success": False,
                         "error": (
@@ -112,12 +112,12 @@ def register_screen_events(socketio):
                 return
 
         # ----------------------------------------------------
-        # FUTURE SCREEN ANALYSIS
+        # FUTURE CAMERA AI SERVICE
         # ----------------------------------------------------
         #
-        # from services.screen_service import ScreenService
+        # from services.camera_service import CameraService
         #
-        # result = ScreenService.analyze_frame(
+        # result = CameraService.analyze_frame(
         #     frame=frame,
         #     project_id=project.id,
         # )
@@ -125,14 +125,16 @@ def register_screen_events(socketio):
         # ----------------------------------------------------
 
         result = {
-            "detected_code": False,
+            "objects": [],
+            "text": [],
+            "code_detected": False,
             "errors": [],
             "observations": [],
             "suggestions": [],
         }
 
         emit(
-            "screen_analysis",
+            "camera_analysis",
             {
                 "success": True,
                 "project_id": (

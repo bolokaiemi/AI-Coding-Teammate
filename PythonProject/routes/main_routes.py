@@ -34,8 +34,10 @@ def index():
 
 @main_bp.route("/datenschutz")
 def datenschutz():
-    """
-    Render the Datenschutz page.
-    """
+    """Render the Datenschutz page."""
+    return render_template("datenschutz.html")
 
-    return render
+@main_bp.route("/impressum")
+def impressum():
+    """Render the Impressum page."""
+    return render_template("impressum.html")

@@ -39,6 +39,7 @@ from flask_socketio import SocketIO
 
 from config import config
 from database.database import init_db
+from sockets import register_socket_events
 
 
 # ============================================================
@@ -54,9 +55,11 @@ load_dotenv()
 
 login_manager = LoginManager()
 
-# Do not force async_mode="threading".
-# Flask-SocketIO will select the available async backend.
-socketio = SocketIO()
+# Socket.IO is created once here and initialized later
+# inside create_app().
+#
+# Do not create another SocketIO instance anywhere else.
+socketio = SocketIO(async_mode='threading')
 
 
 # ============================================================
@@ -95,10 +98,9 @@ def load_user(user_id):
         return None
 
     try:
-        # Import locally to help avoid circular imports.
+        # Local import helps prevent circular imports.
         from database.models import User
 
-        # SQLAlchemy 2.x compatible query.
         return User.query.filter_by(
             id=user_id
         ).first()
@@ -166,7 +168,7 @@ def create_app(config_name=None):
         )
 
     # --------------------------------------------------------
-    # Configure logging early
+    # Configure logging
     # --------------------------------------------------------
 
     configure_logging(app)
@@ -189,14 +191,17 @@ def create_app(config_name=None):
 
     socketio.init_app(
         app,
+
         cors_allowed_origins=app.config.get(
             "SOCKETIO_CORS_ALLOWED_ORIGINS",
             "*",
         ),
+
         logger=app.config.get(
             "SOCKETIO_LOGGER",
             False,
         ),
+
         engineio_logger=app.config.get(
             "ENGINEIO_LOGGER",
             False,
@@ -210,16 +215,41 @@ def create_app(config_name=None):
     create_directories(app)
 
     # --------------------------------------------------------
-    # Register blueprints
+    # Register Flask blueprints
     # --------------------------------------------------------
 
     register_blueprints(app)
 
     # --------------------------------------------------------
-    # Register WebSocket handlers
+    # Register Socket.IO events
+    # --------------------------------------------------------
+    #
+    # IMPORTANT:
+    #
+    # This replaces the previous:
+    #
+    #     websocket/handlers.py
+    #
+    # registration system.
+    #
+    # sockets/__init__.py now registers:
+    #
+    # - workspace_events.py
+    # - chat_events.py
+    # - code_events.py
+    # - screen_events.py
+    # - camera_events.py
+    #
+    # Do this only once.
     # --------------------------------------------------------
 
-    register_socket_handlers()
+    register_socket_events(
+        socketio
+    )
+
+    app.logger.info(
+        "Socket.IO event handlers registered."
+    )
 
     # --------------------------------------------------------
     # Register error handlers
@@ -234,7 +264,7 @@ def create_app(config_name=None):
     register_template_context(app)
 
     # --------------------------------------------------------
-    # Register core routes
+    # Register core utility routes
     # --------------------------------------------------------
 
     register_core_routes(app)
@@ -416,42 +446,6 @@ def register_blueprints(app):
     except ImportError as error:
         app.logger.warning(
             "API blueprint could not be loaded: %s",
-            error,
-        )
-
-
-# ============================================================
-# WEBSOCKET REGISTRATION
-# ============================================================
-
-def register_socket_handlers():
-    """
-    Register real-time WebSocket handlers.
-
-    The application's actual Socket.IO handlers live in
-    websocket/handlers.py.
-    """
-
-    try:
-        from websocket.handlers import register_handlers
-
-        register_handlers(
-            socketio
-        )
-
-        logging.info(
-            "WebSocket handlers registered successfully."
-        )
-
-    except ImportError as error:
-        logging.warning(
-            "WebSocket handlers could not be loaded: %s",
-            error,
-        )
-
-    except Exception as error:
-        logging.exception(
-            "Unable to register WebSocket handlers: %s",
             error,
         )
 
@@ -723,4 +717,5 @@ if __name__ == "__main__":
         port=port,
         debug=debug_mode,
         allow_unsafe_werkzeug=True,
+        use_reloader=False,
     )
